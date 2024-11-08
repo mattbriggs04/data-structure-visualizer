@@ -1,22 +1,26 @@
 :root {
   color-scheme: light dark;
-  --text-color: #222;
-  --bg-color: #f8f8f8;
+  --text-color: #4a4947;
+  --bg-color: #faf7f0;
+  --bg-color-contrast: #242424;
+  --fg-color: #6496b9;
 }
 @media (prefers-color-scheme: dark) {
   :root {
     --text-color: #eee;
     --bg-color: #242424;
+    --bg-color-contrast: #faf7f0;
   }
 }
 
 * {
   margin: 0;
-  box-sizing: border-box;
   padding: 0;
+  box-sizing: border-box;
 }
 
 body {
   background-color: var(--bg-color);
   color: var(--text-color);
+  font-size: 1.2rem;
 }
