@@ -1,6 +1,7 @@
 :root {
   color-scheme: light dark;
   --text-color: #4a4947;
+  --text-color-contrast: #eee;
   --bg-color: #faf7f0;
   --bg-color-contrast: #242424;
   --fg-color: #6496b9;
@@ -8,6 +9,7 @@
 @media (prefers-color-scheme: dark) {
   :root {
     --text-color: #eee;
+    --text-color-contrast: #4a4947;
     --bg-color: #242424;
     --bg-color-contrast: #faf7f0;
   }

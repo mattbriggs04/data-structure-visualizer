@@ -4,19 +4,23 @@
     flex-direction: column;
     align-items: center;
 
+    padding: 1rem;
     width: 40%;
-    height: 100vh;
-    padding: 2rem;
+
     background-color: var(--bg-color-contrast);
+    color: var(--text-color-contrast);
 }
 select {
     width: 100%;
     padding: 0.2em 0.2em;
-    border: 1px solid var(--text-color);
-    color: var(--text-color);
+
     background-color: var(--bg-color);
-    border-radius: 0.3em;
+    color: var(--text-color);
     font-size: 1rem;
+
+    border: 1px solid var(--text-color);
+    border-radius: 0.3em;
+
     outline: none;
 }
 select:hover {

@@ -1,28 +1,33 @@
-import { useState } from 'react'
-import './Menu.css'
+import { Dispatch, SetStateAction } from 'react';
+import './Menu.css';
+import ControlPanel from "./ControlPanel"
 
-export default function Menu() {
-    const [currStructure, setCurrStructure] = useState("");
+interface MenuProps {
+    structure: string;
+    setStructure: Dispatch<SetStateAction<string>>;
+}
 
-    const handleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-        setCurrStructure(e.target.value);
-    }
-    return  (
-    <div>
+function Menu({ structure, setStructure }: MenuProps) {
+    const handleDropdownChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+        setStructure(event.target.value);
+    };
+
+    return (
         <div className="menu-container">
-            <select id="dropdown" value={currStructure} onChange={handleChange}>
+            <div className={`menu-header`}>
+                <h1>Menu</h1>
+            </div>
+            <select id="dropdown" onChange={handleDropdownChange}>
                 <option value="">Choose a Data Structure</option>
                 <option value="linkedlist">Linked List</option>
                 <option value="stack">Stack</option>
+                <option value="binarytree">Binary Tree</option>
             </select>
-            {
-                currStructure == ""
-                ? <div>No structure selected</div>
-                : <div>Structure is <span id="structure-text">{currStructure}</span></div>
-                
-            }
+            
+            <ControlPanel structure={structure} />
         </div>
-    </div>
+
     );
 }
- 
+
+export default Menu;

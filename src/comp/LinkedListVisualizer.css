@@ -1,0 +1,11 @@
+.linkedlist-container > h2 {
+    text-align: center;
+    width: 100%;
+}
+.linkedlist-svg {
+    max-width: 100%;
+    height: auto;
+    border: 4px solid blue;
+    display: block;
+
+}

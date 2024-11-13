@@ -1,0 +1,7 @@
+.visualizer-container {
+    display: flex;
+    padding: 1rem;
+    width: 60%; /* menu has a width of 40% */
+    align-items: center;
+    flex-direction: column;
+}
