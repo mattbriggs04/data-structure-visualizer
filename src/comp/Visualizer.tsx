@@ -1,13 +1,10 @@
-
 import LinkedListVisualizer from "./LinkedListVisualizer";
 import "./Visualizer.css"
+import { DataType } from "../types/types"
 
-interface Data {
-    [key: string]: number[]; // TODO: change this eventually -> currently not sure what types may be needed
-}
 interface VisualizerProps {
     structure: string;
-    data: Data;
+    data: DataType;
 }
 function Visualizer({structure, data} : VisualizerProps) {
     return (

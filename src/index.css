@@ -1,10 +1,15 @@
+/* Space Mono */
+@import url('https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400;1,700&display=swap');
+/* Noto Sans Mono */
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Mono:wght@100..900&family=Space+Mono:ital,wght@0,400;0,700;1,400;1,700&display=swap');
+/* global variables stored in :root */
 :root {
   color-scheme: light dark;
   --text-color: #4a4947;
   --text-color-contrast: #eee;
   --bg-color: #faf7f0;
   --bg-color-contrast: #242424;
-  --fg-color: #6496b9;
+  --fg-color: #28A745;
 }
 @media (prefers-color-scheme: dark) {
   :root {
@@ -12,6 +17,7 @@
     --text-color-contrast: #4a4947;
     --bg-color: #242424;
     --bg-color-contrast: #faf7f0;
+    --fg-color: #19bc8b;
   }
 }
 
@@ -21,8 +27,34 @@
   box-sizing: border-box;
 }
 
+/* global styles for common elements */
 body {
   background-color: var(--bg-color);
   color: var(--text-color);
   font-size: 1.2rem;
+}
+
+button {
+  outline: none;
+  border: none;
+  background-color: transparent;
+  color: var(--text-color);
+  border: 2px solid var(--fg-color);
+  font-family: 'Noto Sans Mono', monospace;
+  border-radius: 0.2rem;
+}
+
+button {
+  padding: 1rem;
+}
+
+button:hover {
+  transition: 0.5s;
+  box-shadow: inset 9rem 0 0 0 var(--fg-color);
+  color: var(--text-color-contrast);
+  cursor: pointer;
+}
+
+button:active {
+  border: 2px solid var(--fg-color);
 }

@@ -1,13 +1,16 @@
 import { Dispatch, SetStateAction } from 'react';
 import './Menu.css';
 import ControlPanel from "./ControlPanel"
+import { DataType } from "../types/types"
 
 interface MenuProps {
     structure: string;
     setStructure: Dispatch<SetStateAction<string>>;
+    data: DataType;
+    setData: Dispatch<SetStateAction<DataType>>;
 }
 
-function Menu({ structure, setStructure }: MenuProps) {
+function Menu({ structure, setStructure, data, setData }: MenuProps) {
     const handleDropdownChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
         setStructure(event.target.value);
     };
@@ -24,7 +27,7 @@ function Menu({ structure, setStructure }: MenuProps) {
                 <option value="binarytree">Binary Tree</option>
             </select>
             
-            <ControlPanel structure={structure} />
+            <ControlPanel structure={structure} data={data} setData={setData} />
         </div>
 
     );

@@ -1,4 +1,3 @@
-
 .menu-container {
     display: flex;
     flex-direction: column;
@@ -7,8 +6,8 @@
     padding: 1rem;
     width: 40%;
 
-    background-color: var(--bg-color-contrast);
-    color: var(--text-color-contrast);
+    background-color: var(--bg-color);
+    color: var(--text-color);
 }
 select {
     width: 100%;
