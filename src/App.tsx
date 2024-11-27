@@ -7,7 +7,7 @@ import { DataType } from './types/types';
 function App() {
   const [structure, setStructure] = useState('');
   const [data, setData] = useState<DataType>({
-    'linkedlist': [0, 0]
+    'linkedlist': []
   })
 
   return (
