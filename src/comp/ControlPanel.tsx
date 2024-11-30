@@ -18,7 +18,8 @@ function ControlPanel({structure, data, setData} : ControlPanelProps) {
     }, [structure]);
 
     const handleLinkedListSubmit = () => {
-        if(true /* TODO: add regex to check if it is right */) {
+        let regex = new RegExp(/^\[\s*((\d+\s*,\s*)*\d+\s*)?\]$/);
+        if(regex.test(input)) {
             try {
                 setData({ ...data, "linkedlist": JSON.parse(input) });
                 setInputError(false);
@@ -31,6 +32,7 @@ function ControlPanel({structure, data, setData} : ControlPanelProps) {
             
         }
         else {
+            console.log("Error: invalid input, did not pass regex.")
             setInputError(true);
         }
     }
@@ -72,7 +74,7 @@ function ControlPanel({structure, data, setData} : ControlPanelProps) {
             }
             {
                 structure == "binarytree" &&
-                <div className={`controlpanel-binarytree ${inputError && "text-error"}`}>
+                <div className={`controlpanel-bst ${inputError && "text-error"}`}>
                     <input type="text" id="bst_input" name="bst_input" placeholder="ex: 35" defaultValue='' onChange={handleInputChange}/>
                     <button type="submit" defaultValue='' onChange={handleBSTInsert}>Insert</button>
                 </div>
