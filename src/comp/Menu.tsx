@@ -24,7 +24,7 @@ function Menu({ structure, setStructure, data, setData }: MenuProps) {
                 <option value="">Choose a Data Structure</option>
                 <option value="linkedlist">Linked List</option>
                 <option value="stack">Stack</option>
-                <option value="binarytree">Binary Search Tree</option>
+                <option value="bst">Binary Search Tree</option>
             </select>
             
             <ControlPanel structure={structure} data={data} setData={setData} />

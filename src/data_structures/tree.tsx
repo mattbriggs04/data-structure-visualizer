@@ -45,6 +45,35 @@ export class BST {
         }
         return;
     }
-    
+    print(): void {
+        this.printBST(this.root); // recursive helper function
+    }
+
+    private printBST(node : TreeNode | null): void {
+        if(node != null) {
+            console.log(`${node.data}`)
+            this.printBST(node.left)
+            this.printBST(node.right)
+        }
+    }
+
     // toObject() -> convert to object such that easy to process with d3
+    toObject(): any { // temporary : any
+        if(this.root === null) {
+            return {};
+        }
+        let bstObj = {
+            "left": this.root.left,
+            "right": this.root.right,
+            "data": this.root.data
+        }
+        let curr = this.root;
+        while(curr) {
+            while(curr.left) {
+            }
+            if(curr.right) {
+
+            }
+        }
+    }
 }

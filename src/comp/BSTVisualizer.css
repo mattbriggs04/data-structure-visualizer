@@ -1,0 +1,10 @@
+.bst-container > h2 {
+    text-align: center;
+    width: 100%;
+}
+.bst-svg {
+    max-width: 100%;
+    border: 2px solid var(--fg-color);
+    padding: 1em;
+    display: block;
+}

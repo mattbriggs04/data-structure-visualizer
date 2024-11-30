@@ -48,6 +48,7 @@ function ControlPanel({structure, data, setData} : ControlPanelProps) {
         else {
             try {
                 data['bst'].insert(val);
+                console.log(`inserting ${val}`)
                 setData({ ...data });
                 setInputError(false);
             }
@@ -73,10 +74,10 @@ function ControlPanel({structure, data, setData} : ControlPanelProps) {
                 </div>
             }
             {
-                structure == "binarytree" &&
+                structure == "bst" &&
                 <div className={`controlpanel-bst ${inputError && "text-error"}`}>
                     <input type="text" id="bst_input" name="bst_input" placeholder="ex: 35" defaultValue='' onChange={handleInputChange}/>
-                    <button type="submit" defaultValue='' onChange={handleBSTInsert}>Insert</button>
+                    <button type="submit" defaultValue='' onClick={handleBSTInsert}>Insert</button>
                 </div>
             }
         </div>

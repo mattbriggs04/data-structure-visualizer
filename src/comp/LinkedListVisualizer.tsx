@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react';
 import * as d3 from "d3";
-import './LinkedListVisualizer.css'
+import './LinkedListVisualizer.css';
 
 interface LinkedListVisualizerProps {
     linkedList: number[];
@@ -103,9 +103,6 @@ function LinkedListVisualizer({linkedList} : LinkedListVisualizerProps) {
         <div className={`linkedlist-container`}>
             <h2>Linked List Selected</h2>
             <div ref={svgRef}></div>
-            <code className={`linkedlist-code`}>
-                C Code Here
-            </code>
         </div>
     );
 }

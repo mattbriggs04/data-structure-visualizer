@@ -1,4 +1,5 @@
 import LinkedListVisualizer from "./LinkedListVisualizer";
+import BSTVisualizer from "./BSTVisualizer";
 import "./Visualizer.css"
 import { DataType } from "../types/types"
 
@@ -14,6 +15,9 @@ function Visualizer({structure, data} : VisualizerProps) {
             </div>
             {
                 structure == "linkedlist" && <LinkedListVisualizer linkedList={data["linkedlist"]} />
+            }
+            {
+                structure == "bst" && <BSTVisualizer bst={data["bst"]} />
             }
         </div>
     );
