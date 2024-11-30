@@ -1,6 +1,6 @@
 import './ControlPanel.css';
 import { DataType } from '../types/types.ts'
-import { useState, Dispatch, SetStateAction } from 'react';
+import { useState, useEffect, Dispatch, SetStateAction } from 'react';
 
 interface ControlPanelProps {
     structure: string;
@@ -9,17 +9,22 @@ interface ControlPanelProps {
 }
 
 function ControlPanel({structure, data, setData} : ControlPanelProps) {
-    const [input, setInput] = useState('');
-    const [inputError, setInputError] = useState(false);
+    const [input, setInput] = useState(''); // Input from user from ANY given text field (handling depends on which button is pressed)
+    const [inputError, setInputError] = useState(false); // If input is valid, store the state and update styles accordingly
 
-    const handleSubmitBtn = () => {
-        console.log(`submit button pressed, inputError = ${inputError}`);
+    // Reset input whenever structure is updated
+    useEffect(() => {
+        setInput('');
+    }, [structure]);
+
+    const handleLinkedListSubmit = () => {
         if(true /* TODO: add regex to check if it is right */) {
             try {
                 setData({ ...data, "linkedlist": JSON.parse(input) });
                 setInputError(false);
             }
             catch(error) {
+                console.log("Error: invalid input given.");
                 console.log(error);
                 setInputError(true);
             }
@@ -29,8 +34,26 @@ function ControlPanel({structure, data, setData} : ControlPanelProps) {
             setInputError(true);
         }
     }
-    const handleDataChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setInput(e.target.value);
+    }
+
+    const handleBSTInsert = () => {
+        const val = Number(input)
+        if(isNaN(val)) {
+            setInputError(true);
+        }
+        else {
+            try {
+                data['bst'].insert(val);
+                setData({ ...data });
+                setInputError(false);
+            }
+            catch(error) {
+                console.log(error);
+                setInputError(true);
+            }
+        }
     }
 
     return (
@@ -40,11 +63,18 @@ function ControlPanel({structure, data, setData} : ControlPanelProps) {
                 ? <div> Current structure is {structure} </div>
                 :  <div> No structure selected </div>
             }
-            {
+            { // potential TODO: Convert all control panels into separate components
                 structure == "linkedlist" &&
-                <div className={`controlpanel-linkedlist ${inputError ? "text-error" : "not-error"}`}>
-                    <input type="text" id="linkedlist" name="linkedlist" placeholder="ex: [0, 1, 2]" defaultValue='' onChange={handleDataChange} />
-                    <button type="submit" onClick={handleSubmitBtn}> Apply Changes </button>
+                <div className={`controlpanel-linkedlist ${inputError && "text-error"}`}>
+                    <input type="text" id="linkedlist_input" name="linkedlist" placeholder="ex: [0, 1, 2]" defaultValue='' onChange={handleInputChange} />
+                    <button type="submit" onClick={handleLinkedListSubmit}> Apply Changes </button>
+                </div>
+            }
+            {
+                structure == "binarytree" &&
+                <div className={`controlpanel-binarytree ${inputError && "text-error"}`}>
+                    <input type="text" id="bst_input" name="bst_input" placeholder="ex: 35" defaultValue='' onChange={handleInputChange}/>
+                    <button type="submit" defaultValue='' onChange={handleBSTInsert}>Insert</button>
                 </div>
             }
         </div>

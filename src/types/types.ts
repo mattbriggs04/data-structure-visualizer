@@ -1,3 +1,6 @@
+import { BST } from '../data_structures/tree';
+
 export interface DataType {
-    [key: string]: number[];
+    "linkedlist": number[];
+    "bst": BST;
 }

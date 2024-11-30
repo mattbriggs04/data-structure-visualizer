@@ -20,7 +20,7 @@
     font-size: 1rem;
     font-family: 'Space Mono', monospace;
     text-anchor: middle;
-    alignment-baseline: middle;
+    alignment-baseline: middle; /* VSCode thinks this is not a property but it is */
 }
 
 .link {

@@ -98,10 +98,14 @@ function LinkedListVisualizer({linkedList} : LinkedListVisualizerProps) {
     }, [linkedList]);
 
     
+    // TODO: add radio buttons to select singly linked, doubly linked, circular, etc.
     return (
         <div className={`linkedlist-container`}>
             <h2>Linked List Selected</h2>
             <div ref={svgRef}></div>
+            <code className={`linkedlist-code`}>
+                C Code Here
+            </code>
         </div>
     );
 }

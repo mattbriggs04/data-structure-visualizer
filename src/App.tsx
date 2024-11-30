@@ -3,11 +3,13 @@ import { useState } from 'react';
 import Menu from './comp/Menu'
 import Visualizer from './comp/Visualizer';
 import { DataType } from './types/types';
+import { BST } from './data_structures/tree';
 
 function App() {
   const [structure, setStructure] = useState('');
   const [data, setData] = useState<DataType>({
-    'linkedlist': []
+    'linkedlist': [],
+    'bst': new BST()
   })
 
   return (
