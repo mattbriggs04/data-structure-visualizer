@@ -1,6 +1,7 @@
-import { Dispatch, SetStateAction } from 'react';
+import { Dispatch, SetStateAction, useState } from 'react';
 import './Menu.css';
 import ControlPanel from "./ControlPanel"
+import StructureModal from "./StructureModal"
 import { DataType } from "../types/types"
 
 interface MenuProps {
@@ -11,21 +12,24 @@ interface MenuProps {
 }
 
 function Menu({ structure, setStructure, data, setData }: MenuProps) {
-    const handleDropdownChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-        setStructure(event.target.value);
-    };
+    const [isSelect, setIsSelect] = useState(false);
+    const handleSelectBtn = () => {
+        setIsSelect(true);
+    }
+    // const handleDropdownChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    //     setStructure(event.currentTarget.value);
+    // };
 
     return (
         <div className="menu-container">
-            <div className={`menu-header`}>
-                <h1>Menu</h1>
-            </div>
-            <select id="dropdown" onChange={handleDropdownChange}>
+            <button onClick={handleSelectBtn}>Select Structure</button>
+            {isSelect && <StructureModal setIsSelect={setIsSelect} setStructure={setStructure} />}
+            {/* <select id="dropdown" onChange={handleDropdownChange}>
                 <option value="">Choose a Data Structure</option>
                 <option value="linkedlist">Linked List</option>
                 <option value="stack">Stack</option>
                 <option value="bst">Binary Search Tree</option>
-            </select>
+            </select> */}
             
             <ControlPanel structure={structure} data={data} setData={setData} />
         </div>

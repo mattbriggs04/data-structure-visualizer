@@ -1,8 +1,4 @@
 import "./CodeBlock.css";
-import { useEffect } from "react";
-import Prism from 'prismjs';
-import 'prismjs/themes/prism.css';
-import 'prismjs/components/prism-c';
 
 interface CodeBlockProps {
     structure: string;
