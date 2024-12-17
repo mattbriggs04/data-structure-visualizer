@@ -61,11 +61,6 @@ function ControlPanel({structure, data, setData} : ControlPanelProps) {
 
     return (
         <div className={`controlpanel-container`}>
-            {
-                structure 
-                ? <div> Current structure is {structure} </div>
-                :  <div> No structure selected </div>
-            }
             { // potential TODO: Convert all control panels into separate components
                 structure == "linkedlist" &&
                 <div className={`controlpanel-linkedlist ${inputError && "text-error"}`}>

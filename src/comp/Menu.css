@@ -1,9 +1,10 @@
 .menu-container {
     display: flex;
     flex-direction: row;
+    justify-content: space-between;
     align-items: center;
     width: 100%;
-    justify-content: space-between;
+
 
     padding: 1rem;
 
@@ -13,19 +14,3 @@
     border-bottom: 3px solid var(--bg-color-contrast);
 }
 
-select {
-    width: 100%;
-    padding: 0.2em 0.2em;
-
-    background-color: var(--bg-color);
-    color: var(--text-color);
-    font-size: 1rem;
-
-    border: 1px solid var(--text-color);
-    border-radius: 0.3em;
-
-    outline: none;
-}
-select:hover {
-    cursor: pointer;
-}

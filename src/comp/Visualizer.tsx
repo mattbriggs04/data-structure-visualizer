@@ -12,6 +12,7 @@ function Visualizer({structure, data} : VisualizerProps) {
         <div className={`visualizer-container`}>
             <div className={`visualizer-header`}>
                 <h1>Data Structure Visualizer</h1>
+                <p>{structure ? `${structure} selected`: `No Structure Selected`}</p>
             </div>
             {
                 structure == "linkedlist" && <LinkedListVisualizer linkedList={data["linkedlist"]} />

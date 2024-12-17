@@ -16,24 +16,15 @@ function Menu({ structure, setStructure, data, setData }: MenuProps) {
     const handleSelectBtn = () => {
         setIsSelect(true);
     }
-    // const handleDropdownChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    //     setStructure(event.currentTarget.value);
-    // };
 
     return (
-        <div className="menu-container">
-            <button onClick={handleSelectBtn}>Select Structure</button>
+        <>
             {isSelect && <StructureModal setIsSelect={setIsSelect} setStructure={setStructure} />}
-            {/* <select id="dropdown" onChange={handleDropdownChange}>
-                <option value="">Choose a Data Structure</option>
-                <option value="linkedlist">Linked List</option>
-                <option value="stack">Stack</option>
-                <option value="bst">Binary Search Tree</option>
-            </select> */}
-            
-            <ControlPanel structure={structure} data={data} setData={setData} />
-        </div>
-
+            <div className="menu-container">
+                <button onClick={handleSelectBtn} className={`button-style1`}>Select Structure</button>
+                <ControlPanel structure={structure} data={data} setData={setData} />
+            </div>
+        </>
     );
 }
 
