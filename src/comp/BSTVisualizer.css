@@ -3,8 +3,19 @@
     width: 100%;
 }
 .bst-svg {
-    max-width: 100%;
     border: 2px solid var(--fg-color);
     padding: 1em;
     display: block;
+}
+
+.node {
+    r: 20;
+    fill: var(--bg-color-contrast);
+}
+.node-text {
+    fill: var(--text-color-contrast);
+    font-size: 1rem;
+    font-family: 'Space Mono', monospace;
+    text-anchor: middle;
+    alignment-baseline: middle; /* VSCode thinks this is not a property but it is */
 }

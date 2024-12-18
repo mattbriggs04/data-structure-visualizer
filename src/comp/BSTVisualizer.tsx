@@ -1,36 +1,89 @@
-import { useEffect, useRef } from "react";
-import * as d3 from "d3"
 import "./BSTVisualizer.css";
 import { BST } from "../data_structures/tree";
-
+import { Group } from "@visx/group";
+import { hierarchy, Tree } from "@visx/hierarchy";
+import { LinkVerticalLine } from "@visx/shape";
 interface BSTVisualizerProps {
     bst: BST;
 }
+interface Node {
+    value: number;
+    children?: Node[]
+}
 
-function BSTVisualizer({bst} : BSTVisualizerProps) {
-    const svgRef = useRef<HTMLDivElement | null>(null);
-    const d3svg = useRef<d3.Selection<SVGSVGElement, unknown, null, undefined> | null>(null);
-
-    // Create svg itself when component mounts
-    useEffect(() => {
-        if(svgRef.current) { // Ensure that the component rendered correctly
-            const svgWidth = 1000;
-            const svgHeight = 200;
-            d3svg.current = d3.select(svgRef.current) // create svg
-                .append("svg")
-                .attr("width", svgWidth)
-                .attr("height", svgHeight)
-                .attr("class", "bst-svg");
+const testTree: Node = {
+    value: 0,
+    children: [
+        { // left child
+            value: 1,
+            children: [
+                {
+                    value: 3,
+                },
+                {
+                    value: 4,
+                }
+            ]
+        },
+        { // right child
+            value: 2,
+            children: [
+                {
+                    value: 5,
+                },
+                {
+                    value: 6,
+                }
+            ]
         }
-    }, []);
-
-    useEffect(() => {
-        console.log("bst received")
-    }, [bst]);
-
+    ]
+}
+function BSTVisualizer({bst} : BSTVisualizerProps) {
+    const width = 800;
+    const height = 500;
+    let origin = { x: 0, y: 0 }
+    let margin = { top: 30, left: 0, right: 0, bottom: 0 }
     return (
         <div className="bst-container">
-            <div ref={svgRef}></div>
+            <svg className={`bst-svg`} width={width} height={height}>
+                <Group top={margin.top} left={margin.left}>
+                    {/* Create the tree using the tree object -> must have children attribute */}
+                    <Tree 
+                        root={hierarchy(testTree)}
+                        size={[width, height - 100]} // Create 100px offset from height to account for circles needing to fit in svg
+                        separation={(a, b) => (a.parent === b.parent ? 1 : 1)}
+                    >
+                        {(tree) => (
+                            <Group top={origin.x} left={origin.y}>
+                                {/* Create the lines between all tree elements */}
+                                {tree.links().map((link, i) => (
+                                    <LinkVerticalLine
+                                        key={i}
+                                        data={link}
+                                        stroke="rgb(255,255,255)"
+                                        strokeWidth="1"
+                                        fill="none" 
+                                    />
+                                ))}
+
+                                {/* Create the nodes */}
+                                {tree.descendants().map((node, i) => (
+                                    <Group
+                                        key={i}
+                                        top={node.y}
+                                        left={node.x}
+                                    >
+                                        <circle className="node" />
+                                        <text className="node-text">
+                                            {node.data.value}
+                                        </text>
+                                    </Group>
+                                ))}
+                            </Group>
+                        )}
+                    </Tree>
+                </Group>
+            </svg>
         </div>
     )
 }

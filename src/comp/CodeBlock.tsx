@@ -8,7 +8,7 @@ interface CodeBlockProps {
 function CodeBlock({language, code} : CodeBlockProps) {
     return (
         <div className={'code-container'}>
-            <h1>Language Selected: {language}</h1>
+            <h2>Language Selected: {language}</h2>
             <pre>
                 <code>
                     {code}

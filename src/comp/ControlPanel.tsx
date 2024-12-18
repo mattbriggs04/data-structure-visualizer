@@ -18,8 +18,8 @@ function ControlPanel({structure, data, setData} : ControlPanelProps) {
     }, [structure]);
 
     const handleLinkedListSubmit = () => {
-        let regex = new RegExp(/^\[\s*((\d+\s*,\s*)*\d+\s*)?\]$/);
-        if(regex.test(input)) {
+        let isValidListRe = new RegExp(/^\[\s*((\d+\s*,\s*)*\d+\s*)?\]$/);
+        if(isValidListRe.test(input)) {
             try {
                 setData({ ...data, "linkedlist": JSON.parse(input) });
                 setInputError(false);

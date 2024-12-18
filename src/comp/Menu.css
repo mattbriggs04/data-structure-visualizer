@@ -14,3 +14,11 @@
     border-bottom: 3px solid var(--bg-color-contrast);
 }
 
+.menu-container .select-structure-btn {
+    box-shadow: 0 0 3px var(--fg-color);
+}
+
+.menu-container .select-structure-btn:hover {
+    transition: 500ms;
+    box-shadow: 0 0 8px var(--fg-color);
+}

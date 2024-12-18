@@ -21,7 +21,7 @@ function Menu({ structure, setStructure, data, setData }: MenuProps) {
         <>
             {isSelect && <StructureModal setIsSelect={setIsSelect} setStructure={setStructure} />}
             <div className="menu-container">
-                <button onClick={handleSelectBtn} className={`button-style1`}>Select Structure</button>
+                <button onClick={handleSelectBtn} className={`button-style1 select-structure-btn`}>Select Structure</button>
                 <ControlPanel structure={structure} data={data} setData={setData} />
             </div>
         </>
