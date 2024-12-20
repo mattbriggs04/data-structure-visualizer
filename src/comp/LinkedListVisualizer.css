@@ -16,7 +16,7 @@
 }
 
 .node-text {
-    fill: var(--text-color);
+    fill: none;
     font-size: 1rem;
     font-family: 'Space Mono', monospace;
     text-anchor: middle;
