@@ -21,13 +21,27 @@ function BSTVisualizer({bst} : BSTVisualizerProps) {
                 {
                 treeObj !== null &&
                 <Group top={margin.top} left={margin.left}>
-                    {/* Create the tree using the tree object -> must have children attribute */}
+                    {/* Create the tree using the tree object */}
                     <Tree 
                         root={hierarchy(treeObj)}
                         size={[width, height - 100]} // Create 100px offset from height to account for circles needing to fit in svg
                         separation={(a, b) => (a.parent === b.parent ? 1 : 1)}
                     >
-                        {(tree) => (
+                        {
+                        (tree) => {
+
+                        // Create the gaps between nodes for the tree relative to their parent
+                        const width_gap = 100;
+                        const height_gap = 100;
+                        tree.descendants().forEach((node) => {
+                            if(node.parent && node.parent.value) {
+                                node.x = node.parent.x + (node.data.value < node.parent.value ? -width_gap : width_gap);
+                                node.y = node.parent.y + height_gap;
+                            }
+                        })
+
+                        // Render the tree links and nodes themselves
+                        return (
                             <Group top={origin.x} left={origin.y}>
                                 {/* Create the lines/links between all tree elements */}
                                 {tree.links().map((link, i) => (
@@ -56,6 +70,7 @@ function BSTVisualizer({bst} : BSTVisualizerProps) {
                                 ))}
                             </Group>
                         )}
+                        }
                     </Tree>
                 </Group>
                 } 

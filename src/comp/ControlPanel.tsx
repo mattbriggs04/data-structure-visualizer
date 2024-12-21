@@ -41,7 +41,7 @@ function ControlPanel({structure, data, setData} : ControlPanelProps) {
     }
 
     const handleBSTInsert = () => {
-        const val = Number(input)
+        const val = Number(input);
         if(isNaN(val)) {
             setInputError(true);
         }
@@ -50,6 +50,23 @@ function ControlPanel({structure, data, setData} : ControlPanelProps) {
                 data['bst'].insert(val);
                 console.log(`inserting ${val}`)
                 setData({ ...data });
+                setInputError(false);
+            }
+            catch(error) {
+                console.log(error);
+                setInputError(true);
+            }
+        }
+    }
+
+    const handleBSTDelete = () => {
+        const val = Number(input);
+        if(isNaN(val)) {
+            setInputError(true);
+        }
+        else {
+            try {
+                data['bst'].delete(val);
                 setInputError(false);
             }
             catch(error) {
@@ -72,7 +89,8 @@ function ControlPanel({structure, data, setData} : ControlPanelProps) {
                 structure == "bst" &&
                 <div className={`controlpanel-bst ${inputError && "text-error"}`}>
                     <input type="text" id="bst_input" name="bst_input" placeholder="ex: 35" defaultValue='' onChange={handleInputChange}/>
-                    <button type="submit" defaultValue='' onClick={handleBSTInsert}>Insert</button>
+                    <button type="submit" onClick={handleBSTInsert}>Insert</button>
+                    <button type="submit" onClick={handleBSTDelete}>Delete</button>
                 </div>
             }
         </div>

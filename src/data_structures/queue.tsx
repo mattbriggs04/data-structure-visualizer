@@ -5,7 +5,7 @@ export class Queue<T> {
     length: number = 0;
 
     enqueue(value: T): void {
-        const newNode = new ListNode(value);
+        const newNode = new ListNode<T>(value);
         if(this.head === null || this.tail === null) {
             this.head = newNode;
         }

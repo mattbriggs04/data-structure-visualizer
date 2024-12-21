@@ -1,5 +1,5 @@
 import { Queue } from "./queue"
-
+import { Stack } from "./stack"
 export class TreeNode<T> {
     data: T;
     left: TreeNode<T> | null;
@@ -25,7 +25,7 @@ export class BST<T> {
     }
 
     insert(data: T): void {
-        const newNode = new TreeNode(data);
+        const newNode = new TreeNode<T>(data);
         // const path: TreeNode[] = []; // may want to store the path for animation purposes and return it
         // TS doesn't do pass by reference / addr so no recursion today (yes I know you can also return for recursion)
         if(this.root == null) {
@@ -53,6 +53,23 @@ export class BST<T> {
         return;
     }
 
+    // private getInorderSuccessor(node: TreeNode<T>): TreeNode<T> {
+    // }
+    // private inorderTraversal(node: TreeNode<T>): TreeNode<T> {
+    // }
+    // delete(key: T): void {
+    //     if(this.root === null) {
+    //         return;
+    //     }
+
+    //     // In order search (DFS) using a stack
+    //     const stack = new Stack<TreeNode<T>>();
+    //     stack.push(this.root);
+    //     while(stack.size > 0) {
+    //         const currNode = stack.pop();
+            
+    //     }
+    // }
     // debug print function (printTree is a helper)
     print(): void {
         this.printTree(this.root);
@@ -65,29 +82,31 @@ export class BST<T> {
         }
     }
 
-    // toObject() -> convert to object so that it is proccessable by hierarchy and Tree from d3
+    // toObject() -> convert to object so that it is proccessable by hierarchy and Tree from d3 (there is a specific format that is expected)
     toObject(): TNodeObj<T> | null {
         if(this.root === null) {
             return null;
         }
-        let bstObj: TNodeObj<T> = { value: this.root.data,
+        let bstObj: TNodeObj<T> = { 
+            value: this.root.data,
             children: []
          };
 
-        // map can get the current object for each node that is pulled out (allows the ability to iterate to many levels of depth of children)
+        // map can get the current object for each node that is pulled out (allows the ability to iterate into nested objects)
         const map = new Map<TreeNode<T>, TNodeObj<T>>();
         map.set(this.root, bstObj);
 
         // breadth first search
-        let queue = new Queue<TreeNode<T>>;
+        const queue = new Queue<TreeNode<T>>;
         queue.enqueue(this.root);
         while(queue.getSize() > 0) {
             const currNode = queue.dequeue();
             if(currNode) { // TS gets mad due to the possibility currNode is null
                 let currObj = map.get(currNode);
-                if(currObj == undefined) { // typescript sucks sometimes - I know that map is never going to return undefined
+                if(currObj == undefined) { // typescript sucks sometimes -> I know that map is never going to return undefined but here we are
                     currObj = { value: currNode.data };
                 }
+
                 // Convert the left node into a left object
                 if(currNode?.left) {
                     const leftObj: TNodeObj<T> = { value: currNode.left.data };
@@ -112,7 +131,6 @@ export class BST<T> {
                 }
             }
         }
-
         return bstObj;
     }
 }
