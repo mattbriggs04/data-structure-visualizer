@@ -16,14 +16,23 @@
 
 .modal-container {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(2, 1fr);
     grid-gap: 10px;
 
-    width: 80%;
-    max-width: 800px;
-    padding: 2rem;
+    width: 70%;
+}
 
-    background: var(--bg-color);
-    border: 5px solid var(--fg-color);
-    box-shadow: 0 0 5px var(--fg-color);
+.modal-container button {
+    font-family: 'Noto Sans Mono';
+    font-size: 1rem;
+    border: 2px solid var(--bg-color-contrast);
+    background-color: var(--bg-color);
+    color: var(--fg-color);
+    padding: 1em;
+}
+.modal-container button:hover {
+    transition: 300ms;
+    color: var(--accent-color);
+    box-shadow: 0 0 5px var(--bg-color-contrast);
+    cursor: pointer;
 }

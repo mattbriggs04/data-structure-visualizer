@@ -83,6 +83,19 @@ function ControlPanel({structure, data, setData} : ControlPanelProps) {
         }
     }
 
+    const handleStackPush = () => {
+        const val = Number(input);
+        if(isNaN(val)) {
+            setInputError(true);
+        }
+        else {
+            setInputError(false);
+        }
+    }
+
+    const handleStackPop = () => {
+
+    }
     return (
         <div className={`controlpanel-container`}>
             { // potential TODO: Convert all control panels into separate components
@@ -95,9 +108,17 @@ function ControlPanel({structure, data, setData} : ControlPanelProps) {
             {
                 structure == "bst" &&
                 <div className={`controlpanel-bst ${inputError && "text-error"}`}>
-                    <input type="text" id="bst_input" name="bst_input" placeholder="ex: 35" defaultValue='' onChange={handleInputChange}/>
+                    <input type="text" id="bst_input" name="bst_input" placeholder="ex: 10" defaultValue='' onChange={handleInputChange}/>
                     <button type="submit" id="bst-insert-btn" onClick={handleBSTInsert}>Insert</button>
                     <button type="submit" id="bst-delete-btn" onClick={handleBSTDelete}>Delete</button>
+                </div>
+            }
+            {
+                structure == "stack" &&
+                <div className={`controlpanel-stack ${inputError && "text-error"}`}>
+                    <input type="text" id="stack_input" name="stack_input" placeholder="ex: 10" defaultValue='' onChange={handleInputChange}/>
+                    <button type="submit" onClick={handleStackPush}>Push</button>
+                    <button type="submit" onClick={handleStackPop}>Pop</button>
                 </div>
             }
         </div>
