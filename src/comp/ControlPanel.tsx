@@ -17,6 +17,11 @@ function ControlPanel({structure, data, setData} : ControlPanelProps) {
         setInput('');
     }, [structure]);
 
+    // Force a data update (yeah this updates everything rather than just a single obj within data, but are we really concerned about efficieny here? this is TS.)
+    const forceUpdate = () => {
+        setData({ ...data });
+    }
+
     const handleLinkedListSubmit = () => {
         let isValidListRe = new RegExp(/^\[\s*((\d+\s*,\s*)*\d+\s*)?\]$/);
         if(isValidListRe.test(input)) {
@@ -66,7 +71,9 @@ function ControlPanel({structure, data, setData} : ControlPanelProps) {
         }
         else {
             try {
+                console.log(`deleting ${val}`)
                 data['bst'].delete(val);
+                forceUpdate();
                 setInputError(false);
             }
             catch(error) {
@@ -81,7 +88,7 @@ function ControlPanel({structure, data, setData} : ControlPanelProps) {
             { // potential TODO: Convert all control panels into separate components
                 structure == "linkedlist" &&
                 <div className={`controlpanel-linkedlist ${inputError && "text-error"}`}>
-                    <input type="text" id="linkedlist_input" name="linkedlist" placeholder="ex: [0, 1, 2]" defaultValue='' onChange={handleInputChange} />
+                    <input type="text" id="linkedlist-input" name="linkedlist" placeholder="ex: [0, 1, 2]" defaultValue='' onChange={handleInputChange} />
                     <button type="submit" onClick={handleLinkedListSubmit}> Apply Changes </button>
                 </div>
             }
@@ -89,8 +96,8 @@ function ControlPanel({structure, data, setData} : ControlPanelProps) {
                 structure == "bst" &&
                 <div className={`controlpanel-bst ${inputError && "text-error"}`}>
                     <input type="text" id="bst_input" name="bst_input" placeholder="ex: 35" defaultValue='' onChange={handleInputChange}/>
-                    <button type="submit" onClick={handleBSTInsert}>Insert</button>
-                    <button type="submit" onClick={handleBSTDelete}>Delete</button>
+                    <button type="submit" id="bst-insert-btn" onClick={handleBSTInsert}>Insert</button>
+                    <button type="submit" id="bst-delete-btn" onClick={handleBSTDelete}>Delete</button>
                 </div>
             }
         </div>

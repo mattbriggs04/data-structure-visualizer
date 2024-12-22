@@ -10,6 +10,12 @@ export class TreeNode<T> {
         this.left = null;
         this.right = null;
     }
+
+    // for the sake of this project, we can consider two nodes equal if they have the same data
+    // will be fine for case of duplicates
+    equals(node: TreeNode<T>): boolean {
+        return node.data === this.data;
+    }
 }
 
 export interface TNodeObj<T> {
@@ -57,19 +63,75 @@ export class BST<T> {
     // }
     // private inorderTraversal(node: TreeNode<T>): TreeNode<T> {
     // }
-    // delete(key: T): void {
-    //     if(this.root === null) {
-    //         return;
-    //     }
+    delete(key: T): void {
+        if(this.root === null) {
+            return;
+        }
+        // Simplest case (root is the only element and the key)
+        // This check is necessary because I need the parent for when I do the dfs and root does not have one
+        if(this.root.data === key && this.root.left === null && this.root.right === null) {
+            this.root = null;
+            return;
+        }
 
-    //     // In order search (DFS) using a stack
-    //     const stack = new Stack<TreeNode<T>>();
-    //     stack.push(this.root);
-    //     while(stack.size > 0) {
-    //         const currNode = stack.pop();
-            
-    //     }
-    // }
+        // In order search (DFS) using a stack - parent is required to actually change the tree structure (cannot change a current node by reference in JS/TS)
+        const rootObj = {node: this.root, parent: null};
+        const stack = new Stack<{
+            node: TreeNode<T>; 
+            parent: TreeNode<T> | null;
+        }>();
+        stack.push(rootObj);
+        // DFS loop and deletion
+        while(stack.size > 0) {
+            const currObj = stack.pop();
+            if(!currObj) { // Should already be accounted for by stack.size (TS forces this check)
+                console.log("Error: currObj is null in deletion");
+                return;
+            }
+
+            const currNode = currObj['node'];
+            const currParent = currObj['parent'];
+            if(currNode) {
+                if(key < currNode.data && currNode.left) { 
+                    const nextObj = {node: currNode.left, parent: currNode};
+                    stack.push(nextObj);
+                }
+                else if(key > currNode.data && currNode.right) {
+                    const nextObj = {node: currNode.right, parent: currNode};
+                    stack.push(nextObj);
+                }
+                else if(key == currNode.data) {
+                    if(!currParent) { // if there is no parent, can't make a deletion (TS forces this check)
+                        console.log("Error: current parent is null in deletion\n");
+                        return;
+                    }
+                    // Three cases: node is a leaf, node has one child, node has two children
+                    // case 1: node is a leaf
+                    if(currNode.left === null && currNode.right === null && currParent) {
+                        if(currParent?.left?.equals(currNode)) { // if its a left child -> delete left
+                            currParent.left = null;
+                        }
+                        else { // must be a right child -> delete right
+                            currParent.right = null;
+                        }
+                    }
+                    // case 2: node has one child
+                    else if(currNode.left === null) {
+
+                    }
+                    else if(currNode.right === null) {
+                    }
+                    // case 3: node has two children, need to find in-order successor
+
+                    // exit function once a deletion is successful
+                    return;
+                }
+                else { // node not found -> return and change nothing
+                    return;
+                }
+            }
+        }
+    }
     // debug print function (printTree is a helper)
     print(): void {
         this.printTree(this.root);
@@ -101,9 +163,9 @@ export class BST<T> {
         queue.enqueue(this.root);
         while(queue.getSize() > 0) {
             const currNode = queue.dequeue();
-            if(currNode) { // TS gets mad due to the possibility currNode is null
+            if(currNode) {
                 let currObj = map.get(currNode);
-                if(currObj == undefined) { // typescript sucks sometimes -> I know that map is never going to return undefined but here we are
+                if(currObj == undefined) {
                     currObj = { value: currNode.data };
                 }
 

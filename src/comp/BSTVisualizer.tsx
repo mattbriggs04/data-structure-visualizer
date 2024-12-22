@@ -35,7 +35,7 @@ function BSTVisualizer({bst} : BSTVisualizerProps) {
                         const height_gap = 100;
                         tree.descendants().forEach((node) => {
                             if(node.parent && node.parent.value) {
-                                node.x = node.parent.x + (node.data.value < node.parent.value ? -width_gap : width_gap);
+                                node.x = node.parent.x + (node.data.value <= node.parent.value ? -width_gap : width_gap);
                                 node.y = node.parent.y + height_gap;
                             }
                         })

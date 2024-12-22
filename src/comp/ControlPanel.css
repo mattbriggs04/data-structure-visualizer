@@ -58,12 +58,14 @@
 }
 
 .controlpanel-bst input {
-    margin-right: 1rem;
+    margin-right: 0;
     min-width: 50px;
-    max-width: 100%;
+    max-width: 100px;
+    text-align: center;
 }
-
-
+.controlpanel-bst button {
+    margin-left: 1rem;
+}
 /* util */
 .text-error input {
     border: 2px solid red;
