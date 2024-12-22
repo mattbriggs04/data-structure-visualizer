@@ -1,5 +1,13 @@
 import { Queue } from "./queue"
 import { Stack } from "./stack"
+
+// For processing by visualizers need an object with value and children
+export interface TNodeObj<T> {
+    value: T;
+    children?: TNodeObj<T>[];
+}
+
+// Generic binary tree node 
 export class TreeNode<T> {
     data: T;
     left: TreeNode<T> | null;
@@ -12,17 +20,13 @@ export class TreeNode<T> {
     }
 
     // for the sake of this project, we can consider two nodes equal if they have the same data
-    // will be fine for case of duplicates
     equals(node: TreeNode<T>): boolean {
         return node.data === this.data;
     }
 }
 
-export interface TNodeObj<T> {
-    value: T;
-    children?: TNodeObj<T>[];
-}
 
+// Binary search tree
 export class BST<T> {
     root: TreeNode<T> | null;
 
@@ -59,22 +63,35 @@ export class BST<T> {
         return;
     }
 
-    // private getInorderSuccessor(node: TreeNode<T>): TreeNode<T> {
-    // }
+    // pair of node and its parent
+    private getInOrderSuccessorPair(node: TreeNode<T> | null): {node: TreeNode<T> | null; parent: TreeNode<T> | null } {
+        let parent: TreeNode<T> | null = null;
+        // In order successor is the min of the right subtree (go right and then down left as far as possible)
+        if(!node) {
+            return {node: node, parent: parent};
+        }
+        parent = node;
+        node = node.right; // right one
+        while(node && node.left) {
+            parent = node;
+            node = node.left; // left as much as possible
+        }
+        return {node: node, parent: parent};
+    }
     // private inorderTraversal(node: TreeNode<T>): TreeNode<T> {
     // }
     delete(key: T): void {
         if(this.root === null) {
             return;
         }
-        // Simplest case (root is the only element and the key)
-        // This check is necessary because I need the parent for when I do the dfs and root does not have one
+        // simplest case (root is the only element and the key)
+        // this check is necessary because I need the parent for when I do the dfs and root does not have one
         if(this.root.data === key && this.root.left === null && this.root.right === null) {
             this.root = null;
             return;
         }
 
-        // In order search (DFS) using a stack - parent is required to actually change the tree structure (cannot change a current node by reference in JS/TS)
+        // in order search (DFS) using a stack - parent is required to actually change the tree structure (cannot change a current node by reference in JS/TS)
         const rootObj = {node: this.root, parent: null};
         const stack = new Stack<{
             node: TreeNode<T>; 
@@ -84,7 +101,7 @@ export class BST<T> {
         // DFS loop and deletion
         while(stack.size > 0) {
             const currObj = stack.pop();
-            if(!currObj) { // Should already be accounted for by stack.size (TS forces this check)
+            if(!currObj) { // should already be accounted for by stack.size (TS forces this check)
                 console.log("Error: currObj is null in deletion");
                 return;
             }
@@ -101,12 +118,10 @@ export class BST<T> {
                     stack.push(nextObj);
                 }
                 else if(key == currNode.data) {
-                    if(!currParent) { // if there is no parent, can't make a deletion (TS forces this check)
-                        console.log("Error: current parent is null in deletion\n");
-                        return;
-                    }
-                    // Three cases: node is a leaf, node has one child, node has two children
-                    // case 1: node is a leaf
+                    const isRoot = !currParent; // if there isn't a parent it has to be the root node
+
+                    // three cases: node is a leaf, node has one child, node has two children
+                    // case 1: node is a leaf (no children)
                     if(currNode.left === null && currNode.right === null && currParent) {
                         if(currParent?.left?.equals(currNode)) { // if its a left child -> delete left
                             currParent.left = null;
@@ -115,14 +130,52 @@ export class BST<T> {
                             currParent.right = null;
                         }
                     }
-                    // case 2: node has one child
+                    // case 2: node has one child (similar to case 1)
                     else if(currNode.left === null) {
-
+                        if(isRoot) {
+                            this.root = this.root.right;
+                        }
+                        else if(currParent?.left?.equals(currNode)) {
+                            currParent.left = currNode.right;
+                        }
+                        else {
+                            currParent.right = currNode.right;
+                        }
                     }
                     else if(currNode.right === null) {
+                        if(isRoot) {
+                            this.root = this.root.left;
+                        }
+                        else if(currParent?.left?.equals(currNode)) {
+                            currParent.left = currNode.left;
+                        }
+                        else {
+                            currParent.right = currNode.left;
+                        }
                     }
-                    // case 3: node has two children, need to find in-order successor
 
+                    // case 3: node has two children, need to find in-order successor to replace with
+                    else { // currNode.left && currNode.right both are not null
+                        const successorPair = this.getInOrderSuccessorPair(currNode);
+                        const successorNode = successorPair['node'];
+                        const successorParent = successorPair['parent'];
+
+                        console.log(`Successor node is ${successorNode?.data}, parent is ${successorParent?.data}`);
+
+                        if(!successorNode) {
+                            console.log("Error: no in order successor found");
+                            return;
+                        }
+                        // replace the current node with inorder successor (we can just use the data values for this)
+                        currNode.data = successorNode.data;
+
+                        // remove inorder successor by replacing it with its right child (its not possible for it to have a left child by definition)
+                        if (successorParent?.left?.equals(successorNode)) {
+                            successorParent.left = successorNode.right;
+                        } else if (successorParent) {
+                            successorParent.right = successorNode.right;
+                        }
+                    }
                     // exit function once a deletion is successful
                     return;
                 }
@@ -158,7 +211,7 @@ export class BST<T> {
         const map = new Map<TreeNode<T>, TNodeObj<T>>();
         map.set(this.root, bstObj);
 
-        // breadth first search
+        // BFS
         const queue = new Queue<TreeNode<T>>;
         queue.enqueue(this.root);
         while(queue.getSize() > 0) {
@@ -169,7 +222,7 @@ export class BST<T> {
                     currObj = { value: currNode.data };
                 }
 
-                // Convert the left node into a left object
+                // convert the left node into a left object
                 if(currNode?.left) {
                     const leftObj: TNodeObj<T> = { value: currNode.left.data };
                     if(currObj.children == undefined) {
