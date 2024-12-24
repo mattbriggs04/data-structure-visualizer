@@ -2,13 +2,13 @@ import './ControlPanel.css';
 import { DataType } from '../types/types.ts'
 import { useState, useEffect, Dispatch, SetStateAction } from 'react';
 
-interface ControlPanelProps {
+interface ControlPanelProps<T> {
     structure: string;
-    data: DataType;
-    setData: Dispatch<SetStateAction<DataType>>;
+    data: DataType<T>;
+    setData: Dispatch<SetStateAction<DataType<T>>>;
 }
 
-function ControlPanel({structure, data, setData} : ControlPanelProps) {
+function ControlPanel({structure, data, setData} : ControlPanelProps<number>) {
     const [input, setInput] = useState(''); // Input from user from ANY given text field (handling depends on which button is pressed)
     const [inputError, setInputError] = useState(false); // If input is valid, store the state and update styles accordingly
 
@@ -47,7 +47,12 @@ function ControlPanel({structure, data, setData} : ControlPanelProps) {
 
     const handleBSTInsert = () => {
         const val = Number(input);
-        if(isNaN(val)) {
+        // 0 is disabled because it breaks the tree structure since it will register the parent value as being null
+        // may be worth to fix eventually
+        if(isNaN(val) || val == 0) { 
+            if(val == 0) {
+                alert("0 is not allowed for the binary search tree (it will break due to 0 == null). Sorry!");
+            }
             setInputError(true);
         }
         else {
@@ -108,7 +113,7 @@ function ControlPanel({structure, data, setData} : ControlPanelProps) {
             {
                 structure == "bst" &&
                 <div className={`controlpanel-bst ${inputError && "text-error"}`}>
-                    <input type="text" id="bst_input" name="bst_input" placeholder="ex: 10" defaultValue='' onChange={handleInputChange}/>
+                    <input type="text" id="bst_input" name="bst_input" placeholder="ex: 10" defaultValue='' onChange={handleInputChange} />
                     <button type="submit" id="bst-insert-btn" onClick={handleBSTInsert}>Insert</button>
                     <button type="submit" id="bst-delete-btn" onClick={handleBSTDelete}>Delete</button>
                 </div>

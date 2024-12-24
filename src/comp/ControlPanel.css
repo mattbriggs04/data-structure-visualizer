@@ -23,7 +23,8 @@
     border: 2px solid var(--fg-color);
 }
 
-.controlpanel-container button:hover {
+.controlpanel-container button:hover,
+.controlpanel-container button:focus {
     transition: 0.5s;
     box-shadow: inset 9em 0 0 0 var(--fg-color);
     cursor: pointer;

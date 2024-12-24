@@ -1,6 +1,7 @@
 import { BST } from '../data_structures/tree';
-
-export type DataType = {
-    "linkedlist": number[];
-    "bst": BST;
+import { Stack } from "../data_structures/stack";
+export type DataType<T> = {
+    "linkedlist": T[];
+    "bst": BST<T>;
+    "stack": Stack<T>;
 }

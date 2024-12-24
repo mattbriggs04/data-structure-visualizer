@@ -2,10 +2,10 @@ import { useEffect, useRef } from 'react';
 import * as d3 from "d3";
 import './LinkedListVisualizer.css';
 
-interface LinkedListVisualizerProps {
-    linkedList: number[];
+interface LinkedListVisualizerProps<T> {
+    linkedList: T[];
 }
-function LinkedListVisualizer({linkedList} : LinkedListVisualizerProps) {
+function LinkedListVisualizer({linkedList} : LinkedListVisualizerProps<number>) {
     const svgRef = useRef<HTMLDivElement | null>(null);
     const d3svg = useRef<d3.Selection<SVGSVGElement, unknown, null, undefined> | null>(null);
 

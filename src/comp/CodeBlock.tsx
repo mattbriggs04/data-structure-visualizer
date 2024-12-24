@@ -1,7 +1,6 @@
 import "./CodeBlock.css";
 
 interface CodeBlockProps {
-    structure: string;
     language: string;
     code: string;
 }

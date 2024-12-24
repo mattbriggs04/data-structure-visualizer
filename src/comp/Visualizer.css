@@ -16,4 +16,11 @@
     font-family: 'Space Mono', Helvetica, sans-serif;
     font-size: 1.3rem;
     font-weight: 200;
+    text-align: center;
+    width: 100%;
+}
+.visualizer-container svg {
+    border: 2px solid var(--fg-color);
+    padding: 1em;
+    display: block;
 }

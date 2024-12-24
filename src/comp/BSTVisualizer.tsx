@@ -8,8 +8,8 @@ interface BSTVisualizerProps {
 }
 
 function BSTVisualizer({bst} : BSTVisualizerProps) {
-    const width = 800;
-    const height = 500;
+    const width = 1000;
+    const height = 800;
     let origin = { x: 0, y: 0 };
     let margin = { top: 30, left: 0, right: 0, bottom: 0 };
 
@@ -57,16 +57,13 @@ function BSTVisualizer({bst} : BSTVisualizerProps) {
                                 {/* Create the nodes */}
                                 {tree.descendants().map((node, i) => (
                                     node.data && (
-                                    <Group
-                                        key={i}
-                                        top={node.y}
-                                        left={node.x}
-                                    >
+                                    <Group key={i} top={node.y} left={node.x}>
                                         <circle className="node" />
                                         <text className="node-text">
                                             {node.data.value}
                                         </text>
-                                    </Group>)
+                                    </Group>
+                                    )
                                 ))}
                             </Group>
                         )}

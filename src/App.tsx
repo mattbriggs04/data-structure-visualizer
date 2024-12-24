@@ -2,27 +2,30 @@ import './App.css'
 import { useState } from 'react';
 import Menu from './comp/Menu'
 import Visualizer from './comp/Visualizer';
-import CodeBlock from './comp/CodeBlock';
+// import CodeBlock from './comp/CodeBlock';
 import { DataType } from './types/types';
 import { BST } from './data_structures/tree';
+import { Stack } from './data_structures/stack';
 
 
 function App() {
   const [structure, setStructure] = useState('');
-  const [codeLang, setCodeLang] = useState('C');
+  // const [codeLang, setCodeLang] = useState('C');
 
-  const [data, setData] = useState<DataType>({
+  const [data, setData] = useState<DataType<number>>({
     'linkedlist': [],
-    'bst': new BST()
+    'bst': new BST(),
+    'stack': new Stack()
   });
-  const code = `hello`;
+
+  // const code = `#include <stdio.h>`;
   return (
     <div className={`app-wrapper`}>
       <div className={`flex-container`}>
         <Menu structure={structure} setStructure={setStructure} data={data} setData={setData} />
         <Visualizer structure={structure} data={data} />
       </div>
-      <CodeBlock structure={structure} language={codeLang} code={code} />
+      {/* <CodeBlock language={codeLang} code={code} /> */}
     </div>
   )
 }
