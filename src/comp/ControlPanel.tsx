@@ -95,11 +95,21 @@ function ControlPanel({structure, data, setData} : ControlPanelProps<number>) {
         }
         else {
             setInputError(false);
+            data['stack'].push(val);
+            forceUpdate();
         }
     }
 
     const handleStackPop = () => {
-
+        const val = Number(input);
+        if(isNaN(val)) {
+            setInputError(true);
+        }
+        else {
+            setInputError(false);
+            data['stack'].pop();
+            forceUpdate();
+        }
     }
     return (
         <div className={`controlpanel-container`}>

@@ -1,0 +1,13 @@
+.stack-node {
+    stroke: var(--bg-color-contrast);
+    stroke-width: 2;
+    fill: transparent;
+}
+
+.stack-node-text {
+    fill: var(--text-color);
+    font-size: 1rem;
+    font-family: 'Space Mono', monospace;
+    text-anchor: middle;
+    alignment-baseline: middle; /* VSCode thinks this is not a property but it is */
+}

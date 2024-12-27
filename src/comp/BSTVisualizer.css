@@ -3,11 +3,11 @@
     padding: 1em;
     display: block;
 }
-.node {
+.bst-node {
     r: 20;
     fill: var(--bg-color-contrast);
 }
-.node-text {
+.bst-node-text {
     fill: var(--text-color-contrast);
     font-size: 1rem;
     font-family: 'Space Mono', monospace;

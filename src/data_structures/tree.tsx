@@ -45,7 +45,7 @@ export class BST<T> {
     
         let curr = this.root;
         while(curr) {
-            if(data < curr.data) {
+            if(data <= curr.data) {
                 if(curr.left === null) {
                     curr.left = newNode;
                     break;
@@ -159,8 +159,6 @@ export class BST<T> {
                         const successorPair = this.getInOrderSuccessorPair(currNode);
                         const successorNode = successorPair['node'];
                         const successorParent = successorPair['parent'];
-
-                        console.log(`Successor node is ${successorNode?.data}, parent is ${successorParent?.data}`);
 
                         if(!successorNode) {
                             console.log("Error: no in order successor found");

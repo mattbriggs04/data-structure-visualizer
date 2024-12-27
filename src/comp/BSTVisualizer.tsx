@@ -58,8 +58,8 @@ function BSTVisualizer({bst} : BSTVisualizerProps) {
                                 {tree.descendants().map((node, i) => (
                                     node.data && (
                                     <Group key={i} top={node.y} left={node.x}>
-                                        <circle className="node" />
-                                        <text className="node-text">
+                                        <circle className={`bst-node`} />
+                                        <text className={`bst-node-text`}>
                                             {node.data.value}
                                         </text>
                                     </Group>
