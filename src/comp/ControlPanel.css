@@ -23,8 +23,7 @@
     border: 2px solid var(--fg-color);
 }
 
-.controlpanel-container button:hover,
-.controlpanel-container button:focus {
+.controlpanel-container button:hover {
     transition: 0.5s;
     box-shadow: inset 9em 0 0 0 var(--fg-color);
     cursor: pointer;
@@ -65,6 +64,23 @@
     text-align: center;
 }
 .controlpanel-bst button {
+    margin-left: 1rem;
+}
+
+
+/* stack */
+.controlpanel-stack input {
+    margin-right: 0;
+    min-width: 50px;
+    max-width: 100px;
+    text-align: center;
+}
+
+#stack-push-btn {
+    margin-left: 0.25rem;
+}
+
+#stack-pop-btn {
     margin-left: 1rem;
 }
 /* util */

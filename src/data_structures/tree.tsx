@@ -25,13 +25,82 @@ export class TreeNode<T> {
     }
 }
 
-
-// Binary search tree
-export class BST<T> {
+class Tree<T> {
     root: TreeNode<T> | null;
-
     constructor() {
         this.root = null;
+    }
+
+    // toObject() -> convert to object so that it is proccessable by hierarchy and Tree from d3 (there is a specific format that is expected)
+    toObject(): TNodeObj<T> | null {
+        if(this.root === null) {
+            return null;
+        }
+        let bstObj: TNodeObj<T> = { 
+            value: this.root.data,
+            children: []
+         };
+
+        // map can get the current object for each node that is pulled out (allows the ability to iterate into nested objects)
+        const map = new Map<TreeNode<T>, TNodeObj<T>>();
+        map.set(this.root, bstObj);
+
+        // BFS
+        const queue = new Queue<TreeNode<T>>;
+        queue.enqueue(this.root);
+        while(queue.getSize() > 0) {
+            const currNode = queue.dequeue();
+            if(currNode) {
+                let currObj = map.get(currNode);
+                if(currObj == undefined) {
+                    currObj = { value: currNode.data };
+                }
+
+                // convert the left node into a left object
+                if(currNode?.left) {
+                    const leftObj: TNodeObj<T> = { value: currNode.left.data };
+                    if(currObj.children == undefined) {
+                        currObj.children = [];
+                    }
+                    currObj.children.push(leftObj);
+                    map.set(currNode.left, leftObj);
+                    queue.enqueue(currNode.left);
+                    
+                }
+
+                // convert right node into a right object
+                if(currNode?.right) {
+                    const rightObj: TNodeObj<T> = { value: currNode.right.data }
+                    if(currObj.children == undefined) {
+                        currObj.children = [];
+                    }
+                    currObj.children.push(rightObj);
+                    map.set(currNode.right, rightObj);
+                    queue.enqueue(currNode.right);
+                }
+            }
+        }
+        return bstObj;
+    }
+
+
+    // debug print function (printTree is a helper)
+    print(): void {
+        this.printTree(this.root);
+    }
+    private printTree(node : TreeNode<T> | null): void {
+        if(node != null) {
+            console.log(`${node.data}`)
+            this.printTree(node.left)
+            this.printTree(node.right)
+        }
+    }
+}
+
+// Binary search tree
+export class BST<T> extends Tree<T> {
+    constructor() {
+        super();
     }
 
     insert(data: T): void {
@@ -183,67 +252,16 @@ export class BST<T> {
             }
         }
     }
-    // debug print function (printTree is a helper)
-    print(): void {
-        this.printTree(this.root);
-    }
-    private printTree(node : TreeNode<T> | null): void {
-        if(node != null) {
-            console.log(`${node.data}`)
-            this.printTree(node.left)
-            this.printTree(node.right)
-        }
+}
+
+export class AVL<T> extends Tree<T> {
+    constructor() {
+        super();
     }
 
-    // toObject() -> convert to object so that it is proccessable by hierarchy and Tree from d3 (there is a specific format that is expected)
-    toObject(): TNodeObj<T> | null {
-        if(this.root === null) {
-            return null;
-        }
-        let bstObj: TNodeObj<T> = { 
-            value: this.root.data,
-            children: []
-         };
+    // insert(data: T): void {
 
-        // map can get the current object for each node that is pulled out (allows the ability to iterate into nested objects)
-        const map = new Map<TreeNode<T>, TNodeObj<T>>();
-        map.set(this.root, bstObj);
-
-        // BFS
-        const queue = new Queue<TreeNode<T>>;
-        queue.enqueue(this.root);
-        while(queue.getSize() > 0) {
-            const currNode = queue.dequeue();
-            if(currNode) {
-                let currObj = map.get(currNode);
-                if(currObj == undefined) {
-                    currObj = { value: currNode.data };
-                }
-
-                // convert the left node into a left object
-                if(currNode?.left) {
-                    const leftObj: TNodeObj<T> = { value: currNode.left.data };
-                    if(currObj.children == undefined) {
-                        currObj.children = [];
-                    }
-                    currObj.children.push(leftObj);
-                    map.set(currNode.left, leftObj);
-                    queue.enqueue(currNode.left);
-                    
-                }
-
-                // convert right node into a right object
-                if(currNode?.right) {
-                    const rightObj: TNodeObj<T> = { value: currNode.right.data }
-                    if(currObj.children == undefined) {
-                        currObj.children = [];
-                    }
-                    currObj.children.push(rightObj);
-                    map.set(currNode.right, rightObj);
-                    queue.enqueue(currNode.right);
-                }
-            }
-        }
-        return bstObj;
-    }
+    // }
+    // delete(data: T): void {
+    // }
 }

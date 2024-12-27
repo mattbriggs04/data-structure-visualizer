@@ -9,9 +9,9 @@ interface StackVisualizerProps<T> {
 function StackVisualizer({stack} : StackVisualizerProps<number>) {
     const width = 500;
     const height = 800;
-    const node_width = 50;
+    const node_width = 75;
     const node_height = node_width;
-    const top_margin = 30;
+    // const top_margin = 30;
     const bottom_margin = 150; // so the stack starts from the bottom of the svg
     const center_x = (width - node_width) / 2
 

@@ -131,9 +131,9 @@ function ControlPanel({structure, data, setData} : ControlPanelProps<number>) {
             {
                 structure == "stack" &&
                 <div className={`controlpanel-stack ${inputError && "text-error"}`}>
-                    <input type="text" id="stack_input" name="stack_input" placeholder="ex: 10" defaultValue='' onChange={handleInputChange}/>
-                    <button type="submit" onClick={handleStackPush}>Push</button>
-                    <button type="submit" onClick={handleStackPop}>Pop</button>
+                    <input type="text" id="stack_input" name="stack_input" placeholder="ex: 10" defaultValue='' onChange={handleInputChange} />
+                    <button type="submit" id="stack-push-btn" onClick={handleStackPush}>Push</button>
+                    <button type="submit" id="stack-pop-btn" onClick={handleStackPop}>Pop [<span id="stack-last-popped">{data['stack'].lastPopped}</span>]</button>
                 </div>
             }
         </div>

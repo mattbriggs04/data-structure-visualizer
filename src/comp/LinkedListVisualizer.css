@@ -1,18 +1,11 @@
-.linkedlist-svg {
-    max-width: 100%;
-    border: 2px solid var(--fg-color);
-    padding: 1em;
-    display: block;
-}
-
 .node {
     stroke: var(--bg-color-contrast);
     stroke-width: 2;
-    fill: transparent;
+    fill: none;
 }
 
 .node-text {
-    fill: none;
+    fill: var(--text-color);
     font-size: 1rem;
     font-family: 'Space Mono', monospace;
     text-anchor: middle;

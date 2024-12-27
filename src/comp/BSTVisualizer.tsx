@@ -25,14 +25,14 @@ function BSTVisualizer({bst} : BSTVisualizerProps) {
                     <Tree 
                         root={hierarchy(treeObj)}
                         size={[width, height - 100]} // Create 100px offset from height to account for circles needing to fit in svg
-                        separation={(a, b) => (a.parent === b.parent ? 1 : 1)}
+                        // separation={(a, b) => (a.parent === b.parent ? 1 : 1)}
                     >
                         {
                         (tree) => {
 
                         // Create the gaps between nodes for the tree relative to their parent
-                        const width_gap = 100;
-                        const height_gap = 100;
+                        const width_gap = 75;
+                        const height_gap = 75;
                         tree.descendants().forEach((node) => {
                             if(node.parent && node.parent.value) {
                                 node.x = node.parent.x + (node.data.value <= node.parent.value ? -width_gap : width_gap);
