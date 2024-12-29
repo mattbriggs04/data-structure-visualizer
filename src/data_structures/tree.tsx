@@ -10,17 +10,15 @@ export interface TNodeObj<T> {
 // Generic binary tree node 
 export class TreeNode<T> {
     data: T;
-    left: TreeNode<T> | null;
-    right: TreeNode<T> | null;
+    left: TreeNode<T> | null = null;
+    right: TreeNode<T> | null = null;
 
     constructor(data: T) {
         this.data = data;
-        this.left = null;
-        this.right = null;
     }
 
     // for the sake of this project, we can consider two nodes equal if they have the same data
-    equals(node: TreeNode<T>): boolean {
+    equals<U extends TreeNode<T>>(node: U): boolean {
         return node.data === this.data;
     }
 }
@@ -254,14 +252,115 @@ export class BST<T> extends Tree<T> {
     }
 }
 
+export class AVLNode<T> extends TreeNode<T> {
+    height: number;
+    left: AVLNode<T> | null = null;
+    right: AVLNode<T> | null = null;
+
+    constructor(data: T) {
+        super(data);
+        this.height = 0;
+    }
+}
 export class AVL<T> extends Tree<T> {
+    root: AVLNode<T> | null = null;
     constructor() {
         super();
     }
 
-    // insert(data: T): void {
+    // Inspired by GeeksForGeeks implementation of AVL Tree insert
+    private insertHelper(node: AVLNode<T> | null, data: T): AVLNode<T> {
+        if(node === null) {
+            return new AVLNode(data);
+        }
+        if(data <= node.data) { // equality goes left 
+            node.left = this.insertHelper(node.left, data);
+        }
+        else {
+            node.right = this.insertHelper(node.right, data);
+        }
+
+        // note: balance is defined as left - right (right - left works too, but would need to flip the cases)
+        // if left side height is larger than the right, then nodeBalance would be positive
+        // a tree is unbalanced if the magnitude of its balance is 2 or more
+        node.height = Math.max((this.getHeight(node.left), this.getHeight(node.right))) + 1;
+        const nodeBalance = this.getBalance(node);
+
+        // 4 Cases for node becoming unbalanced
+        // left subtree tree is larger, need to rotate to the right
+        if(nodeBalance >= 2 && data < node.left!.data) {
+            return this.rightRotate(node)!;
+        }
+        // left subtree is larger, but the path up from the inserted node comes from the 
+        // right subtree of the left node, requiring first a left rotation then a right rotation 
+        if(nodeBalance <= 2 && data > node.left!.data) {
+            node.left = this.leftRotate(node.left!);
+            return this.rightRotate(node)!;
+        }
+        // right subtree is larger, rotate to the left
+        if(nodeBalance <= -2 && data > node.right!.data) {
+            return this.leftRotate(node)!;
+        }
+        // right subtree is larger, but the path up from the inserted node comes from the
+        // left subtree of the right node, requiring first a right rotation then a left rotation
+        if(nodeBalance <= -2 && data < node.right!.data) {
+            node.right = this.rightRotate(node.right!);
+            return this.leftRotate(node)!;
+        }
+
+        return node;
+    }
+    insert(data: T): void {
+        this.insertHelper(this.root, data);
+    }
+
+    // delete(data: T): void {
 
     // }
-    // delete(data: T): void {
-    // }
+
+    private getHeight(node: AVLNode<T> | null) {
+        return node !== null ? node.height : 0;
+    }
+
+    private getBalance(node: AVLNode<T> | null): number {
+        return node !== null ? this.getHeight(node.left) - this.getHeight(node.right) : 0;
+    }
+
+    private rightRotate(root: AVLNode<T>): AVLNode<T> | null {
+        const newRoot = root.left;
+
+        // in theory newRoot == null should never happen, but is there to make typescript happy
+        if(newRoot === null) return null;
+
+        const subtree: AVLNode<T> | null = newRoot.right;
+
+        // rotate to the right
+        newRoot.right = root;
+        root.left = subtree;
+
+        // update the height values
+        newRoot.height = Math.max(this.getHeight(newRoot.left), this.getHeight(newRoot.right)) + 1;
+        root.height = Math.max(this.getHeight(root.left), this.getHeight(root.right)) + 1
+
+        return newRoot;
+    }
+
+    private leftRotate(root: AVLNode<T>) {
+        const newRoot = root.right;
+
+        // in theory newRoot == null should never happen, but is there to make typescript happy
+        if(newRoot === null) return null;
+
+        const subtree: AVLNode<T> | null = newRoot.left;
+
+        // rotate to the right
+        newRoot.left = root;
+        root.right = subtree;
+
+        // update the height values
+        newRoot.height = Math.max(this.getHeight(newRoot.left), this.getHeight(newRoot.right)) + 1;
+        root.height = Math.max(this.getHeight(root.left), this.getHeight(root.right)) + 1
+
+        return newRoot;
+    }
 }
