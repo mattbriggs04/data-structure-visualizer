@@ -48,7 +48,7 @@
     width: 100%;
 }
 
-/* binary search tree */
+/* binary search tree and AVL tree */
 .controlpanel-bst {
     display: flex;
     flex-direction: row;
@@ -57,16 +57,17 @@
     overflow: scroll;
 }
 
-.controlpanel-bst input {
+.controlpanel-bst input,
+.controlpanel-avl input {
     margin-right: 0;
     min-width: 50px;
     max-width: 100px;
     text-align: center;
 }
-.controlpanel-bst button {
+.controlpanel-bst button,
+.controlpanel-avl button {
     margin-left: 1rem;
 }
-
 
 /* stack */
 .controlpanel-stack input {
@@ -83,6 +84,7 @@
 #stack-pop-btn {
     margin-left: 1rem;
 }
+
 /* util */
 .text-error input {
     border: 2px solid red;

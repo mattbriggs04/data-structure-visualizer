@@ -4,7 +4,7 @@ import Menu from './comp/Menu'
 import Visualizer from './comp/Visualizer';
 // import CodeBlock from './comp/CodeBlock';
 import { DataType } from './types/types';
-import { BST } from './data_structures/tree';
+import { BST, AVL } from './data_structures/tree';
 import { Stack } from './data_structures/stack';
 
 
@@ -15,7 +15,8 @@ function App() {
   const [data, setData] = useState<DataType<number>>({
     'linkedlist': [],
     'bst': new BST(),
-    'stack': new Stack()
+    'stack': new Stack(),
+    'avl': new AVL()
   });
 
   // const code = `#include <stdio.h>`;

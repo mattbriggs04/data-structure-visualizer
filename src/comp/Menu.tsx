@@ -7,8 +7,8 @@ import { DataType } from "../types/types"
 interface MenuProps {
     structure: string;
     setStructure: Dispatch<SetStateAction<string>>;
-    data: DataType;
-    setData: Dispatch<SetStateAction<DataType>>;
+    data: DataType<number>;
+    setData: Dispatch<SetStateAction<DataType<number>>>;
 }
 
 function Menu({ structure, setStructure, data, setData }: MenuProps) {

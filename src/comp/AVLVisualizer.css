@@ -1,0 +1,16 @@
+.avl-node {
+    r: 20;
+    fill: var(--bg-color-contrast);
+}
+.avl-node-text, .avl-node-height-text {
+    fill: var(--text-color-contrast);
+    font-size: 1rem;
+    font-family: 'Space Mono', monospace;
+    text-anchor: middle;
+    alignment-baseline: middle; /* VSCode thinks this is not a property but it is */
+}
+
+.avl-node-height-text {
+    transform: translate(30px, -10px); /* radius / 2 + 10 */
+    fill: var(--text-color);
+}

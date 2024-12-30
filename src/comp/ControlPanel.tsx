@@ -58,7 +58,7 @@ function ControlPanel({structure, data, setData} : ControlPanelProps<number>) {
         else {
             try {
                 data['bst'].insert(val);
-                console.log(`inserting ${val}`)
+                console.log(`BST inserting ${val}`)
                 setData({ ...data });
                 setInputError(false);
             }
@@ -76,7 +76,7 @@ function ControlPanel({structure, data, setData} : ControlPanelProps<number>) {
         }
         else {
             try {
-                console.log(`deleting ${val}`)
+                console.log(`BST deleting ${val}`)
                 data['bst'].delete(val);
                 forceUpdate();
                 setInputError(false);
@@ -111,6 +111,49 @@ function ControlPanel({structure, data, setData} : ControlPanelProps<number>) {
             forceUpdate();
         }
     }
+    const handleAVLInsert = () => {
+        const val = Number(input);
+        // 0 is disabled because it breaks the tree structure since it will register the parent value as being null
+        // may be worth to fix eventually
+        if(isNaN(val) || val == 0) { 
+            if(val == 0) {
+                alert("0 is not allowed for the AVL tree (it will break due to 0 == null). Sorry!");
+            }
+            setInputError(true);
+        }
+        else {
+            try {
+                data['avl'].insert(val);
+                console.log(`AVL inserting ${val}`)
+                setData({ ...data });
+                setInputError(false);
+            }
+            catch(error) {
+                console.log(error);
+                setInputError(true);
+            }
+        }
+    }
+
+    const handleAVLDelete = () => {
+        const val = Number(input);
+        if(isNaN(val)) {
+            setInputError(true);
+        }
+        else {
+            try {
+                console.log(`deleting ${val}`)
+                data['avl'].delete(val);
+                forceUpdate();
+                setInputError(false);
+            }
+            catch(error) {
+                console.log(error);
+                setInputError(true);
+            }
+        }
+    }
+
     return (
         <div className={`controlpanel-container`}>
             { // potential TODO: Convert all control panels into separate components
@@ -134,6 +177,14 @@ function ControlPanel({structure, data, setData} : ControlPanelProps<number>) {
                     <input type="text" id="stack_input" name="stack_input" placeholder="ex: 10" defaultValue='' onChange={handleInputChange} />
                     <button type="submit" id="stack-push-btn" onClick={handleStackPush}>Push</button>
                     <button type="submit" id="stack-pop-btn" onClick={handleStackPop}>Pop [<span id="stack-last-popped">{data['stack'].lastPopped}</span>]</button>
+                </div>
+            }
+            {
+                structure == "avl" && // identical to bst (but may be changed in the future, so im keeping them separate for now)
+                <div className={`controlpanel-avl ${inputError && "text-error"}`}>
+                    <input type="text" id="bst_input" name="bst_input" placeholder="ex: 10" defaultValue='' onChange={handleInputChange} />
+                    <button type="submit" id="avl-insert-btn" onClick={handleAVLInsert}>Insert</button>
+                    <button type="submit" id="avl-delete-btn" onClick={handleAVLDelete}>Delete</button>
                 </div>
             }
         </div>
