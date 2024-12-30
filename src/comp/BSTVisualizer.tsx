@@ -1,5 +1,5 @@
 import "./BSTVisualizer.css";
-import { BST } from "../data_structures/tree";
+import { BST, TreeNode } from "../data_structures/tree";
 import { Group } from "@visx/group";
 import { hierarchy, Tree } from "@visx/hierarchy";
 import { LinkVerticalLine } from "@visx/shape";
@@ -13,7 +13,7 @@ function BSTVisualizer({bst} : BSTVisualizerProps) {
     let origin = { x: 0, y: 0 };
     let margin = { top: 30, left: 0, right: 0, bottom: 0 };
 
-    let treeObj = bst.toObject();
+    let treeObj = bst.toObject<TreeNode<number>>();
     return (
         <div className="bst-container">
             <h2>Binary Search Tree</h2>

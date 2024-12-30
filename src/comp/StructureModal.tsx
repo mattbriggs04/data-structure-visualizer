@@ -16,6 +16,7 @@ function StructureModal({setIsSelect, setStructure} : StructureModalProps) {
                 <button value="linkedlist" onClick={handleBtnChange}>Linked List</button>
                 <button value="stack" onClick={handleBtnChange}>Stack</button>
                 <button value="bst" onClick={handleBtnChange}>Binary Search Tree</button>
+                <button value="avl" onClick={handleBtnChange}>AVL Tree</button>
             </div>
         </div>
     );

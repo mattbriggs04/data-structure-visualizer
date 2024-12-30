@@ -3,6 +3,7 @@ import { DataType } from "../types/types"
 import LinkedListVisualizer from "./LinkedListVisualizer";
 import BSTVisualizer from "./BSTVisualizer";
 import StackVisualizer from "./StackVisualizer";
+import AVLVisualizer from "./AVLVisualizer";
 
 interface VisualizerProps<T> {
     structure: string;
@@ -23,6 +24,9 @@ function Visualizer({structure, data} : VisualizerProps<number>) {
             }
             {
                 structure == "stack" && <StackVisualizer stack={data["stack"]} />
+            }
+            {
+                structure == "avl" && <AVLVisualizer avl={data["avl"]} />
             }
         </div>
     );
