@@ -1,6 +1,10 @@
 # Data Structure Visualizer (WIP)
 
-Currently the linked list is the only structure completed. Plans are to have: Stack, Queue, Binary Search Tree, AVL Tree, and Graph (maybe with a visualization of MST algorithms and Dijkstra's).
+Data structures that are currently available:
+
+- Stack, push and pop operations
+- Linked List, enter an array and it will be shown as a singly linked list
+- Binary Search Tree, insert and delete operations 
 
 # React + TypeScript + Vite
 
