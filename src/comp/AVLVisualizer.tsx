@@ -1,5 +1,5 @@
 import "./AVLVisualizer.css"
-import { AVL, AVLNode } from "../data_structures/tree"
+import { AVL } from "../data_structures/tree"
 import { Group } from "@visx/group";
 import { hierarchy, Tree } from "@visx/hierarchy";
 import { LinkVerticalLine } from "@visx/shape";
@@ -14,7 +14,8 @@ function AVLVisualizer({avl}: AVLVisualizerProps) {
         let origin = { x: 0, y: 0 };
         let margin = { top: 30, left: 0, right: 0, bottom: 0 };
     
-        let treeObj = avl.toObject<AVLNode<number>>();
+        let treeObj = avl.toObject();
+        console.log(treeObj);
         return (
             <div className="avl-container">
                 <h2>AVL Tree</h2>
@@ -62,7 +63,7 @@ function AVLVisualizer({avl}: AVLVisualizerProps) {
                                                 {node.data.value}
                                             </text>
                                             <text className={`avl-node-height-text`}>
-                                                {node.height}
+                                                {node.data.balance}
                                             </text>
                                         </Group>
                                         )

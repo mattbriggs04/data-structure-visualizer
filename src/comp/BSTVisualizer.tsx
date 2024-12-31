@@ -13,7 +13,7 @@ function BSTVisualizer({bst} : BSTVisualizerProps) {
     let origin = { x: 0, y: 0 };
     let margin = { top: 30, left: 0, right: 0, bottom: 0 };
 
-    let treeObj = bst.toObject<TreeNode<number>>();
+    let treeObj = bst.toObject();
     return (
         <div className="bst-container">
             <h2>Binary Search Tree</h2>

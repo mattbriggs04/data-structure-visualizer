@@ -6,6 +6,11 @@ export interface TNodeObj<T> {
     value: T;
     children?: TNodeObj<T>[];
 }
+export interface AVLNodeObj<T> {
+    value: T;
+    balance: number;
+    children?: AVLNodeObj<T>[];
+}
 
 // Generic binary tree node 
 export class TreeNode<T> {
@@ -28,59 +33,6 @@ class Tree<T> {
     constructor() {
         this.root = null;
     }
-
-    // toObject() -> convert to object so that it is proccessable by hierarchy and Tree from d3 (there is a specific format that is expected)
-    toObject<U extends TreeNode<T>>(): TNodeObj<T> | null {
-        if(this.root === null) {
-            return null;
-        }
-        let bstObj: TNodeObj<T> = { 
-            value: this.root.data,
-            children: []
-         };
-
-        // map can get the current object for each node that is pulled out (allows the ability to iterate into nested objects)
-        const map = new Map<U, TNodeObj<T>>();
-        map.set(this.root as U, bstObj);
-
-        // BFS
-        const queue = new Queue<U>();
-        queue.enqueue(this.root as U);
-        while(queue.getSize() > 0) {
-            const currNode = queue.dequeue();
-            if(currNode) {
-                let currObj = map.get(currNode);
-                if(currObj == undefined) {
-                    currObj = { value: currNode.data };
-                }
-
-                // convert the left node into a left object
-                if(currNode?.left) {
-                    const leftObj: TNodeObj<T> = { value: currNode.left.data };
-                    if(currObj.children == undefined) {
-                        currObj.children = [];
-                    }
-                    currObj.children.push(leftObj);
-                    map.set(currNode.left as U, leftObj);
-                    queue.enqueue(currNode.left as U);
-                    
-                }
-
-                // convert right node into a right object
-                if(currNode?.right) {
-                    const rightObj: TNodeObj<T> = { value: currNode.right.data }
-                    if(currObj.children == undefined) {
-                        currObj.children = [];
-                    }
-                    currObj.children.push(rightObj);
-                    map.set(currNode.right as U, rightObj);
-                    queue.enqueue(currNode.right as U);
-                }
-            }
-        }
-        return bstObj;
-    }
-
 
     // debug print function (printTree is a helper)
     print(): void {
@@ -250,8 +202,66 @@ export class BST<T> extends Tree<T> {
             }
         }
     }
+
+    // toObject() -> convert to object so that it is proccessable by hierarchy and Tree from d3 (there is a specific format that is expected)
+    toObject(): TNodeObj<T> | null {
+        if(this.root === null) {
+            return null;
+        }
+        let bstObj: TNodeObj<T> = { 
+            value: this.root.data,
+            children: []
+         };
+
+        // map can get the current object for each node that is pulled out (allows the ability to iterate into nested objects)
+        const map = new Map<TreeNode<T>, TNodeObj<T>>();
+        map.set(this.root, bstObj);
+
+        // BFS
+        const queue = new Queue<TreeNode<T>>();
+        queue.enqueue(this.root);
+        while(queue.getSize() > 0) {
+            const currNode = queue.dequeue();
+            if(currNode) {
+                let currObj = map.get(currNode);
+                if(currObj == undefined) {
+                    currObj = { value: currNode.data };
+                }
+
+                // convert the left node into a left object
+                if(currNode?.left) {
+                    const leftObj: TNodeObj<T> = { value: currNode.left.data };
+                    if(currObj.children == undefined) {
+                        currObj.children = [];
+                    }
+                    currObj.children.push(leftObj);
+                    map.set(currNode.left, leftObj);
+                    queue.enqueue(currNode.left);
+                    
+                }
+
+                // convert right node into a right object
+                if(currNode?.right) {
+                    const rightObj: TNodeObj<T> = { value: currNode.right.data }
+                    if(currObj.children == undefined) {
+                        currObj.children = [];
+                    }
+                    currObj.children.push(rightObj);
+                    map.set(currNode.right, rightObj);
+                    queue.enqueue(currNode.right);
+                }
+            }
+        }
+        return bstObj;
+    }
 }
 
+
+/*
+*
+*   AVL Tree
+* 
+*/
 export class AVLNode<T> extends TreeNode<T> {
     height: number;
     left: AVLNode<T> | null = null;
@@ -260,6 +270,13 @@ export class AVLNode<T> extends TreeNode<T> {
     constructor(data: T) {
         super(data);
         this.height = 1; // non-null nodes have a height of 1
+    }
+
+    // balance defined left - right
+    getBalance(): number {
+        const height_left = this.left ? this.left.height : 0;
+        const height_right = this.right ? this.right.height : 0;
+        return height_left - height_right;
     }
 }
 export class AVL<T> extends Tree<T> {
@@ -284,44 +301,37 @@ export class AVL<T> extends Tree<T> {
         // note: balance is defined as left - right (right - left works too, but would need to flip the cases)
         // if left side height is larger than the right, then nodeBalance would be positive
         // a tree is unbalanced if the magnitude of its balance is 2 or more
-        console.log("Updating height of node" + node.data)
         node.height = Math.max(this.getHeight(node.left), this.getHeight(node.right)) + 1;
         const nodeBalance = this.getBalance(node);
 
         // 4 Cases for node becoming unbalanced
         // left subtree tree is larger, need to rotate to the right
         if(nodeBalance >= 2 && data < node.left!.data) {
-            console.log("case 1 - right rotate");
             return this.rightRotate(node)!;
         }
         // left subtree is larger, but the path up from the inserted node comes from the 
         // right subtree of the left node, requiring first a left rotation then a right rotation 
         if(nodeBalance >= 2 && data > node.left!.data) {
-            console.log("case 2 - left rotate then right");
             node.left = this.leftRotate(node.left!);
             return this.rightRotate(node)!;
         }
         // right subtree is larger, rotate to the left
         if(nodeBalance <= -2 && data > node.right!.data) {
-            console.log("case 3 - left rotate");
             return this.leftRotate(node)!;
         }
         // right subtree is larger, but the path up from the inserted node comes from the
         // left subtree of the right node, requiring first a right rotation then a left rotation
         if(nodeBalance <= -2 && data < node.right!.data) {
-            console.log("case 4 - right rotate then left");
             node.right = this.rightRotate(node.right!);
             return this.leftRotate(node)!;
         }
 
         return node;
     }
+
+    // wrapper function for the recursive insert
     insert(data: T): void {
         this.root = this.insertHelper(this.root, data);
-
-        console.log(`Height of root [${this.root.data}] after insert: ${this.root!.height}`)
-        console.log(`Balance of root [${this.root.data}] after insert ${this.getBalance(this.root)}`);
-        
     }
 
     delete(data: T): void {
@@ -338,20 +348,17 @@ export class AVL<T> extends Tree<T> {
 
     private rightRotate(root: AVLNode<T>): AVLNode<T> | null {
         const newRoot = root.left;
-
-        // in theory newRoot == null should never happen, but is there to make typescript happy
         if(newRoot === null) return null;
+        const subtree = newRoot.right;
 
-        const subtree: AVLNode<T> | null = newRoot.right;
-
-        // rotate to the right
+        // rotate to the right (order matters, newRoot.right must be changed first)
         newRoot.right = root;
         root.left = subtree;
 
-        // update the height values
-        newRoot.height = Math.max(this.getHeight(newRoot.left), this.getHeight(newRoot.right)) + 1;
+        // update the height values (order matters, root.height must be changed first since it is lower)
         root.height = Math.max(this.getHeight(root.left), this.getHeight(root.right)) + 1
-
+        newRoot.height = Math.max(this.getHeight(newRoot.left), this.getHeight(newRoot.right)) + 1;
+    
         return newRoot;
     }
 
@@ -363,14 +370,67 @@ export class AVL<T> extends Tree<T> {
 
         const subtree: AVLNode<T> | null = newRoot.left;
 
-        // rotate to the right
+        // rotate to the right (order matters, newRoot.right must be changed first)
         newRoot.left = root;
         root.right = subtree;
 
-        // update the height values
-        newRoot.height = Math.max(this.getHeight(newRoot.left), this.getHeight(newRoot.right)) + 1;
+        // update the height values (order matters, root.height must be changed first, since it is lower)
         root.height = Math.max(this.getHeight(root.left), this.getHeight(root.right)) + 1
-
+        newRoot.height = Math.max(this.getHeight(newRoot.left), this.getHeight(newRoot.right)) + 1;
+        
         return newRoot;
+    }
+
+    // toObject(), same as BST's toObject() but holds a balance factor
+    toObject(): AVLNodeObj<T> | null {
+        if(this.root === null) {
+            return null;
+        }
+        let avlObj: AVLNodeObj<T> = { 
+            value: this.root.data,
+            balance: this.getBalance(this.root),
+            children: []
+         };
+
+        // map can get the current object for each node that is pulled out (allows the ability to iterate into nested objects)
+        const map = new Map<AVLNode<T>, AVLNodeObj<T>>();
+        map.set(this.root, avlObj);
+
+        // BFS
+        const queue = new Queue<AVLNode<T>>();
+        queue.enqueue(this.root);
+        while(queue.getSize() > 0) {
+            const currNode = queue.dequeue();
+            if(currNode) {
+                let currObj = map.get(currNode);
+                if(currObj == undefined) {
+                    currObj = { value: currNode.data, balance: this.getBalance(currNode) };
+                }
+
+                // convert the left node into a left object
+                if(currNode.left) {
+                    const leftObj: AVLNodeObj<T> = { value: currNode.left.data, balance: this.getBalance(currNode.left) };
+                    if(currObj.children == undefined) {
+                        currObj.children = [];
+                    }
+                    currObj.children.push(leftObj);
+                    map.set(currNode.left, leftObj);
+                    queue.enqueue(currNode.left);
+                    
+                }
+
+                // convert right node into a right object
+                if(currNode.right) {
+                    const rightObj: AVLNodeObj<T> = { value: currNode.right.data, balance: this.getBalance(currNode.right) }
+                    if(currObj.children == undefined) {
+                        currObj.children = [];
+                    }
+                    currObj.children.push(rightObj);
+                    map.set(currNode.right, rightObj);
+                    queue.enqueue(currNode.right);
+                }
+            }
+        }
+        return avlObj;
     }
 }
