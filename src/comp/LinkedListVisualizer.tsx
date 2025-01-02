@@ -8,11 +8,12 @@ interface LinkedListVisualizerProps<T> {
 function LinkedListVisualizer({linkedList} : LinkedListVisualizerProps<number>) {
     const svgRef = useRef<HTMLDivElement | null>(null);
     const d3svg = useRef<d3.Selection<SVGSVGElement, unknown, null, undefined> | null>(null);
-
+    const svgWidth = 1000; //px
+    const svgHeight = 200; //px
+    const leftPadding = 20; //px
     useEffect(() => {
         if(svgRef.current) { // Ensure that the component rendered correctly
-            const svgWidth = 1000;
-            const svgHeight = 200;
+            
             d3svg.current = d3.select(svgRef.current) // create svg
                 .append("svg")
                 .attr("width", svgWidth)
@@ -25,7 +26,7 @@ function LinkedListVisualizer({linkedList} : LinkedListVisualizerProps<number>) 
         if(d3svg.current) {
             const nodeWidth: number = 50;
             const nodeHeight: number = 50; // ideally around svgHeight / 4
-            const spacing: number = 30; // spacing between each node
+            const spacing: number = 40; // spacing between each node
 
             const svg = d3svg.current;
 
@@ -52,12 +53,13 @@ function LinkedListVisualizer({linkedList} : LinkedListVisualizerProps<number>) 
                 .attr("markerHeight", 30)
                 .attr("orient", "auto")
                 .append("path")
-                .attr("d", "M 5 0 L 5 7 M 0 7 L 10 7 M 2 9 L 8 9 M 4 11 L 6 11"); // ground symbol 
-            
+                .attr("d", "M 5 0 L 5 7 M 0 7 L 10 7 M 2 9 L 8 9 M 4 11 L 6 11"); // ground symbol
+
+ 
             linkedList.forEach((val, idx) => {
                 // + 1 removes the left border of the first node from going into the padding
-                const x = idx * (nodeWidth + spacing) + 1; 
-                const y = nodeHeight;
+                const x = leftPadding + idx * (nodeWidth + spacing); 
+                const y = svgHeight / 2 - nodeHeight / 2;
 
                 svg.append("rect")
                     .attr("x", x)
@@ -85,11 +87,13 @@ function LinkedListVisualizer({linkedList} : LinkedListVisualizerProps<number>) 
             });
 
             if(linkedList.length > 0) {
+                const x = leftPadding + linkedList.length * (nodeWidth + spacing);
+                const y = svgHeight / 2;
                 svg.append("line")
-                    .attr("x1", linkedList.length * (nodeWidth + spacing) - spacing)
-                    .attr("y1", nodeHeight + nodeHeight / 2)
-                    .attr("x2", linkedList.length * (nodeWidth + spacing))
-                    .attr("y2", nodeHeight + nodeHeight / 2)
+                    .attr("x1", x - spacing)
+                    .attr("y1", y)
+                    .attr("x2", x)
+                    .attr("y2", y)
                     .attr("class", "link")
                     .attr("marker-end", "url(#ground)");
             }
@@ -102,7 +106,7 @@ function LinkedListVisualizer({linkedList} : LinkedListVisualizerProps<number>) 
     return (
         <div className={`linkedlist-container`}>
             <h2>Linked List</h2>
-            <div ref={svgRef}></div>
+            <div ref={svgRef} className={`linkedlist-svg`}></div>
         </div>
     );
 }
