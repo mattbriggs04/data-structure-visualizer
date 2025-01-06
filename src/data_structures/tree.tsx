@@ -328,14 +328,65 @@ export class AVL<T> extends Tree<T> {
 
         return node;
     }
+    
+    // adapted from GeeksForGeeks implementation of AVL deletion
+    private deleteHelper(node: AVLNode<T> | null, data: T): AVLNode<T> | null {
+        if (node === null) return node;
 
-    // wrapper function for the recursive insert
+        if(data < node.data) {
+            node.left = this.deleteHelper(node.left, data);
+        }
+        else if(data > node.data) {
+            node.right = this.deleteHelper(node.right, data);
+        } else { // equality case, delete node found -> delete
+            // case 1 / 2: no child or one child
+            if(node.left === null || node.right === null) {
+                node = null;
+            }
+            else { // case 3: node has both children, replace node w/ in order successor
+                const successor = this.getInOrderSuccessor(node); // get successor
+                node.data = successor!.data; // replace data
+                node.right = this.deleteHelper(node.right, successor!.data) // delete the successor
+            }
+        }
+
+        // update height
+        if(node === null) return node;
+        node.height = Math.max(this.getHeight(node.left), this.getHeight(node.right)) + 1;
+
+        // rebalance - same as insert
+        const nodeBalance = this.getBalance(node);
+        // left subtree tree is larger, need to rotate to the right
+        if(nodeBalance >= 2 && data < node.left!.data) {
+            return this.rightRotate(node)!;
+        }
+        // left subtree is larger, but the path up from the inserted node comes from the 
+        // right subtree of the left node, requiring first a left rotation then a right rotation 
+        if(nodeBalance >= 2 && data > node.left!.data) {
+            node.left = this.leftRotate(node.left!);
+            return this.rightRotate(node)!;
+        }
+        // right subtree is larger, rotate to the left
+        if(nodeBalance <= -2 && data > node.right!.data) {
+            return this.leftRotate(node)!;
+        }
+        // right subtree is larger, but the path up from the inserted node comes from the
+        // left subtree of the right node, requiring first a right rotation then a left rotation
+        if(nodeBalance <= -2 && data < node.right!.data) {
+            node.right = this.rightRotate(node.right!);
+            return this.leftRotate(node)!;
+        }
+        return node;
+    }
+
+    // wrapper function for recursive insertion
     insert(data: T): void {
         this.root = this.insertHelper(this.root, data);
     }
 
+    // wrapper function for recursive deletion
     delete(data: T): void {
-        console.log(`deleting ${data}`);
+        this.root = this.deleteHelper(this.root, data);
     }
 
     private getHeight(node: AVLNode<T> | null) {
@@ -379,6 +430,16 @@ export class AVL<T> extends Tree<T> {
         newRoot.height = Math.max(this.getHeight(newRoot.left), this.getHeight(newRoot.right)) + 1;
         
         return newRoot;
+    }
+
+    private getInOrderSuccessor(node: AVLNode<T> | null): AVLNode<T> | null {
+        let curr = node; 
+        if(!curr) return null
+        curr = curr.right;
+        while(curr && curr.left) {
+            curr = curr.left;
+        }
+        return curr;
     }
 
     // toObject(), same as BST's toObject() but holds a balance factor
