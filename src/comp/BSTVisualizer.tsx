@@ -31,11 +31,11 @@ function BSTVisualizer({bst} : BSTVisualizerProps) {
                         (tree) => {
 
                         // Create the gaps between nodes for the tree relative to their parent
-                        const width_gap = 75;
+                        const width_gap = 200;
                         const height_gap = 75;
                         tree.descendants().forEach((node) => {
                             if(node.parent && node.parent.value) {
-                                node.x = node.parent.x + (node.data.value <= node.parent.value ? -width_gap : width_gap);
+                                node.x = node.parent.x + (node.data.value <= node.parent.value ? -(width_gap - node.depth * 50)  : width_gap - node.depth * 50);
                                 node.y = node.parent.y + height_gap;
                             }
                         })
