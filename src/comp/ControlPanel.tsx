@@ -44,27 +44,45 @@ function ControlPanel({structure, data, setData} : ControlPanelProps<number>) {
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setInput(e.target.value);
     }
-
-    const handleBSTInsert = () => {
-        const val = Number(input);
-        // 0 is disabled because it breaks the tree structure since it will register the parent value as being null
-        // may be worth to fix eventually
-        if(isNaN(val) || val == 0) { 
-            if(val == 0) {
-                alert("0 is not allowed for the binary search tree (it will break due to 0 == null). Sorry!");
-            }
-            setInputError(true);
+    const zeroCheckHandler = (val: number): boolean => {
+        if(val == 0) {
+            alert("Due to an unresolved bug, insertion of 0 has been temporarily disabled. Sorry!");
+            return true;
         }
-        else {
+        return false;
+    }
+    const handleBSTInsert = () => {
+        // quick parser for doing multiple inserts in a row
+        if(input[0] == '[') {
             try {
-                data['bst'].insert(val);
-                console.log(`BST inserting ${val}`)
+                const tree_arr = JSON.parse(input);
+                tree_arr.forEach((num: number) => data['bst'].insert(num));
                 setData({ ...data });
                 setInputError(false);
             }
             catch(error) {
                 console.log(error);
                 setInputError(true);
+            }
+        }
+        else {
+            const val = Number(input);
+            // 0 is disabled because it breaks the tree structure since it will register the parent value as being null
+            // may be worth to fix eventually
+            if(isNaN(val) || zeroCheckHandler(val)) { 
+                setInputError(true);
+            }
+            else {
+                try {
+                    data['bst'].insert(val);
+                    console.log(`BST inserting ${val}`)
+                    setData({ ...data });
+                    setInputError(false);
+                }
+                catch(error) {
+                    console.log(error);
+                    setInputError(true);
+                }
             }
         }
     }
@@ -112,12 +130,11 @@ function ControlPanel({structure, data, setData} : ControlPanelProps<number>) {
         }
     }
     const handleAVLInsert = () => {
-        // quick parser for putting in a tree in array form
+        // quick parser for putting multiple insertions in array form
         if(input[0] == '[') {
-            console.log("Quick parsing");
             try {
                 const tree_arr = JSON.parse(input);
-                tree_arr.forEach((num: number) => data['avl'].insert(num));
+                tree_arr.forEach((num: number) => zeroCheckHandler(num) ? console.log("Skipping Insertion: num == 0\n") : data['avl'].insert(num));
                 setData({ ...data });
                 setInputError(false);
             }
@@ -130,10 +147,7 @@ function ControlPanel({structure, data, setData} : ControlPanelProps<number>) {
             const val = Number(input);
             // 0 is disabled because it breaks the tree structure since it will register the parent value as being null
             // may be worth to fix eventually
-            if(isNaN(val) || val == 0) { 
-                if(val == 0) {
-                    alert("0 is not allowed for the AVL tree (it will break due to 0 == null). Sorry!");
-                }
+            if(isNaN(val) || zeroCheckHandler(val)) { 
                 setInputError(true);
             }
             else {

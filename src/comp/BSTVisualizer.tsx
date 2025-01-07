@@ -31,7 +31,7 @@ function BSTVisualizer({bst} : BSTVisualizerProps) {
                         (tree) => {
 
                         // Create the gaps between nodes for the tree relative to their parent
-                        const width_gap = 200;
+                        const width_gap = 250;
                         const height_gap = 75;
                         tree.descendants().forEach((node) => {
                             if(node.parent && node.parent.value) {
