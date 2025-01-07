@@ -112,25 +112,41 @@ function ControlPanel({structure, data, setData} : ControlPanelProps<number>) {
         }
     }
     const handleAVLInsert = () => {
-        const val = Number(input);
-        // 0 is disabled because it breaks the tree structure since it will register the parent value as being null
-        // may be worth to fix eventually
-        if(isNaN(val) || val == 0) { 
-            if(val == 0) {
-                alert("0 is not allowed for the AVL tree (it will break due to 0 == null). Sorry!");
-            }
-            setInputError(true);
-        }
-        else {
+        // quick parser for putting in a tree in array form
+        if(input[0] == '[') {
+            console.log("Quick parsing");
             try {
-                data['avl'].insert(val);
-                console.log(`AVL inserting ${val}`)
+                const tree_arr = JSON.parse(input);
+                tree_arr.forEach((num: number) => data['avl'].insert(num));
                 setData({ ...data });
                 setInputError(false);
             }
             catch(error) {
                 console.log(error);
                 setInputError(true);
+            }
+        }
+        else {
+            const val = Number(input);
+            // 0 is disabled because it breaks the tree structure since it will register the parent value as being null
+            // may be worth to fix eventually
+            if(isNaN(val) || val == 0) { 
+                if(val == 0) {
+                    alert("0 is not allowed for the AVL tree (it will break due to 0 == null). Sorry!");
+                }
+                setInputError(true);
+            }
+            else {
+                try {
+                    data['avl'].insert(val);
+                    console.log(`AVL inserting ${val}`)
+                    setData({ ...data });
+                    setInputError(false);
+                }
+                catch(error) {
+                    console.log(error);
+                    setInputError(true);
+                }
             }
         }
     }

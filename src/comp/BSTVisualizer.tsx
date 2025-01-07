@@ -1,5 +1,5 @@
 import "./BSTVisualizer.css";
-import { BST, TreeNode } from "../data_structures/tree";
+import { BST } from "../data_structures/tree";
 import { Group } from "@visx/group";
 import { hierarchy, Tree } from "@visx/hierarchy";
 import { LinkVerticalLine } from "@visx/shape";

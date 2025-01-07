@@ -332,7 +332,6 @@ export class AVL<T> extends Tree<T> {
     // adapted from GeeksForGeeks implementation of AVL deletion
     private deleteHelper(node: AVLNode<T> | null, data: T): AVLNode<T> | null {
         if (node === null) return node;
-
         if(data < node.data) {
             node.left = this.deleteHelper(node.left, data);
         }
@@ -341,12 +340,12 @@ export class AVL<T> extends Tree<T> {
         } else { // equality case, delete node found -> delete
             // case 1 / 2: no child or one child
             if(node.left === null || node.right === null) {
-                node = null;
+                node = node.left ? node.left : node.right; // note: if both left and right are null, node will become null
             }
             else { // case 3: node has both children, replace node w/ in order successor
                 const successor = this.getInOrderSuccessor(node); // get successor
                 node.data = successor!.data; // replace data
-                node.right = this.deleteHelper(node.right, successor!.data) // delete the successor
+                node.right = this.deleteHelper(node.right, successor!.data) // delete the successor 
             }
         }
 
@@ -357,22 +356,26 @@ export class AVL<T> extends Tree<T> {
         // rebalance - same as insert
         const nodeBalance = this.getBalance(node);
         // left subtree tree is larger, need to rotate to the right
-        if(nodeBalance >= 2 && data < node.left!.data) {
+        if(nodeBalance >= 2 && this.getBalance(node.left) >= 0) {
+            console.log(`Tree imbalanced at ${node.data}, performing left rotation`);
             return this.rightRotate(node)!;
         }
         // left subtree is larger, but the path up from the inserted node comes from the 
         // right subtree of the left node, requiring first a left rotation then a right rotation 
-        if(nodeBalance >= 2 && data > node.left!.data) {
+        if(nodeBalance >= 2 && this.getBalance(node.left) < 0) {
+            console.log(`Tree imbalanced at ${node.data}, performing left right rotation`);
             node.left = this.leftRotate(node.left!);
             return this.rightRotate(node)!;
         }
         // right subtree is larger, rotate to the left
-        if(nodeBalance <= -2 && data > node.right!.data) {
+        if(nodeBalance <= -2 && this.getBalance(node.right) <= 0) {
+            console.log(`Tree imbalanced at ${node.data}, performing right rotation`);
             return this.leftRotate(node)!;
         }
         // right subtree is larger, but the path up from the inserted node comes from the
         // left subtree of the right node, requiring first a right rotation then a left rotation
-        if(nodeBalance <= -2 && data < node.right!.data) {
+        if(nodeBalance <= -2 && this.getBalance(node.right) > 0) {
+            console.log(`Tree imbalanced at ${node.data}, performing right left rotation`);
             node.right = this.rightRotate(node.right!);
             return this.leftRotate(node)!;
         }
