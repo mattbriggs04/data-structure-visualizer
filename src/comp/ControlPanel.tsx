@@ -23,21 +23,14 @@ function ControlPanel({structure, data, setData} : ControlPanelProps<number>) {
     }
 
     const handleLinkedListSubmit = () => {
-        let isValidListRe = new RegExp(/^\[\s*((\d+\s*,\s*)*\d+\s*)?\]$/);
-        if(isValidListRe.test(input)) {
-            try {
-                setData({ ...data, "linkedlist": JSON.parse(input) });
-                setInputError(false);
-            }
-            catch(error) {
-                console.log("Error: invalid input given.");
-                console.log(error);
-                setInputError(true);
-            }
-            
+        // let isValidListRe = new RegExp(/^\[\s*((\d+\s*,\s*)*\d+\s*)?\]$/);
+        try {
+            setData({ ...data, "linkedlist": JSON.parse(input) });
+            setInputError(false);
         }
-        else {
-            console.log("Error: invalid input, did not pass regex.")
+        catch(error) {
+            console.log("Error: invalid linked list input given.");
+            console.log(error);
             setInputError(true);
         }
     }
