@@ -177,6 +177,12 @@ function ControlPanel({structure, data, setData} : ControlPanelProps<number>) {
         }
     }
 
+    const handleHeapInsert = () => {
+        const val = Number(input);
+    }
+    const handleHeapExtract = () => {
+        
+    }
     return (
         <div className={`controlpanel-container`}>
             { // potential TODO: Convert all control panels into separate components
@@ -205,9 +211,17 @@ function ControlPanel({structure, data, setData} : ControlPanelProps<number>) {
             {
                 structure == "avl" && // identical to bst (but may be changed in the future, so im keeping them separate for now)
                 <div className={`controlpanel-avl ${inputError && "text-error"}`}>
-                    <input type="text" id="bst_input" name="bst_input" placeholder="ex: 10" defaultValue='' onChange={handleInputChange} />
+                    <input type="text" id="avl-input" name="avl-input" placeholder="ex: 10" defaultValue='' onChange={handleInputChange} />
                     <button type="submit" id="avl-insert-btn" onClick={handleAVLInsert}>Insert</button>
                     <button type="submit" id="avl-delete-btn" onClick={handleAVLDelete}>Delete</button>
+                </div>
+            }
+            {
+                structure == "minheap" &&
+                <div className={`controlpanel-minheap ${inputError && "text-error"}`}>
+                    <input type="text" id="minheap-input" name="minheap-input" placeholder="ex: 10" defaultValue='' onChange={handleInputChange} />
+                    <button type="submit" id="minheap-insert-btn" onClick={handleHeapInsert}>Insert</button>
+                    <button type="submit" id="minheap-extract-btn" onClick={handleHeapExtract}>Extract</button>
                 </div>
             }
         </div>

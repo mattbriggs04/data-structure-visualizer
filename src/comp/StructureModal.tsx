@@ -17,6 +17,8 @@ function StructureModal({setIsSelect, setStructure} : StructureModalProps) {
                 <button value="stack" onClick={handleBtnChange}>Stack</button>
                 <button value="bst" onClick={handleBtnChange}>Binary Search Tree</button>
                 <button value="avl" onClick={handleBtnChange}>AVL Tree</button>
+                <button value="minheap" onClick={handleBtnChange}>Min Heap</button>
+                <button value="maxheap" onClick={handleBtnChange}>Max Heap</button>
             </div>
         </div>
     );
