@@ -11,7 +11,16 @@ export interface AVLNodeObj<T> {
     balance: number;
     children?: AVLNodeObj<T>[];
 }
-
+export interface HeapNodeObj {
+    value: number; // this is the weight, so must be a number
+    children?: HeapNodeObj[];
+    txt: string;
+}
+/*
+*
+* Binary Search Tree
+* 
+*/
 // Generic binary tree node 
 export class TreeNode<T> {
     data: T;
@@ -496,5 +505,107 @@ export class AVL<T> extends Tree<T> {
             }
         }
         return avlObj;
+    }
+}
+
+/*
+*
+*   Heap (Max and Min)
+* 
+*/
+class HeapNode {
+    weight: number;
+    text: string;
+    constructor(weight: number, text: string) {
+        this.weight = weight;
+        this.text = text;
+    }
+}
+
+export class Heap {
+    arr: HeapNode[];
+    type: string;
+    size: number;
+
+    constructor(type: string) {
+        this.arr = []
+        this.type = type.toLowerCase()
+        this.size = 0
+    }
+
+    insert(weight: number, text: string) {
+        this.arr.push(new HeapNode(weight, text))
+        this.bubbleUp(this.size++)
+    }
+    delete(weight:number) {
+        
+    }
+
+    bubbleUp(idx: number) {
+        let parent = Math.floor((idx - 1) / 2)
+        let curr = idx;
+        while(parent >= 0 && this.type == "min" ? this.arr[curr] < this.arr[parent] : this.arr[curr] > this.arr[parent]) {
+            const swap_node = this.arr[parent];
+            this.arr[parent] = this.arr[curr];
+            this.arr[curr] = swap_node;
+            curr = parent;
+            parent = Math.floor((curr - 1) / 2);
+        }
+    }
+    bubbleDown(idx: number) {
+        
+    }
+
+    extract() {
+
+        return this.arr[0];
+    }
+
+    toObject(): HeapNodeObj | null {
+        if(this.arr === null) { 
+            return null;
+        }
+        let heapObj: HeapNodeObj = {
+            value: this.arr[0].weight,
+            children: [],
+            txt: this.arr[0].text
+        };
+
+        const map = new Map<HeapNode, HeapNodeObj>();
+        map.set(this.arr[0], heapObj);
+
+        const queue = new Queue<HeapNode>
+        let currIdx = 0
+        queue.enqueue(this.arr[currIdx++])
+        while(queue.getSize() != 0) {
+            const currNode = queue.dequeue();
+            if(currNode) {
+                let currObj = map.get(currNode)
+                if(currObj === undefined) {
+                    currObj = { value: currNode.weight, txt: currNode.text }
+                }
+                const leftIdx = currIdx * 2 + 1;
+                const rightIdx = currIdx * 2 + 2;
+                if(leftIdx < this.size && this.arr[leftIdx]) {
+                    const leftObj: HeapNodeObj = { value: this.arr[leftIdx].weight, txt: this.arr[leftIdx].text }
+                    if(currObj.children == undefined) {
+                        currObj.children = [];
+                    }
+                    currObj.children.push(leftObj);
+                    map.set(this.arr[leftIdx], leftObj);
+                    queue.enqueue(this.arr[leftIdx]);
+                }
+                if(rightIdx < this.size && this.arr[rightIdx]) {
+                    const rightObj: HeapNodeObj = { value: this.arr[rightIdx].weight, txt: this.arr[rightIdx].text }
+                    if(currObj.children == undefined) {
+                        currObj.children = [];
+                    }
+                    currObj.children.push(rightObj);
+                    map.set(this.arr[rightIdx], rightObj);
+                    queue.enqueue(this.arr[rightIdx]);
+                }
+            }
+        }
+        return heapObj;
     }
 }
