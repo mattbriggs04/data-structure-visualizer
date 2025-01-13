@@ -4,6 +4,7 @@ import LinkedListVisualizer from "./LinkedListVisualizer";
 import BSTVisualizer from "./BSTVisualizer";
 import StackVisualizer from "./StackVisualizer";
 import AVLVisualizer from "./AVLVisualizer";
+import HeapVisualizer from "./HeapVisualizer";
 
 interface VisualizerProps<T> {
     structure: string;
@@ -27,6 +28,12 @@ function Visualizer({structure, data} : VisualizerProps<number>) {
             }
             {
                 structure == "avl" && <AVLVisualizer avl={data["avl"]} />
+            }
+            {
+                structure == "minheap" && <HeapVisualizer heap={data["minheap"]} />
+            }
+            {
+                structure == "maxheap" && <HeapVisualizer heap={data["maxheap"]} />
             }
         </div>
     );

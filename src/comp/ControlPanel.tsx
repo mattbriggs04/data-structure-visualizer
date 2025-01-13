@@ -10,6 +10,7 @@ interface ControlPanelProps<T> {
 
 function ControlPanel({structure, data, setData} : ControlPanelProps<number>) {
     const [input, setInput] = useState(''); // Input from user from ANY given text field (handling depends on which button is pressed)
+    const [secondInput, setSecondInput] = useState(''); // Another input field, used primarily for when something may include a pair of inputs like heaps
     const [inputError, setInputError] = useState(false); // If input is valid, store the state and update styles accordingly
 
     // Reset input whenever structure is updated
@@ -36,6 +37,9 @@ function ControlPanel({structure, data, setData} : ControlPanelProps<number>) {
     }
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setInput(e.target.value);
+    }
+    const handleSecondInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setSecondInput(e.target.value);
     }
     const zeroCheckHandler = (val: number): boolean => {
         if(val == 0) {
@@ -179,6 +183,9 @@ function ControlPanel({structure, data, setData} : ControlPanelProps<number>) {
 
     const handleHeapInsert = () => {
         const val = Number(input);
+        const txt = String(secondInput)
+        data['minheap'].insert(val, txt);
+        forceUpdate();
     }
     const handleHeapExtract = () => {
         
@@ -219,7 +226,8 @@ function ControlPanel({structure, data, setData} : ControlPanelProps<number>) {
             {
                 structure == "minheap" &&
                 <div className={`controlpanel-minheap ${inputError && "text-error"}`}>
-                    <input type="text" id="minheap-input" name="minheap-input" placeholder="ex: 10" defaultValue='' onChange={handleInputChange} />
+                    <input type="text" id="minheap-input-text" name="minheap-input-text" placeholder="letter" defaultValue='' onChange={handleSecondInputChange} />
+                    <input type="text" id="minheap-input" name="minheap-input" placeholder="weight" defaultValue='' onChange={handleInputChange} />
                     <button type="submit" id="minheap-insert-btn" onClick={handleHeapInsert}>Insert</button>
                     <button type="submit" id="minheap-extract-btn" onClick={handleHeapExtract}>Extract</button>
                 </div>

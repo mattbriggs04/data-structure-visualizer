@@ -1,22 +1,78 @@
 import './HeapVisualizer.css';
-import { Heap } from '../data_structures/tree'
+import { Heap } from '../data_structures/tree';
+import { Group } from '@visx/group';
+import { hierarchy, Tree } from '@visx/hierarchy';
+import { LinkVerticalLine } from '@visx/shape';
 
 interface HeapVisualizerProps {
-    type: string;
     heap: Heap;
 }
-function HeapVisualizer({type, heap} : HeapVisualizerProps) {
+function HeapVisualizer({heap} : HeapVisualizerProps) {
     const width = 1000;
     const height = 800;
     let origin = { x: 0, y: 0 };
     let margin = { top: 30, left: 0, right: 0, bottom: 0 };
 
-    let heapObj = heap.toObject();
-    return(
-        <div className={`heap-container`}>
-            
+    let treeObj = heap.toObject();
+    return (
+        <div className="heap-container">
+            <h2>{heap.type == "min" ? "Min" : "Max"} Heap</h2>
+            <svg className={`heap-svg`} width={width} height={height}>
+                {
+                treeObj !== null &&
+                <Group top={margin.top} left={margin.left}>
+                    {/* Create the tree using the tree object */}
+                    <Tree 
+                        root={hierarchy(treeObj)}
+                        size={[width, height - 100]} // Create 100px offset from height to account for circles needing to fit in svg
+                    >
+                        {
+                        (tree) => {
+                        // Create the gaps between nodes for the tree relative to their parent
+                        const width_gap = 200;
+                        const height_gap = 75;
+                        tree.descendants().forEach((node) => {
+                            if(node.parent && node.parent.value) {
+                                // use the depth to dynamically shrink the x value width so the nodes won't overlap
+                                node.x = node.parent.x + (node.data.value <= node.parent.value ? -(width_gap - node.depth * 50)  : width_gap - node.depth * 50);
+                                node.y = node.parent.y + height_gap;
+                            }
+                        })
+
+                        // Render the tree links and nodes themselves
+                        return (
+                            <Group top={origin.x} left={origin.y}>
+                                {/* Create the lines/links between all tree elements */}
+                                {tree.links().map((link, i) => (
+                                    <LinkVerticalLine
+                                        key={i}
+                                        data={link}
+                                        stroke="rgb(255,255,255)"
+                                        strokeWidth="1"
+                                        fill="none" 
+                                    />
+                                ))}
+
+                                {/* Create the nodes */}
+                                {tree.descendants().map((node, i) => (
+                                    node.data && (
+                                    <Group key={i} top={node.y} left={node.x}>
+                                        <circle className={`heap-node`} />
+                                        <text className={`heap-node-text`}>
+                                            {node.data.value} {node.data.txt}
+                                        </text>
+                                    </Group>
+                                    )
+                                ))}
+                            </Group>
+                        )}
+                        }
+                    </Tree>
+                </Group>
+                } 
+            </svg>
         </div>
-    )
+    );
 }
 
 export default HeapVisualizer;

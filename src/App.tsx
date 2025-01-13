@@ -4,9 +4,8 @@ import Menu from './comp/Menu'
 import Visualizer from './comp/Visualizer';
 // import CodeBlock from './comp/CodeBlock';
 import { DataType } from './types/types';
-import { BST, AVL } from './data_structures/tree';
+import { BST, AVL, Heap } from './data_structures/tree';
 import { Stack } from './data_structures/stack';
-
 
 function App() {
   const [structure, setStructure] = useState('');
@@ -16,7 +15,9 @@ function App() {
     'linkedlist': [],
     'bst': new BST(),
     'stack': new Stack(),
-    'avl': new AVL()
+    'avl': new AVL(),
+    'minheap': new Heap("min"),
+    'maxheap': new Heap("max")
   });
 
   // const code = `#include <stdio.h>`;

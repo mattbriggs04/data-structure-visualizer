@@ -537,14 +537,11 @@ export class Heap {
         this.arr.push(new HeapNode(weight, text))
         this.bubbleUp(this.size++)
     }
-    delete(weight:number) {
-        
-    }
 
     bubbleUp(idx: number) {
         let parent = Math.floor((idx - 1) / 2)
         let curr = idx;
-        while(parent >= 0 && this.type == "min" ? this.arr[curr] < this.arr[parent] : this.arr[curr] > this.arr[parent]) {
+        while(parent >= 0 && (this.type == "min" ? this.arr[curr] < this.arr[parent] : this.arr[curr] > this.arr[parent])) {
             const swap_node = this.arr[parent];
             this.arr[parent] = this.arr[curr];
             this.arr[curr] = swap_node;
@@ -553,16 +550,24 @@ export class Heap {
         }
     }
     bubbleDown(idx: number) {
-        
+        const leftIdx = 2 * idx + 1;
+        const rightIdx = 2 * idx + 2;
+
+        if(leftIdx < this.size && (this.type == "min" ? this.arr[leftIdx] < this.arr[idx] : this.arr[leftIdx] > this.arr[idx])) {
+
+        }
     }
 
     extract() {
-
-        return this.arr[0];
+        const extract_val = this.arr[0]
+        this.arr[0] = this.arr[--this.size]; // set the last element to replace the max
+        this.arr.pop() // remove last element
+        this.bubbleDown(0); // bubble down the top element
+        return extract_val
     }
 
     toObject(): HeapNodeObj | null {
-        if(this.arr === null) { 
+        if(this.size === 0) { 
             return null;
         }
         let heapObj: HeapNodeObj = {
