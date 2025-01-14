@@ -96,12 +96,12 @@ export class BST<T> extends Tree<T> {
     private getInOrderSuccessorPair(node: TreeNode<T> | null): {node: TreeNode<T> | null; parent: TreeNode<T> | null } {
         let parent: TreeNode<T> | null = null;
         // In order successor is the min of the right subtree (go right and then down left as far as possible)
-        if(!node) {
+        if(node === null) {
             return {node: node, parent: parent};
         }
         parent = node;
         node = node.right; // right one
-        while(node && node.left) {
+        while(node !== null && node.left !== null) {
             parent = node;
             node = node.left; // left as much as possible
         }
@@ -138,11 +138,11 @@ export class BST<T> extends Tree<T> {
             const currNode = currObj['node'];
             const currParent = currObj['parent'];
             if(currNode) {
-                if(key < currNode.data && currNode.left) { 
+                if(key < currNode.data && currNode.left !== null) { 
                     const nextObj = {node: currNode.left, parent: currNode};
                     stack.push(nextObj);
                 }
-                else if(key > currNode.data && currNode.right) {
+                else if(key > currNode.data && currNode.right !== null) {
                     const nextObj = {node: currNode.right, parent: currNode};
                     stack.push(nextObj);
                 }
@@ -151,7 +151,7 @@ export class BST<T> extends Tree<T> {
 
                     // three cases: node is a leaf, node has one child, node has two children
                     // case 1: node is a leaf (no children)
-                    if(currNode.left === null && currNode.right === null && currParent) {
+                    if(currNode.left === null && currNode.right === null && currParent !== null) {
                         if(currParent?.left?.equals(currNode)) { // if its a left child -> delete left
                             currParent.left = null;
                         }
@@ -232,14 +232,14 @@ export class BST<T> extends Tree<T> {
         queue.enqueue(this.root);
         while(queue.getSize() > 0) {
             const currNode = queue.dequeue();
-            if(currNode) {
+            if(currNode !== null) {
                 let currObj = map.get(currNode);
                 if(currObj == undefined) {
                     currObj = { value: currNode.data };
                 }
 
                 // convert the left node into a left object
-                if(currNode?.left) {
+                if(currNode?.left !== null) {
                     const leftObj: TNodeObj<T> = { value: currNode.left.data };
                     if(currObj.children == undefined) {
                         currObj.children = [];
@@ -251,7 +251,7 @@ export class BST<T> extends Tree<T> {
                 }
 
                 // convert right node into a right object
-                if(currNode?.right) {
+                if(currNode?.right !== null) {
                     const rightObj: TNodeObj<T> = { value: currNode.right.data }
                     if(currObj.children == undefined) {
                         currObj.children = [];
@@ -447,9 +447,9 @@ export class AVL<T> extends Tree<T> {
 
     private getInOrderSuccessor(node: AVLNode<T> | null): AVLNode<T> | null {
         let curr = node; 
-        if(!curr) return null
+        if(curr === null) return null
         curr = curr.right;
-        while(curr && curr.left) {
+        while(curr !== null && curr.left !== null) {
             curr = curr.left;
         }
         return curr;
@@ -475,14 +475,14 @@ export class AVL<T> extends Tree<T> {
         queue.enqueue(this.root);
         while(queue.getSize() > 0) {
             const currNode = queue.dequeue();
-            if(currNode) {
+            if(currNode !== null) {
                 let currObj = map.get(currNode);
                 if(currObj == undefined) {
                     currObj = { value: currNode.data, balance: this.getBalance(currNode) };
                 }
 
                 // convert the left node into a left object
-                if(currNode.left) {
+                if(currNode.left !== null) {
                     const leftObj: AVLNodeObj<T> = { value: currNode.left.data, balance: this.getBalance(currNode.left) };
                     if(currObj.children == undefined) {
                         currObj.children = [];
@@ -494,7 +494,7 @@ export class AVL<T> extends Tree<T> {
                 }
 
                 // convert right node into a right object
-                if(currNode.right) {
+                if(currNode.right !== null) {
                     const rightObj: AVLNodeObj<T> = { value: currNode.right.data, balance: this.getBalance(currNode.right) }
                     if(currObj.children == undefined) {
                         currObj.children = [];
@@ -611,7 +611,7 @@ export class Heap {
                     const rightIdx = 2 * currIdx + 2;
                     
                     console.log(leftIdx < this.size && this.arr[leftIdx] !== null);
-                    if(leftIdx < this.size && this.arr[leftIdx]) {
+                    if(leftIdx < this.size && this.arr[leftIdx] !== null) {
                         const leftObj: HeapNodeObj = {
                             value: this.arr[leftIdx].weight,
                             txt: this.arr[leftIdx].text,

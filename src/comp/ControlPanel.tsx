@@ -41,13 +41,6 @@ function ControlPanel({structure, data, setData} : ControlPanelProps<number>) {
     const handleSecondInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setSecondInput(e.target.value);
     }
-    const zeroCheckHandler = (val: number): boolean => {
-        if(val == 0) {
-            alert("Due to an unresolved bug, insertion of 0 has been temporarily disabled. Sorry!");
-            return true;
-        }
-        return false;
-    }
     const handleBSTInsert = () => {
         // quick parser for doing multiple inserts in a row
         if(input[0] == '[') {
@@ -66,7 +59,7 @@ function ControlPanel({structure, data, setData} : ControlPanelProps<number>) {
             const val = Number(input);
             // 0 is disabled because it breaks the tree structure since it will register the parent value as being null
             // may be worth to fix eventually
-            if(isNaN(val) || zeroCheckHandler(val)) { 
+            if(isNaN(val)) { 
                 setInputError(true);
             }
             else {
@@ -131,7 +124,7 @@ function ControlPanel({structure, data, setData} : ControlPanelProps<number>) {
         if(input[0] == '[') {
             try {
                 const tree_arr = JSON.parse(input);
-                tree_arr.forEach((num: number) => zeroCheckHandler(num) ? console.log("Skipping Insertion: num == 0\n") : data['avl'].insert(num));
+                tree_arr.forEach((num: number) => data['avl'].insert(num));
                 setData({ ...data });
                 setInputError(false);
             }
@@ -144,7 +137,7 @@ function ControlPanel({structure, data, setData} : ControlPanelProps<number>) {
             const val = Number(input);
             // 0 is disabled because it breaks the tree structure since it will register the parent value as being null
             // may be worth to fix eventually
-            if(isNaN(val) || zeroCheckHandler(val)) { 
+            if(isNaN(val)) { 
                 setInputError(true);
             }
             else {
