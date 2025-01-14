@@ -554,11 +554,28 @@ export class Heap {
             parent = Math.floor((curr - 1) / 2);
         }
     }
-    bubbleDown(idx: number) { // TODO: Complete
+    bubbleDown(idx: number) {
         const leftIdx = 2 * idx + 1;
         const rightIdx = 2 * idx + 2;
 
-        if(leftIdx < this.size && (this.type === "min" ? this.arr[leftIdx].weight <= this.arr[idx].weight : this.arr[leftIdx].weight >= this.arr[idx].weight)) {
+        // if both are less/more, swap with the larger/smaller one
+        if(leftIdx < this.size && rightIdx < this.size 
+        && (this.type === "min" ? this.arr[leftIdx].weight < this.arr[idx].weight : this.arr[leftIdx].weight > this.arr[idx].weight) 
+        && (this.type === "min" ? this.arr[rightIdx].weight < this.arr[idx].weight : this.arr[rightIdx].weight > this.arr[idx].weight)) 
+        {
+            // case leftIdx is the one to swap with
+            let swapIdx: number;
+            if(this.type === "min" ? this.arr[leftIdx] < this.arr[rightIdx] : this.arr[leftIdx] >= this.arr[rightIdx] )
+                swapIdx = leftIdx;
+            else   
+                swapIdx = rightIdx;
+
+            const swap_node = this.arr[idx];
+            this.arr[idx] = this.arr[swapIdx];
+            this.arr[swapIdx] = swap_node;
+            this.bubbleDown(swapIdx);
+        }
+        else if(leftIdx < this.size && (this.type === "min" ? this.arr[leftIdx].weight < this.arr[idx].weight : this.arr[leftIdx].weight > this.arr[idx].weight)) {
             const swap_node = this.arr[idx];
             this.arr[idx] = this.arr[leftIdx];
             this.arr[leftIdx] = swap_node;
