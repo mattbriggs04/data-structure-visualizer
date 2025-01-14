@@ -34,7 +34,7 @@ function HeapVisualizer({heap} : HeapVisualizerProps) {
                         const width_gap = 245;
                         const height_gap = 95;
                         tree.descendants().forEach((node) => {
-                            if(node.parent !== null && node.parent.value !== null) {
+                            if(node.parent !== null) {
                                 // use the depth to dynamically shrink the x value width so the nodes won't overlap
                                 node.x = node.parent.x + (node.data.isLeft ? -(width_gap - node.depth * 60)  : width_gap - node.depth * 60);
                                 node.y = node.parent.y + height_gap;
