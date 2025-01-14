@@ -184,11 +184,13 @@ function ControlPanel({structure, data, setData} : ControlPanelProps<number>) {
     const handleHeapInsert = () => {
         const val = Number(input);
         const txt = String(secondInput)
-        data['minheap'].insert(val, txt);
+        // insert depending on which heap is selected
+        structure == "minheap" ? data['minheap'].insert(val, txt) : data['maxheap'].insert(val, txt);
         forceUpdate();
     }
     const handleHeapExtract = () => {
-        
+        structure == "minheap" ? data['minheap'].extract() : data['maxheap'].extract();
+        forceUpdate();
     }
     return (
         <div className={`controlpanel-container`}>
@@ -224,12 +226,12 @@ function ControlPanel({structure, data, setData} : ControlPanelProps<number>) {
                 </div>
             }
             {
-                structure == "minheap" &&
-                <div className={`controlpanel-minheap ${inputError && "text-error"}`}>
-                    <input type="text" id="minheap-input-text" name="minheap-input-text" placeholder="letter" defaultValue='' onChange={handleSecondInputChange} />
-                    <input type="text" id="minheap-input" name="minheap-input" placeholder="weight" defaultValue='' onChange={handleInputChange} />
-                    <button type="submit" id="minheap-insert-btn" onClick={handleHeapInsert}>Insert</button>
-                    <button type="submit" id="minheap-extract-btn" onClick={handleHeapExtract}>Extract</button>
+                (structure == "minheap" || structure == "maxheap") &&
+                <div className={`controlpanel-heap ${inputError && "text-error"}`}>
+                    <input type="text" id="heap-input-text" name="heap-input-text" placeholder="letter" defaultValue='' onChange={handleSecondInputChange} />
+                    <input type="text" id="heap-input" name="heap-input" placeholder="weight" defaultValue='' onChange={handleInputChange} />
+                    <button type="submit" id="heap-insert-btn" onClick={handleHeapInsert}>Insert</button>
+                    <button type="submit" id="heap-extract-btn" onClick={handleHeapExtract}>Extract [<span id="heap-last-extracted">{structure == "minheap" ? data["minheap"].lastExtracted : data["maxheap"].lastExtracted}</span>]</button>
                 </div>
             }
         </div>

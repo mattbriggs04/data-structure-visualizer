@@ -11,12 +11,14 @@ function HeapVisualizer({heap} : HeapVisualizerProps) {
     const width = 1000;
     const height = 800;
     let origin = { x: 0, y: 0 };
-    let margin = { top: 30, left: 0, right: 0, bottom: 0 };
+    let margin = { top: 40, left: 0, right: 0, bottom: 0 };
 
     let treeObj = heap.toObject();
+    console.log(heap.arr);
     return (
         <div className="heap-container">
             <h2>{heap.type == "min" ? "Min" : "Max"} Heap</h2>
+            {/* <h2>{heap.getArr()}</h2> */}
             <svg className={`heap-svg`} width={width} height={height}>
                 {
                 treeObj !== null &&
@@ -29,12 +31,12 @@ function HeapVisualizer({heap} : HeapVisualizerProps) {
                         {
                         (tree) => {
                         // Create the gaps between nodes for the tree relative to their parent
-                        const width_gap = 200;
-                        const height_gap = 75;
+                        const width_gap = 245;
+                        const height_gap = 95;
                         tree.descendants().forEach((node) => {
-                            if(node.parent && node.parent.value) {
+                            if(node.parent !== null && node.parent.value !== null) {
                                 // use the depth to dynamically shrink the x value width so the nodes won't overlap
-                                node.x = node.parent.x + (node.data.value <= node.parent.value ? -(width_gap - node.depth * 50)  : width_gap - node.depth * 50);
+                                node.x = node.parent.x + (node.data.isLeft ? -(width_gap - node.depth * 60)  : width_gap - node.depth * 60);
                                 node.y = node.parent.y + height_gap;
                             }
                         })
@@ -59,7 +61,7 @@ function HeapVisualizer({heap} : HeapVisualizerProps) {
                                     <Group key={i} top={node.y} left={node.x}>
                                         <circle className={`heap-node`} />
                                         <text className={`heap-node-text`}>
-                                            {node.data.value} {node.data.txt}
+                                            {node.data.txt},{node.data.value} 
                                         </text>
                                     </Group>
                                     )

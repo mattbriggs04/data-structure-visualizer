@@ -15,6 +15,7 @@ export interface HeapNodeObj {
     value: number; // this is the weight, so must be a number
     children?: HeapNodeObj[];
     txt: string;
+    isLeft?: boolean;
 }
 /*
 *
@@ -526,22 +527,26 @@ export class Heap {
     arr: HeapNode[];
     type: string;
     size: number;
-
+    lastExtracted: string | null;
     constructor(type: string) {
         this.arr = []
         this.type = type.toLowerCase()
         this.size = 0
+        this.lastExtracted = null;
     }
 
     insert(weight: number, text: string) {
-        this.arr.push(new HeapNode(weight, text))
-        this.bubbleUp(this.size++)
+        this.arr.push(new HeapNode(weight, text));
+        console.log(`Adding new node ${text}, ${weight}`)
+        this.bubbleUp(this.size++);
     }
 
     bubbleUp(idx: number) {
         let parent = Math.floor((idx - 1) / 2)
         let curr = idx;
-        while(parent >= 0 && (this.type == "min" ? this.arr[curr] < this.arr[parent] : this.arr[curr] > this.arr[parent])) {
+        console.log("bubbling up");
+        while(parent >= 0 && (this.type === "min" ? this.arr[curr].weight < this.arr[parent].weight : this.arr[curr].weight > this.arr[parent].weight)) {
+            console.log(`swapping ${parent} with ${curr}`)
             const swap_node = this.arr[parent];
             this.arr[parent] = this.arr[curr];
             this.arr[curr] = swap_node;
@@ -549,68 +554,101 @@ export class Heap {
             parent = Math.floor((curr - 1) / 2);
         }
     }
-    bubbleDown(idx: number) {
+    bubbleDown(idx: number) { // TODO: Complete
         const leftIdx = 2 * idx + 1;
         const rightIdx = 2 * idx + 2;
 
-        if(leftIdx < this.size && (this.type == "min" ? this.arr[leftIdx] < this.arr[idx] : this.arr[leftIdx] > this.arr[idx])) {
-
+        if(leftIdx < this.size && (this.type === "min" ? this.arr[leftIdx].weight <= this.arr[idx].weight : this.arr[leftIdx].weight >= this.arr[idx].weight)) {
+            const swap_node = this.arr[idx];
+            this.arr[idx] = this.arr[leftIdx];
+            this.arr[leftIdx] = swap_node;
+            this.bubbleDown(leftIdx);
+        }
+        else if(rightIdx < this.size && (this.type === "min" ? this.arr[rightIdx].weight < this.arr[idx].weight : this.arr[rightIdx].weight > this.arr[idx].weight)) {
+            const swap_node = this.arr[idx];
+            this.arr[idx] = this.arr[rightIdx];
+            this.arr[rightIdx] = swap_node;
+            this.bubbleDown(rightIdx);
         }
     }
 
-    extract() {
-        const extract_val = this.arr[0]
+    extract(): HeapNode {
+        const extract_node = this.arr[0]
         this.arr[0] = this.arr[--this.size]; // set the last element to replace the max
         this.arr.pop() // remove last element
         this.bubbleDown(0); // bubble down the top element
-        return extract_val
+        
+        this.lastExtracted = `(${extract_node.text}, ${extract_node.weight})`;
+        return extract_node
     }
 
     toObject(): HeapNodeObj | null {
-        if(this.size === 0) { 
+        if (this.size === 0) { 
             return null;
         }
+    
         let heapObj: HeapNodeObj = {
             value: this.arr[0].weight,
             children: [],
             txt: this.arr[0].text
         };
-
+    
         const map = new Map<HeapNode, HeapNodeObj>();
         map.set(this.arr[0], heapObj);
-
-        const queue = new Queue<HeapNode>
-        let currIdx = 0
-        queue.enqueue(this.arr[currIdx++])
-        while(queue.getSize() != 0) {
-            const currNode = queue.dequeue();
-            if(currNode) {
-                let currObj = map.get(currNode)
-                if(currObj === undefined) {
-                    currObj = { value: currNode.weight, txt: currNode.text }
-                }
-                const leftIdx = currIdx * 2 + 1;
-                const rightIdx = currIdx * 2 + 2;
-                if(leftIdx < this.size && this.arr[leftIdx]) {
-                    const leftObj: HeapNodeObj = { value: this.arr[leftIdx].weight, txt: this.arr[leftIdx].text }
-                    if(currObj.children == undefined) {
-                        currObj.children = [];
+    
+        const queue = new Queue<number>(); // Queue of indices
+        queue.enqueue(0); // Start with the root node at index 0
+    
+        while(queue.getSize() !== 0) {
+            const currIdx = queue.dequeue();
+            console.log(`curr idx = ${currIdx}`)
+            if(currIdx !== null) {
+                const currNode = this.arr[currIdx];
+                const currObj = map.get(currNode);
+    
+                if(currObj !== undefined) {
+                    const leftIdx = 2 * currIdx + 1;
+                    const rightIdx = 2 * currIdx + 2;
+                    
+                    console.log(leftIdx < this.size && this.arr[leftIdx] !== null);
+                    if(leftIdx < this.size && this.arr[leftIdx]) {
+                        const leftObj: HeapNodeObj = {
+                            value: this.arr[leftIdx].weight,
+                            txt: this.arr[leftIdx].text,
+                            children: [],
+                            isLeft: true
+                        };
+                        console.log("adding to left side");
+                        currObj.children?.push(leftObj);
+                        map.set(this.arr[leftIdx], leftObj);
+                        queue.enqueue(leftIdx);
                     }
-                    currObj.children.push(leftObj);
-                    map.set(this.arr[leftIdx], leftObj);
-                    queue.enqueue(this.arr[leftIdx]);
-                }
-                if(rightIdx < this.size && this.arr[rightIdx]) {
-                    const rightObj: HeapNodeObj = { value: this.arr[rightIdx].weight, txt: this.arr[rightIdx].text }
-                    if(currObj.children == undefined) {
-                        currObj.children = [];
+    
+                    if(rightIdx < this.size && this.arr[rightIdx] !== null) {
+                        const rightObj: HeapNodeObj = {
+                            value: this.arr[rightIdx].weight,
+                            txt: this.arr[rightIdx].text,
+                            children: [],
+                            isLeft: false
+                        };
+                        currObj.children?.push(rightObj);
+                        map.set(this.arr[rightIdx], rightObj);
+                        queue.enqueue(rightIdx);
                     }
-                    currObj.children.push(rightObj);
-                    map.set(this.arr[rightIdx], rightObj);
-                    queue.enqueue(this.arr[rightIdx]);
                 }
             }
         }
+    
         return heapObj;
     }
+
+    // getArr(): string | null {
+    //     let out: string = '[';
+    //     for(let i = 0; i < this.size - 1; i++) {
+    //         out += `(${this.arr[i].text}, ${this.arr[i].weight}), `;
+    //     }
+    //     out += `(${this.arr[this.size - 1].text}, ${this.arr[this.size - 1].weight})`;
+    //     out += ']';
+    //     return out;
+    // }
 }

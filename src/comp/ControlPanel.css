@@ -48,7 +48,7 @@
     width: 100%;
 }
 
-/* binary search tree and AVL tree */
+/* binary search tree, AVL tree, and Heap */
 .controlpanel-bst {
     display: flex;
     flex-direction: row;
@@ -58,17 +58,18 @@
 }
 
 .controlpanel-bst input,
-.controlpanel-avl input {
+.controlpanel-avl input,
+.controlpanel-heap input {
     margin-right: 0;
     min-width: 50px;
     max-width: 100px;
     text-align: center;
 }
 .controlpanel-bst button,
-.controlpanel-avl button {
+.controlpanel-avl button,
+.controlpanel-heap button {
     margin-left: 1rem;
 }
-
 /* stack */
 .controlpanel-stack input {
     margin-right: 0;
