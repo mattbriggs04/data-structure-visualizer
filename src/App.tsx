@@ -1,7 +1,8 @@
-import './App.css'
+import './App.css';
 import { useState } from 'react';
-import Menu from './comp/Menu'
+import Menu from './comp/Menu';
 import Visualizer from './comp/Visualizer';
+import Description from './comp/Description';
 // import CodeBlock from './comp/CodeBlock';
 import { DataType } from './types/types';
 import { BST, AVL, Heap } from './data_structures/tree';
@@ -26,6 +27,7 @@ function App() {
       <div className={`flex-container`}>
         <Menu structure={structure} setStructure={setStructure} data={data} setData={setData} />
         <Visualizer structure={structure} data={data} />
+        <Description structure={structure} />
       </div>
       {/* <CodeBlock language={codeLang} code={code} /> */}
     </div>
