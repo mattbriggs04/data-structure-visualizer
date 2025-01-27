@@ -5,14 +5,14 @@ interface DescriptionProps {
 }
 function Description({structure}: DescriptionProps) {
     return (
-        <>
+        <div className="description-wrapper">
             {structure == "linkedlist" &&
-                <div className="linkedlist-desc-container">
+                <div className="description-container linkedlist-desc-container">
 
                 </div>
             }
             {structure == "bst" &&
-                <div className="bst-desc-container">
+                <div className="description-container bst-desc-container">
                     <h2>What is a Binary Search Tree?</h2>
                     <p>A Binary Search Tree (BST) is a basic and common data structure that is derived from a Binary Tree. "Bi" refers to two, as each node has zero, one, or two children. A useful way to think about a binary tree is that each node always has two children, but children can be NULL. A BST has the specific property that the left child must have a value less than its parent, while a right child must have a value larger than its parent. A BST's ordering property makes it efficient at searching, inserting, and deleting.</p>
                     <h3>Searching</h3>
@@ -28,13 +28,13 @@ function Description({structure}: DescriptionProps) {
                     <h3>Insertion</h3>
                     <h3>Deletion</h3>
                     <h3>Disadvantages</h3>
-                    <p>A BST does have one major difference. Consider inserting the following values (try it yourself!): 10, 8, 5, 3, 2, 1</p>
+                    <p>Consider inserting the following values in the order which they are listed (try it yourself!): [10, 8, 5, 3, 2, 1]. Notice the structure of the BST. In this case, the BST is effectively a Linked List -- the time complexity for inserting and searching is O(n). Thus, the worst-case time complexity for a BST is O(n).</p>
                     <p>See the code below for an example of how a general purpose BST would be implemented</p>
                     {/* Code Block Here */}
                     
                 </div>
             }
-        </>
+        </div>
     )
 }
 

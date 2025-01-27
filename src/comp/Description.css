@@ -1,0 +1,10 @@
+.description-wrapper {
+    display: flex;
+    justify-content: center;
+    padding-top: 5vh;
+}
+.description-container {
+    font-family: 'Ubuntu';
+    line-height: 1.7rem;
+    width: 80%;
+}
