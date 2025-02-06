@@ -3,7 +3,8 @@
 
 typedef struct _ListNode {
     int value;
-    struct _ListNode* next
+    struct _ListNode* next; // singly linked list
+    // struct _ListNode* prev; // doubly linked list
 } ListNode;
 
 typedef struct _List {
