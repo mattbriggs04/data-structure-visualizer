@@ -3,8 +3,42 @@
     justify-content: center;
     padding-top: 5vh;
 }
+
 .description-container {
     font-family: 'Ubuntu';
-    line-height: 1.7rem;
     width: 80%;
+    background-color: var(--bg-colors);
+    border-radius: 12px;
+    color: var(--text-color);
+}
+
+.description-container h1 {
+    font-size: 28px;
+    text-align: center;
+    margin-bottom: 10px;
+}
+
+.description-container p {
+    font-size: 1.1rem;
+    line-height: 1.6;
+}
+
+.description-container ol {
+    padding-left: 3rem;
+    margin: 1rem;
+}
+.description-container ol li {
+    line-height: 1.8; /* better than margin bottom or margin top since there will not be a margin on the first or last element */
+}
+.description-container h3 {
+    margin-top: 1rem;
+    padding-bottom: 0.3rem;
+}
+
+.description-container blockquote {
+    padding-left: 1rem;
+    margin: 1rem;
+    border-left: 2px solid var(--accent-color);
+    transition: opacity 200ms;
+    opacity: 1;
 }

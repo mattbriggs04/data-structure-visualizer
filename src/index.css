@@ -7,7 +7,7 @@
   --text-color: #4a4947;
   --text-color-contrast: #eee;
   --bg-color: #faf7f0;
-  --bg-color-contrast: #242424;
+  --bg-color-contrast: #1d1d1d;
   --fg-color: #28A745;
   --accent-color: #ffd700;
 }
@@ -15,9 +15,10 @@
   :root {
     --text-color: #eee;
     --text-color-contrast: #4a4947;
-    --bg-color: #242424;
+    --bg-color: #1d1d1d;
     --bg-color-contrast: #faf7f0;
     --fg-color: #19bc8b;
+    --accent-color: #ffd700;
   }
 }
 
