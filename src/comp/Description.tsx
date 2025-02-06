@@ -4,16 +4,34 @@ interface DescriptionProps {
     structure: string;
 }
 function Description({structure}: DescriptionProps) {
-    const language="c";
-    const code="int main() {return 0;}";
+    const code=`#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct _ListNode {
+    int value;
+    struct _ListNode* next; // singly linked list
+    // struct _ListNode* prev; // doubly linked list
+} ListNode;
+
+typedef struct _List {
+    ListNode* head;
+    ListNode* tail;
+    int size;
+} List;
+
+int main(void) {
+    
+    return EXIT_SUCCESS; // 0
+}`;
     return (
         <div className="description-wrapper">
             {structure == "linkedlist" &&
                 <div className="description-container linkedlist-desc-container">
                     <h1>What is a Linked List?</h1>
-                    <p>Linked lists are a fundamental data structure that store information in nodes, in which each node is <em>linked</em> to eachother through a pointer to the next and or the previous node. <blockquote>Currently, the linked list shown in the visualizer is a singly linked list, which means each element contains only a pointer to the next element. A doubly linked list would also include an arrow going backwards, storing both a pointer to the next element and previous element. Note the electrical ground symbol is also used to denote <em>NULL</em> (end of list).</blockquote>
-                    </p>
-                    <CodeBlock language={language} code={code} />;
+                    <p>Linked lists are a fundamental data structure that store information in nodes, in which each node is <em>linked</em> to eachother through a pointer to the next and or the previous node.</p> 
+                    <blockquote>Currently, the linked list shown in the visualizer is a singly linked list, which means each element contains only a pointer to the next element. A doubly linked list would also include an arrow going backwards, storing both a pointer to the next element and previous element. Note the electrical ground symbol is also used to denote <em>NULL</em> (end of list).</blockquote>
+                    <p></p>
+                    <CodeBlock language="c" code={code} />
                 </div>
             }
             {structure == "bst" &&

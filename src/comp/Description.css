@@ -19,9 +19,16 @@
     margin-bottom: 10px;
 }
 
-.description-container p {
+.description-container p,
+.description-container blockquote {
     font-size: 1.1rem;
     line-height: 1.6;
+}
+
+.description-container blockquote {
+    padding-left: 1rem;
+    margin: 1rem;
+    border-left: 2px solid var(--accent-color);
 }
 
 .description-container ol {
@@ -34,12 +41,6 @@
 .description-container h3 {
     margin-top: 1rem;
     padding-bottom: 0.3rem;
-}
-
-.description-container blockquote {
-    padding-left: 1rem;
-    margin: 1rem;
-    border-left: 2px solid var(--accent-color);
 }
 
 .footer {

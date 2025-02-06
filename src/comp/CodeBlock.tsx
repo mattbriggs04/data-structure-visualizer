@@ -13,7 +13,7 @@ interface CodeBlockProps {
 function CodeBlock({language, code} : CodeBlockProps) {
     useEffect(() => {
         Prism.highlightAll();
-    }, []);
+    }, [code, language]);
 
     return (
         <pre>
