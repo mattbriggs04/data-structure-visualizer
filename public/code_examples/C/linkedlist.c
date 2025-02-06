@@ -15,5 +15,5 @@ typedef struct _List {
 
 int main(void) {
     
-    return EXIT_SUCCESS; // 0
+    return EXIT_SUCCESS;
 }

@@ -10,20 +10,20 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@types/prismjs": "^1.26.5",
     "@visx/group": "^3.12.0",
     "@visx/hierarchy": "^3.12.0",
     "@visx/shape": "^3.12.0",
     "d3": "^7.9.0",
-    "prismjs": "^1.29.0",
     "react": "^18.3.1",
-    "react-dom": "^18.3.1"
+    "react-dom": "^18.3.1",
+    "react-syntax-highlighter": "^15.6.1"
   },
   "devDependencies": {
     "@eslint/js": "^9.13.0",
     "@types/d3": "^7.4.3",
     "@types/react": "^18.3.17",
     "@types/react-dom": "^18.3.1",
+    "@types/react-syntax-highlighter": "^15.5.13",
     "@vitejs/plugin-react": "^4.3.3",
     "eslint": "^9.13.0",
     "eslint-plugin-react-hooks": "^5.0.0",
