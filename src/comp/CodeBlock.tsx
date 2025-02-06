@@ -8,6 +8,9 @@ interface CodeBlockProps {
 }
 function CodeBlock({language, filepath} : CodeBlockProps) {
     const [code, setCode] = useState(``);
+    const codeStyles = {
+        fontSize: "1.1rem",
+    }
     useEffect(() => {
         fetch(filepath)
             .then((res) => res.text())
@@ -18,7 +21,7 @@ function CodeBlock({language, filepath} : CodeBlockProps) {
     }, [filepath])
 
     return (
-        <SyntaxHighlighter language={language} style={monokai}>
+        <SyntaxHighlighter language={language} style={monokai} customStyle={codeStyles}>
             {code}
         </SyntaxHighlighter> 
     );

@@ -8,6 +8,7 @@
 .description-container {
     font-family: 'Ubuntu';
     width: 80%;
+    max-width: 1200px;
     background-color: var(--bg-colors);
     border-radius: 12px;
     color: var(--text-color);
