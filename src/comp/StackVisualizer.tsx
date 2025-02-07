@@ -8,7 +8,7 @@ interface StackVisualizerProps<T> {
 
 function StackVisualizer({stack} : StackVisualizerProps<number>) {
     const width = 500;
-    const height = 800;
+    const height = 600;
     const node_width = 75;
     const node_height = node_width;
     // const top_margin = 30;

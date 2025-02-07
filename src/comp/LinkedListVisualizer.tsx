@@ -8,7 +8,7 @@ interface LinkedListVisualizerProps<T> {
 function LinkedListVisualizer({linkedList} : LinkedListVisualizerProps<number>) {
     const svgRef = useRef<HTMLDivElement | null>(null);
     const d3svg = useRef<d3.Selection<SVGSVGElement, unknown, null, undefined> | null>(null);
-    const svgWidth = 1000; //px
+    const svgWidth = 800; //px
     const svgHeight = 200; //px
     const leftPadding = 20; //px
     useEffect(() => {
