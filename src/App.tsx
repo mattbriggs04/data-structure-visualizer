@@ -1,16 +1,15 @@
 import './App.css';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Menu from './comp/Menu';
 import Visualizer from './comp/Visualizer';
 import Description from './comp/Description';
-// import CodeBlock from './comp/CodeBlock';
 import { DataType } from './types/types';
 import { BST, AVL, Heap } from './data_structures/tree';
 import { Stack } from './data_structures/stack';
 
 function App() {
   const [structure, setStructure] = useState('');
-  // const [codeLang, setCodeLang] = useState('C');
+  const [theme, setTheme] = useState(window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'); // default is system theme
 
   const [data, setData] = useState<DataType<number>>({
     'linkedlist': [],
@@ -21,15 +20,18 @@ function App() {
     'maxheap': new Heap("max")
   });
 
-  // const code = `#include <stdio.h>`;
+  useEffect(() => {
+    document.documentElement.setAttribute('data-theme', theme);
+    console.log("theme updated");
+  }, [theme]);
+
   return (
     <div className={`app-wrapper`}>
       <div className={`flex-container`}>
-        <Menu structure={structure} setStructure={setStructure} data={data} setData={setData} />
+        <Menu structure={structure} theme={theme} setTheme={setTheme} setStructure={setStructure} data={data} setData={setData} />
         <Visualizer structure={structure} data={data} />
         <Description structure={structure} />
       </div>
-      {/* <CodeBlock language={codeLang} code={code} /> */}
     </div>
   )
 }

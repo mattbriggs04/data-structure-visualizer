@@ -9,18 +9,25 @@ interface MenuProps {
     setStructure: Dispatch<SetStateAction<string>>;
     data: DataType<number>;
     setData: Dispatch<SetStateAction<DataType<number>>>;
+    theme: string;
+    setTheme: Dispatch<SetStateAction<string>>;
 }
 
-function Menu({ structure, setStructure, data, setData }: MenuProps) {
+function Menu({ structure, setStructure, data, setData, theme, setTheme }: MenuProps) {
     const [isSelect, setIsSelect] = useState(false);
     const handleSelectBtn = () => {
         setIsSelect(true);
+    }
+
+    const handleThemeChange = () => {        
+        setTheme(theme == "light" ? "dark" : "light");
     }
 
     return (
         <>
             {isSelect && <StructureModal setIsSelect={setIsSelect} setStructure={setStructure} />}
             <div className="menu-container">
+                <button onClick={handleThemeChange} className={`theme-select-btn`}>Settings</button>
                 <button onClick={handleSelectBtn} className={`button-style1 select-structure-btn`}>Select Structure</button>
                 <ControlPanel structure={structure} data={data} setData={setData} />
             </div>

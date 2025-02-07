@@ -6,6 +6,13 @@ interface DescriptionProps {
 function Description({structure}: DescriptionProps) {
     return (
         <div className="description-wrapper">
+            {structure == "stack" &&
+            <div className="description-container stack-desc-container">
+                <h1>What is a Stack?</h1>
+                <CodeBlock language="c" filepath="/code_examples/C/stack.c" />
+            </div>
+
+            }
             {structure == "linkedlist" &&
                 <div className="description-container linkedlist-desc-container">
                     <h1>What is a Linked List?</h1>

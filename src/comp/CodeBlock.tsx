@@ -1,6 +1,6 @@
 import "./CodeBlock.css";
 import SyntaxHighlighter from 'react-syntax-highlighter';
-import { monokai } from 'react-syntax-highlighter/dist/esm/styles/hljs';
+import { atomOneDark } from 'react-syntax-highlighter/dist/esm/styles/hljs';
 import { useState, useEffect } from "react";
 interface CodeBlockProps {
     language: string;
@@ -9,7 +9,8 @@ interface CodeBlockProps {
 function CodeBlock({language, filepath} : CodeBlockProps) {
     const [code, setCode] = useState(``);
     const codeStyles = {
-        fontSize: "1.1rem",
+        fontSize: "1rem",
+        boxShadow: "0 0 8px 1px black",
     }
     useEffect(() => {
         fetch(filepath)
@@ -21,7 +22,7 @@ function CodeBlock({language, filepath} : CodeBlockProps) {
     }, [filepath])
 
     return (
-        <SyntaxHighlighter language={language} style={monokai} customStyle={codeStyles}>
+        <SyntaxHighlighter language={language} showLineNumbers={true} style={atomOneDark} customStyle={codeStyles}>
             {code}
         </SyntaxHighlighter> 
     );
