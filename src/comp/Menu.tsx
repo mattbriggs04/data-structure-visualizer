@@ -3,6 +3,9 @@ import './Menu.css';
 import ControlPanel from "./ControlPanel"
 import StructureModal from "./StructureModal"
 import { DataType } from "../types/types"
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faMoon } from "@fortawesome/free-regular-svg-icons";
+import { faSun } from "@fortawesome/free-solid-svg-icons";
 
 interface MenuProps {
     structure: string;
@@ -19,7 +22,7 @@ function Menu({ structure, setStructure, data, setData, theme, setTheme }: MenuP
         setIsSelect(true);
     }
 
-    const handleThemeChange = () => {        
+    const handleThemeChange = () => {
         setTheme(theme == "light" ? "dark" : "light");
     }
 
@@ -27,8 +30,12 @@ function Menu({ structure, setStructure, data, setData, theme, setTheme }: MenuP
         <>
             {isSelect && <StructureModal setIsSelect={setIsSelect} setStructure={setStructure} />}
             <div className="menu-container">
-                <button onClick={handleThemeChange} className={`theme-select-btn`}>Settings</button>
-                <button onClick={handleSelectBtn} className={`button-style1 select-structure-btn`}>Select Structure</button>
+                <div>
+                    <button onClick={handleThemeChange} className={`theme-select-btn`}>
+                        <FontAwesomeIcon icon={theme === 'light' ? faSun : faMoon} />
+                    </button>
+                    <button onClick={handleSelectBtn} className={`button-style1 select-structure-btn`}>Select Structure</button>
+                </div>
                 <ControlPanel structure={structure} data={data} setData={setData} />
             </div>
         </>

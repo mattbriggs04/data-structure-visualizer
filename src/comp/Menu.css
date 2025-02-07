@@ -22,3 +22,20 @@
     transition: 500ms;
     box-shadow: 0 0 8px var(--fg-color);
 }
+
+.menu-container .theme-select-btn {
+    outline: none;
+    border: none;
+    width: 60px;
+
+    margin-right: 1rem;
+
+    padding: 0.6rem;
+    font-size: 1.8rem;
+    color: var(--icon-color);
+    background-color: transparent;
+}
+
+.menu-container .theme-select-btn:hover {
+    cursor: pointer;
+}

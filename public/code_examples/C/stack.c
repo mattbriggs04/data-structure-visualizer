@@ -56,6 +56,5 @@ int main(void) {
     // free stack
     delete_stack(&stack);
 
-    
     return EXIT_SUCCESS;
 }
