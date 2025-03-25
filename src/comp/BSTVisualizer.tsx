@@ -8,7 +8,7 @@ interface BSTVisualizerProps {
 }
 
 function BSTVisualizer({bst} : BSTVisualizerProps) {
-    const width = 1000;
+    const width = 1200;
     const height = 800;
     let origin = { x: 0, y: 0 };
     let margin = { top: 30, left: 0, right: 0, bottom: 0 };

@@ -18,7 +18,18 @@ function Description({structure}: DescriptionProps) {
                     <h1>What is a Linked List?</h1>
                     <p>Linked lists are a fundamental data structure that store information in nodes, in which each node is <em>linked</em> to eachother through a pointer to the next and or the previous node.</p> 
                     <blockquote>Currently, the linked list shown in the visualizer is a singly linked list, which means each element contains only a pointer to the next element. A doubly linked list would also include an arrow going backwards, storing both a pointer to the next element and previous element. Note the electrical ground symbol is also used to denote <em>NULL</em> (end of list).</blockquote>
-                    <p></p>
+                    Linked lists are commonly used to create other fundamental datastructures, such as a stack or queue. The "competition" to linked lists are arrays, which is what they are often compared to when making design decisions and considering the advantages and disadvantages.
+                    <h3>Advantages</h3>
+                    <ul>
+                        <li>Dynamically Sized. Easy to create and add a new node or remove a node already in the list. In contrast, arrays entire structure have to be resized to add more elements.</li>
+                        <li>Efficient insertion and deletion. Elements don't need to be moved around, just the links updated.</li>
+                    </ul>
+                    <h3>Disadvantages</h3>
+                    <ul>
+                        <li>No random access / indexing: while in an array to access the fifth element one might type my_arr[5], a linked list would require a traversal along five of the links.
+                        </li>
+                        <li>Memory overhead: Each node requires additional space to store the next pointer (the link).</li>
+                    </ul>
                     <CodeBlock language="c" filepath="/code_examples/C/linkedlist.c" />
                 </div>
             }
@@ -45,7 +56,11 @@ function Description({structure}: DescriptionProps) {
                     <h3>Deletion</h3>
                     <p>Deletion gets a little bit more complex. What happens if we want to delete a node that has two children?</p>
                     <h3>Disadvantages</h3>
-                    <p>Consider inserting the following values in the order which they are listed (try it yourself!): [10, 8, 5, 3, 2, 1]. <blockquote><b>Pro tip:</b> into any tree visualizer, elements can be quickly inserted by putting them in an array format. [10, 8, 5] will insert a 10, then 8, then 5.</blockquote>Notice the structure of the BST. In this case, the BST is effectively a Linked List -- the time complexity for inserting and searching is O(n). Thus, the worst-case time complexity for a BST is O(n). With a <em>balanced</em> binary search tree (such as an AVL Tree), the searching and inserting time complexity is O(logn) -- much better!</p>
+                    <p>Consider inserting the following values in the order which they are listed (try it yourself!): [10, 8, 5, 3, 2, 1]. </p>
+                    <blockquote>
+                        <b>Pro tip:</b> into any tree visualizer, elements can be quickly inserted by putting them in a list format. [10, 8, 5] will insert a 10, then 8, then 5.
+                    </blockquote>
+                    <p>Notice the structure of the BST -- since all of the elements are less than the previously inserted one, they form a line. In this case, the BST is effectively a Linked List -- the time complexity for inserting and searching is O(n). Thus, the worst-case time complexity for a BST is O(n). With a <em>balanced</em> binary search tree (such as an AVL Tree), the searching and inserting time complexity is O(logn) -- much better!</p>
                     {/* <p>See the code below for an example of how a general purpose BST would be implemented</p>
                     Code Block Here */}
                     

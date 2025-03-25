@@ -32,11 +32,13 @@
     border-left: 2px solid var(--accent-color);
 }
 
-.description-container ol {
+.description-container ol,
+.description-container ul {
     padding-left: 3rem;
     margin: 0.5rem;
 }
-.description-container ol li {
+.description-container ol li,
+.description-container ul li {
     line-height: 1.8; /* better than margin bottom or margin top since there will not be a margin on the first or last element */
 }
 .description-container h3 {
