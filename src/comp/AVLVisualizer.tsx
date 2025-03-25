@@ -9,7 +9,7 @@ interface AVLVisualizerProps {
 }
 
 function AVLVisualizer({avl}: AVLVisualizerProps) {
-        const width = 1000;
+        const width = 1200;
         const height = 800;
         let origin = { x: 0, y: 0 };
         let margin = { top: 30, left: 0, right: 0, bottom: 0 };
@@ -32,11 +32,16 @@ function AVLVisualizer({avl}: AVLVisualizerProps) {
                             (tree) => {
                             // Create the gaps between nodes for the tree relative to their parent
                             const width_gap = 200;
+                            const min_gap = 20;
                             const height_gap = 75;
                             tree.descendants().forEach((node) => {
                                 if(node.parent !== null && node.parent.value !== undefined) {
                                     // use the depth to dynamically shrink the x value width so the nodes won't overlap
-                                    node.x = node.parent.x + (node.data.value <= node.parent.value ? -(width_gap - node.depth * 50)  : width_gap - node.depth * 50);
+                                    let gap = width_gap - node.depth * 50;
+                                    if (gap < min_gap) {
+                                        gap = min_gap
+                                    }
+                                    node.x = node.parent.x + (node.data.value <= node.parent.value ? -gap  : gap);
                                     node.y = node.parent.y + height_gap;
                                 }
                             })

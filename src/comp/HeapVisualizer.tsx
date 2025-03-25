@@ -32,11 +32,16 @@ function HeapVisualizer({heap} : HeapVisualizerProps) {
                         (tree) => {
                         // Create the gaps between nodes for the tree relative to their parent
                         const width_gap = 245;
+                        const min_gap = 20;
                         const height_gap = 95;
                         tree.descendants().forEach((node) => {
                             if(node.parent !== null) {
                                 // use the depth to dynamically shrink the x value width so the nodes won't overlap
-                                node.x = node.parent.x + (node.data.isLeft ? -(width_gap - node.depth * 60)  : width_gap - node.depth * 60);
+                                let gap = width_gap - node.depth * 60;
+                                if (gap < min_gap) {
+                                    gap = min_gap
+                                }
+                                node.x = node.parent.x + (node.data.isLeft ? -gap  : gap);
                                 node.y = node.parent.y + height_gap;
                             }
                         })
