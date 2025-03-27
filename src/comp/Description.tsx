@@ -19,10 +19,10 @@ function Description({structure}: DescriptionProps) {
                     <p>Linked lists are a fundamental data structure that store information in nodes, in which each node is <em>linked</em> to eachother through a pointer to the next and or the previous node.</p> 
                     <blockquote>Currently, the linked list shown in the visualizer is a singly linked list, which means each element contains only a pointer to the next element. A doubly linked list would also include an arrow going backwards, storing both a pointer to the next element and previous element. Note the electrical ground symbol is also used to denote <em>NULL</em> (end of list).</blockquote>
                     <p>
-                    Linked lists are commonly used to create other fundamental datas tructures, such as a stack or queue. The "competition" to linked lists are arrays, which is what they are often compared to when making design decisions and considering the advantages and disadvantages. Much of the time, a linked list solution can also be replicated with an array, and vice versa. Understanding which one to use by weighing their pros and cons given a situation is an essential skill when working with data structures.</p>
+                    Linked lists are commonly used to create other fundamental data structures, such as a stack or queue. The "competition" to linked lists are arrays, which is what they are often compared to when making design decisions and considering the advantages and disadvantages. Much of the time, a linked list solution can also be replicated with an array, and vice versa. Understanding which one to use by weighing their pros and cons given a situation is an essential skill when working with data structures.</p>
                     <h3>Advantages</h3>
                     <ul>
-                        <li>Dynamically Sized. Easy to create and add a new node or remove a node already in the list. In contrast, arrays entire structure have to be resized to add more elements.</li>
+                        <li>Dynamically Sized. Easy to create and add a new node or remove a node already in the list. In contrast, an array's entire structure would have to be resized to add more elements (in C, this could be done using <em>realloc</em> ).</li>
                         <li>Efficient insertion and deletion. Elements don't need to be moved around, just the links updated.</li>
                     </ul>
                     <h3>Disadvantages</h3>
@@ -33,12 +33,40 @@ function Description({structure}: DescriptionProps) {
                     </ul>
                     <h3>C Code Implementation</h3>
                     <CodeBlock language="c" filepath="/code_examples/C/linkedlist.c" />
+                    <h3>Linked Lists Variants</h3>
+                    <p>This data structure visualizer (currently) only shows a singly linked list, where the links point to the next node. This does not always have to be the case. As seen in the C Code Implementation, a link is defined by a <strong>next</strong> pointer. These next pointers can store any other link. In fact, multiple pointers can be stored in the ListNode struct! Let's say we wanted to also store a pointer going backwards, to the previous node. We can! It would just require defining a prev pointer after the next pointer. This is known as a <strong>doubly linked list</strong>. Some common linked lists variants are:</p>
+                    <ol>
+                        <li>Singly Linked List</li>
+                        <ul>
+                            <li>Simplest linked list.</li>
+                            <li>Each node contains data and a pointer to the next node.</li>
+                            <li>Pros: Easy, memory efficient.</li>
+                            <li>Cons: No backward traversal.</li>
+                        </ul>
+                        <li>Doubly Linked List</li>
+                        <ul>
+                            <li>Each node contains data, a pointer to the next node, and a pointer to the previous node.</li>
+                            <li>Pros: Easier to delete nodes (given a node, not its data), supports backwards traversal.</li>
+                            <li>Cons: More memory overhead, may be more complex to manage pointers.</li>
+                        </ul>
+                        <li>Circularly Linked Lists</li>
+                        <ul>
+                            <li>A linked list where the last node points back to the first node, forming a loop.</li>
+                            <li>Can be singly or doubly linked.</li>
+                            <li>Pros: Useful for cyclic traversal applications.</li>
+                            <li>Cons: Risk of infinite loops.</li>
+                        </ul>
+                    </ol>
                 </div>
             }
             {structure == "bst" &&
                 <div className="description-container bst-desc-container">
                     <h1>What is a Binary Search Tree?</h1>
-                    <p>A <b>Binary Search Tree</b> (BST) is a common data structure that is derived from a Binary Tree. "Bi" meaning two, as each node has zero, one, or two children. A potentially useful way to think about a binary tree is that each node always has two children, but children can be <em>NULL</em>. A BST has the specific property that the left child must have a value less than its parent, while a right child must have a value larger than its parent. 
+                    <p>A <b>Binary Search Tree</b> (BST) is a common data structure that is derived from a Binary Tree. BST's have properties that make them efficient in storing data.
+
+                    <blockquote>But first: what is a Binary Tree? A tree is a hierarchical data structure consisting of nodes that are connected to eachother. Nodes store data and links to their "children". In the case of a Binary Tree -- "Bi" meaning two -- each node has zero, one, or two children. A useful way to think about a Binary Tree is that each node always has two children, but children can be <em>NULL</em>.</blockquote>
+
+                    A Binary Search Tree is a Binary Tree with the following ordering property: for any given node, a node's left child must have a weight less than its parent's weight and the node's right child must have a weight more than its parent's weight. When using the visualizer, notice that this is always true.
 
                     <blockquote>What about if the parent value is equal? It's a design choice: either discard and do nothing (only allowing unique values), go to the left, or go to the right. Whichever choice is made must be kept consistent with the rest of the program.</blockquote>
 
@@ -71,12 +99,12 @@ function Description({structure}: DescriptionProps) {
                         <li><strong>One child</strong>: Replace the node with its child.</li>
                         <li><strong>Two children</strong>: Unfortunately, you cannot just delete the node or randomly replace the node with one of its children. Instead:</li>
                         <ul>
-                            <li>Find the inorder successor, which is the smallest value in the right subtree. This can be found by traversing once to the right, then left as far as possible. Then, Copy the successor value into the target node, then delete the successor. Since we have gone left as far as possible, we know the successor node has at maximum only one child (it's left child must be NULL).</li>
+                            <li>Find the inorder successor, which is the smallest value in the right subtree. This can be found by traversing once to the right, then left as far as possible. Then, Copy the successor value into the target node, then delete the successor. Since we have gone left as far as possible, we know the successor node does not have a left child, thus it will be replaced by the right child.</li>
                             <li>This works because the inorder successor is the next largest value, so by replacing the node with it, the left child must still be smaller and the right still larger.</li>
                             <li>Alternatively, the inorder predecessor also works (go left, then right as far as possible).</li>
                         </ul>
                     </ol>
-                    It is highly encouraged to test all three of these situations using the visualizer: see if you can predict what the tree will look like after deletion!
+                    It is highly encouraged to test all three deletion cases using the visualizer: see if you can predict what the tree will look like after deletion!
                     </p>
                     <h3>Disadvantages</h3>
                     <p>Consider inserting the following values in the order which they are listed: [10, 8, 5, 3, 2, 1]</p>
