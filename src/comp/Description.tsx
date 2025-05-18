@@ -9,7 +9,29 @@ function Description({structure}: DescriptionProps) {
             {structure == "stack" &&
             <div className="description-container stack-desc-container">
                 <h1>What is a Stack?</h1>
+                <p>A stack is a simple data structure that follows the Last-In, First-Out (LIFO) principle, meaning the last element added is the first to be removed. Stacks are fundamental to the implementation of many algorithms. One notable use case of stacks is for storing information of a program, you may have heard of the stack of a process. In computer security, many vulnerabilities are exploited through buffer overflow attacks. This vulnerability takes advantage of the stacks structure in order to overwrite data that affects the control-flow of a program.</p>
+                <blockquote>
+                    While the stack in the visualizer grows up, the stack of a process grows <em>downward</em> (toward lower addresses). This is done for space management, as the heap grows upward. And yes, the heap and the stack could grow into eachother and collide, causing a stack or heap overflow. However, modern operating systems typically incorporate protections to prevent such collisions.
+                </blockquote>
+                <h3>Operations</h3>
+                <p>A stack is defined by three main operations:</p>
+                <ul>
+                    <li>Push - Place an element at the top of the stack.</li>
+                    <li>Pop - Read and remove the top element of the stack.</li>
+                    <li>Peek - Read the value of the top of the stack without removing it.</li>
+                </ul>
+                <p>All operations have <strong>O(1)</strong> time complexity.</p>
+
+                <h3>C Code Implementation</h3>
+                <p>Stacks can be implemented with either an array or a linked list. Below is an array implementation. A good exercise would be to write an implementation of a stack using a linked list.</p>
                 <CodeBlock language="c" filepath="/code_examples/C/stack.c" />
+                <h3>Applications</h3>
+                <p>Some stack applications are:</p>
+                <ul>
+                    <li>Function call management: Storing function call data in what is known as a "stack frame" during program execution.</li>
+                    <li>Depth First Search: Stacks can be utilized to traverse trees</li>
+                    <li>Undo/Redo: Past actions can be stored in a stack for later retrieval</li>
+                </ul>
             </div>
 
             }
