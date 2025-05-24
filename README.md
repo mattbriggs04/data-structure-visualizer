@@ -1,12 +1,5 @@
-# Data Structure Visualizer (WIP)
+# Data Structure Visualizer
 
-Data structures that are currently available:
+AI is good at explaining how data structures work, but still has a long way to go in order to create visualizations that are intuitive to beginners. This web application intends to help fill that gap, by providing visualizers for common data structures, along with a description and code example implementing the data structure.
 
-- Stack, push and pop operations (The value popped will show up next to the pop button).
-- Linked List, enter an array and it will be shown as a singly linked list (this was more of a proof of concept).
-- Binary Search Tree, insert and delete operations.
-- AVL Tree, insert and delete operations.
-
-Coming soon:
-- Graph, enter number of vertices and then add edges.
-- Priority Queue / Heap. Will look similar to the trees, but have an extract-min/max and also show the array form.
+This application has not yet been released to the web, as it is still a work in progress. You can check out the current version yourself by cloning the repository and then running `npm run dev`.
