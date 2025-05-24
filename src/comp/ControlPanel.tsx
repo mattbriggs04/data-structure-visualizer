@@ -190,14 +190,30 @@ function ControlPanel({structure, data, setData} : ControlPanelProps<number>) {
             { // potential TODO: Convert all control panels into separate components
                 structure == "linkedlist" &&
                 <div className={`controlpanel-linkedlist ${inputError && "text-error"}`}>
-                    <input type="text" id="linkedlist-input" name="linkedlist" placeholder="ex: [0, 1, 2]" defaultValue='' onChange={handleInputChange} />
+                    <input type="text" id="linkedlist-input" name="linkedlist" placeholder="ex: [0, 1, 2]" defaultValue='' 
+                        onKeyDown={(e) => {
+                            if (e.key == "Enter") {
+                                e.preventDefault();
+                                handleLinkedListSubmit();
+                                e.currentTarget.value = "";
+                            }
+                        }} 
+                        onChange={handleInputChange} />
                     <button type="submit" onClick={handleLinkedListSubmit}> Apply Changes </button>
                 </div>
             }
             {
                 structure == "bst" &&
                 <div className={`controlpanel-bst ${inputError && "text-error"}`}>
-                    <input type="text" id="bst_input" name="bst_input" placeholder="ex: 10" defaultValue='' onChange={handleInputChange} />
+                    <input type="text" id="bst_input" name="bst_input" placeholder="ex: 10" defaultValue='' 
+                        onKeyDown={(e) => {
+                            if (e.key == "Enter") {
+                                e.preventDefault();
+                                handleBSTInsert();
+                                e.currentTarget.value = "";
+                            }
+                        }} 
+                        onChange={handleInputChange} />
                     <button type="submit" id="bst-insert-btn" onClick={handleBSTInsert}>Insert</button>
                     <button type="submit" id="bst-delete-btn" onClick={handleBSTDelete}>Delete</button>
                 </div>
@@ -205,7 +221,15 @@ function ControlPanel({structure, data, setData} : ControlPanelProps<number>) {
             {
                 structure == "stack" &&
                 <div className={`controlpanel-stack ${inputError && "text-error"}`}>
-                    <input type="text" id="stack_input" name="stack_input" placeholder="ex: 10" defaultValue='' onChange={handleInputChange} />
+                    <input type="text" id="stack_input" name="stack_input" placeholder="ex: 10" defaultValue='' 
+                        onKeyDown={(e) => {
+                            if (e.key == "Enter") {
+                                e.preventDefault();
+                                handleStackPush();
+                                e.currentTarget.value = "";
+                            }
+                        }} 
+                        onChange={handleInputChange} />
                     <button type="submit" id="stack-push-btn" onClick={handleStackPush}>Push</button>
                     <button type="submit" id="stack-pop-btn" onClick={handleStackPop}>Pop [<span id="stack-last-popped">{data['stack'].lastPopped}</span>]</button>
                 </div>
@@ -213,7 +237,16 @@ function ControlPanel({structure, data, setData} : ControlPanelProps<number>) {
             {
                 structure == "avl" && // identical to bst (but may be changed in the future, so im keeping them separate for now)
                 <div className={`controlpanel-avl ${inputError && "text-error"}`}>
-                    <input type="text" id="avl-input" name="avl-input" placeholder="ex: 10" defaultValue='' onChange={handleInputChange} />
+                    <input type="text" id="avl-input" name="avl-input" placeholder="ex: 10" defaultValue='' 
+                        onKeyDown={(e) => {
+                            if (e.key == "Enter") {
+                                e.preventDefault();
+                                handleAVLInsert();
+                                e.currentTarget.value = "";
+                            }
+                        }} 
+                        onChange={handleInputChange} 
+                    />
                     <button type="submit" id="avl-insert-btn" onClick={handleAVLInsert}>Insert</button>
                     <button type="submit" id="avl-delete-btn" onClick={handleAVLDelete}>Delete</button>
                 </div>
@@ -221,8 +254,24 @@ function ControlPanel({structure, data, setData} : ControlPanelProps<number>) {
             {
                 (structure == "minheap" || structure == "maxheap") &&
                 <div className={`controlpanel-heap ${inputError && "text-error"}`}>
-                    <input type="text" id="heap-input-text" name="heap-input-text" placeholder="letter" defaultValue='' onChange={handleSecondInputChange} />
-                    <input type="text" id="heap-input" name="heap-input" placeholder="weight" defaultValue='' onChange={handleInputChange} />
+                    <input type="text" id="heap-input-text" name="heap-input-text" placeholder="id" defaultValue='' 
+                        onKeyDown={(e) => {
+                            if (e.key == "Enter") {
+                                e.preventDefault();
+                                handleHeapInsert();
+                                e.currentTarget.value = "";
+                            }
+                        }} 
+                        onChange={handleSecondInputChange} />
+                    <input type="text" id="heap-input" name="heap-input" placeholder="weight" defaultValue='' 
+                        onKeyDown={(e) => {
+                            if (e.key == "Enter") {
+                                e.preventDefault();
+                                handleHeapInsert();
+                                e.currentTarget.value = "";
+                            }
+                        }} 
+                        onChange={handleInputChange} />
                     <button type="submit" id="heap-insert-btn" onClick={handleHeapInsert}>Insert</button>
                     <button type="submit" id="heap-extract-btn" onClick={handleHeapExtract}>Extract [<span id="heap-last-extracted">{structure == "minheap" ? data["minheap"].lastExtracted : data["maxheap"].lastExtracted}</span>]</button>
                 </div>

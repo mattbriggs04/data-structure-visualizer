@@ -52,9 +52,9 @@ function AVLVisualizer({avl}: AVLVisualizerProps) {
                                     {/* Create the lines/links between all tree elements */}
                                     {tree.links().map((link, i) => (
                                         <LinkVerticalLine
+                                            className="avl-line"
                                             key={i}
                                             data={link}
-                                            stroke="rgb(255,255,255)"
                                             strokeWidth="1"
                                             fill="none" 
                                         />

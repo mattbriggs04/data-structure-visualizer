@@ -92,6 +92,7 @@ function Description({structure}: DescriptionProps) {
 
                     <blockquote>What about if the parent value is equal? It's a design choice: either discard and do nothing (only allowing unique values), go to the left, or go to the right. Whichever choice is made must be kept consistent with the rest of the program.</blockquote>
 
+                    <h2>Operations</h2>
                     A BST's ordering property makes it efficient at searching, inserting, and deleting.</p>
                     <h3>Searching</h3>
                     <p>Consider searching for an element with value <em>target</em>.
@@ -115,7 +116,7 @@ function Description({structure}: DescriptionProps) {
                     </ol>
                     </p>
                     <h3>Deletion</h3>
-                    <p>Deletion gets a little bit more complex. First, search for the node. Once the desired node has been reached, there are three main cases to consider:
+                    <p>Deletion gets a little bit more complex. First, search for the node same as above. Once the desired node has been reached, there are three main cases to consider:
                     <ol>
                         <li><strong>No children</strong>: Simply remove the node.</li>
                         <li><strong>One child</strong>: Replace the node with its child.</li>

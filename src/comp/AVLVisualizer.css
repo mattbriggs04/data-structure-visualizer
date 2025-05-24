@@ -11,6 +11,10 @@
 }
 
 .avl-node-height-text {
-    transform: translate(30px, -10px); /* radius / 2 + 10 */
-    fill: var(--text-color);
+    transform: translate(20px, -20px); /* radius / 2 + 10 */
+    fill: var(--accent-color);
+}
+
+.avl-line {
+    stroke: var(--bg-color-contrast);
 }
