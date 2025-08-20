@@ -14,3 +14,6 @@ This application has not yet been released to the web, as it is still a work in 
 ### AVL
 
 ![avl](images/avl_example.png)
+
+# License
+This project is under the MIT License. See `License.md`.
