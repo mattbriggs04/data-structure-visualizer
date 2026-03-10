@@ -22,7 +22,6 @@ function AVLVisualizer({avl}: AVLVisualizerProps) {
 
     return (
         <div className="avl-container">
-            <h2>AVL Tree</h2>
             <p className="visualizer-copy">{operationCopy}</p>
             <svg className={`avl-svg`} width={width} height={height} viewBox={`0 0 ${width} ${height}`}>
                 {

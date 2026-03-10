@@ -22,7 +22,6 @@ function BSTVisualizer({bst} : BSTVisualizerProps) {
 
     return (
         <div className="bst-container">
-            <h2>Binary Search Tree</h2>
             <p className="visualizer-copy">{operationCopy}</p>
             <svg className={`bst-svg`} width={width} height={height} viewBox={`0 0 ${width} ${height}`}>
                 {

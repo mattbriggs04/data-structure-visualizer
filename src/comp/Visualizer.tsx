@@ -1,5 +1,5 @@
 import "./Visualizer.css"
-import { DataType, StructureType, structureLabels } from "../types/types"
+import { DataType, StructureType } from "../types/types"
 import LinkedListVisualizer from "./LinkedListVisualizer";
 import BSTVisualizer from "./BSTVisualizer";
 import StackVisualizer from "./StackVisualizer";
@@ -12,16 +12,6 @@ interface VisualizerProps {
     data: DataType;
     onOpenStructureModal: () => void;
 }
-
-const structureDescriptions: Record<Exclude<StructureType, ''>, string> = {
-    linkedlist: 'Follow nodes and pointers as the list updates from one end to the other.',
-    stack: 'Watch LIFO behavior as values push upward and pop from the top.',
-    bst: 'Trace insert and delete paths through a binary search tree.',
-    avl: 'See how self-balancing rotations keep the tree efficient.',
-    minheap: 'Track how smaller weights bubble toward the root.',
-    maxheap: 'Track how larger weights bubble toward the root.',
-    graph: 'Build connections and animate traversal order through the graph.',
-};
 
 function Visualizer({structure, data, onOpenStructureModal} : VisualizerProps) {
     if(structure === '') {
@@ -51,12 +41,7 @@ function Visualizer({structure, data, onOpenStructureModal} : VisualizerProps) {
     }
 
     return (
-        <section className="visualizer-container">
-            <div className="visualizer-header">
-                <p className="visualizer-eyebrow">Now Visualizing</p>
-                <h1>{structureLabels[structure]}</h1>
-                <p className="visualizer-copy">{structureDescriptions[structure]}</p>
-            </div>
+        <section className="visualizer-container visualizer-active">
             {
                 structure === "linkedlist" && <LinkedListVisualizer linkedList={data["linkedlist"]} />
             }

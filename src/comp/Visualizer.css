@@ -1,7 +1,7 @@
 .visualizer-container {
     position: relative;
     display: flex;
-    padding: 1.75rem 1.5rem;
+    padding: 1.35rem 1.25rem;
     width: 100%;
     min-height: 420px;
     align-items: center;
@@ -34,27 +34,15 @@
     font-weight: 600;
 }
 
-.visualizer-header {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 0.65rem;
-    padding: 0.5rem 1rem 1.5rem;
-    text-align: center;
-}
-
-.visualizer-container h2 {
-    font-family: 'Space Mono', Helvetica, sans-serif;
-    font-size: 1.3rem;
-    font-weight: 200;
-    text-align: center;
-    width: 100%;
-}
-
 .visualizer-home {
     justify-content: center;
     min-height: 62vh;
     overflow: hidden;
+}
+
+.visualizer-active {
+    min-height: 0;
+    padding-top: 1rem;
 }
 
 .visualizer-hero {
@@ -75,7 +63,6 @@
     color: var(--fg-color);
 }
 
-.visualizer-header h1,
 .visualizer-hero h1 {
     font-size: clamp(2rem, 5vw, 4rem);
     line-height: 1.05;
@@ -142,12 +129,8 @@
 
 @media (max-width: 760px) {
     .visualizer-container {
-        padding: 1.25rem 1rem;
+        padding: 1rem 0.85rem;
         border-radius: 26px;
-    }
-
-    .visualizer-header {
-        padding: 0.25rem 0 1rem;
     }
 
     .visualizer-container svg {

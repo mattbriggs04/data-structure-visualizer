@@ -66,7 +66,6 @@ function GraphVisualizer({graph}: GraphVisualizerProps) {
 
     return (
         <div className="graph-container">
-            <h2>Graph</h2>
             <p className="visualizer-copy">{operationCopy}</p>
             <svg className="graph-svg" width={width} height={height} viewBox={`0 0 ${width} ${height}`}>
                 {graphObj.edges.map((edge) => {

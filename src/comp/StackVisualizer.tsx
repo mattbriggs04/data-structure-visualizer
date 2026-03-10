@@ -17,7 +17,6 @@ function StackVisualizer({stack} : StackVisualizerProps<number>) {
 
     return (
         <div className={`stack-container`}>
-            <h2>Stack</h2>
             <p className="visualizer-copy">Push grows upward. Pop removes the top-most element first.</p>
             <svg className={`stack-svg`} width={width} height={height} viewBox={`0 0 ${width} ${height}`}>
                 {

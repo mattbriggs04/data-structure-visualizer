@@ -1,6 +1,6 @@
 import { Dispatch, SetStateAction } from 'react';
 import './Menu.css';
-import { StructureType, structureLabels } from "../types/types"
+import { StructureType } from "../types/types"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faMoon } from "@fortawesome/free-regular-svg-icons";
 import { faSun } from "@fortawesome/free-solid-svg-icons";
@@ -17,8 +17,6 @@ function Menu({ structure, theme, setTheme, onOpenStructureModal }: MenuProps) {
         setTheme(theme === "light" ? "dark" : "light");
     }
 
-    const currentStructure = structure === '' ? 'No structure selected' : structureLabels[structure];
-
     return (
         <header className="menu-container">
             <div className="menu-brand">
@@ -26,21 +24,15 @@ function Menu({ structure, theme, setTheme, onOpenStructureModal }: MenuProps) {
                 <div className="menu-copy">
                     <p className="menu-title">Data Structure Visualizer</p>
                     <p className="menu-description">
-                        {structure === ''
-                            ? 'Choose a structure to start exploring animations and controls.'
-                            : `Working with ${currentStructure}. Switch structures at any time.`}
+                        Choose a structure, run commands, and watch the animation update in real time.
                     </p>
                 </div>
             </div>
             <div className="menu-actions">
-                <div className="menu-selection" aria-live="polite">
-                    <span>Current</span>
-                    <strong>{currentStructure}</strong>
-                </div>
                 <button
                     type="button"
                     onClick={onOpenStructureModal}
-                    className="button-style1 select-structure-btn"
+                    className="select-structure-btn"
                 >
                     {structure === '' ? 'Select Structure' : 'Change Structure'}
                 </button>

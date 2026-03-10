@@ -22,7 +22,6 @@ function HeapVisualizer({heap} : HeapVisualizerProps) {
 
     return (
         <div className="heap-container">
-            <h2>{heap.type === "min" ? "Min" : "Max"} Heap</h2>
             <p className="visualizer-copy">{operationCopy}</p>
             <svg className={`heap-svg`} width={width} height={height} viewBox={`0 0 ${width} ${height}`}>
                 {

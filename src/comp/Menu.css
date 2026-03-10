@@ -55,39 +55,11 @@
     gap: 0.75rem;
 }
 
-.menu-selection {
-    display: flex;
-    flex-direction: column;
-    gap: 0.15rem;
-    min-width: 220px;
-    padding: 0.85rem 1rem;
-    border-radius: 18px;
-    border: 1px solid var(--panel-border);
-    background: color-mix(in srgb, var(--panel-bg) 84%, var(--fg-color) 16%);
-}
-
-.menu-selection span {
-    font-family: 'Space Mono', monospace;
-    font-size: 0.72rem;
-    letter-spacing: 0.14em;
-    text-transform: uppercase;
-    color: color-mix(in srgb, var(--text-color) 68%, transparent);
-}
-
-.menu-selection strong {
-    font-family: 'Noto Sans Mono', monospace;
-    font-size: 0.98rem;
-    font-weight: 600;
-}
-
-.select-structure-btn {
-    min-height: 52px;
-    box-shadow: 0 0 0 1px color-mix(in srgb, var(--fg-color) 20%, transparent), 0 18px 32px color-mix(in srgb, var(--fg-color) 18%, transparent);
-}
-
+.select-structure-btn,
 .theme-select-btn {
     display: inline-flex;
     align-items: center;
+    justify-content: center;
     gap: 0.55rem;
     min-height: 52px;
     padding: 0.8rem 1rem;
@@ -102,15 +74,21 @@
     transition: transform 180ms ease, box-shadow 180ms ease, border-color 180ms ease;
 }
 
+.select-structure-btn {
+    min-width: 170px;
+}
+
 .theme-select-btn svg {
     font-size: 1.05rem;
     color: var(--icon-color);
 }
 
+.select-structure-btn:hover,
 .theme-select-btn:hover {
     transform: translateY(-1px);
     border-color: color-mix(in srgb, var(--fg-color) 42%, transparent);
     box-shadow: 0 16px 28px color-mix(in srgb, var(--fg-color) 18%, transparent);
+    filter: none;
 }
 
 @media (max-width: 960px) {
@@ -132,10 +110,6 @@
     .menu-actions {
         flex-direction: column;
         align-items: stretch;
-    }
-
-    .menu-selection {
-        min-width: auto;
     }
 
     .theme-select-btn,

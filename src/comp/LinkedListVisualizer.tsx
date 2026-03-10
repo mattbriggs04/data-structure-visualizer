@@ -180,7 +180,6 @@ function LinkedListVisualizer({linkedList} : LinkedListVisualizerProps<number>) 
 
     return (
         <div className={`linkedlist-container`}>
-            <h2>Linked List</h2>
             <p className="visualizer-copy">Each box stores a value and a pointer to the next node in the list.</p>
             <div ref={svgRef} className={`linkedlist-svg`}></div>
         </div>
