@@ -1,282 +1,468 @@
 import './ControlPanel.css';
-import { DataType } from '../types/types.ts'
-import { useState, useEffect, Dispatch, SetStateAction } from 'react';
+import { useState, useEffect, Dispatch, SetStateAction, KeyboardEvent } from 'react';
+import { DataType, StructureType, structureLabels } from '../types/types';
 
-interface ControlPanelProps<T> {
-    structure: string;
-    data: DataType<T>;
-    setData: Dispatch<SetStateAction<DataType<T>>>;
+interface ControlPanelProps {
+    structure: StructureType;
+    data: DataType;
+    setData: Dispatch<SetStateAction<DataType>>;
 }
 
-function ControlPanel({structure, data, setData} : ControlPanelProps<number>) {
-    const [input, setInput] = useState(''); // Input from user from ANY given text field (handling depends on which button is pressed)
-    const [secondInput, setSecondInput] = useState(''); // Another input field, used primarily for when something may include a pair of inputs like heaps
-    const [inputError, setInputError] = useState(false); // If input is valid, store the state and update styles accordingly
+interface ControlFieldProps {
+    id: string;
+    name: string;
+    label: string;
+    placeholder: string;
+    value: string;
+    onChange: (value: string) => void;
+    onEnter?: () => void;
+    wide?: boolean;
+}
 
-    // Reset input whenever structure is updated
+const panelDescriptions: Record<Exclude<StructureType, ''>, string> = {
+    linkedlist: 'Replace the current list with a JSON array of numbers.',
+    bst: 'Insert a single number or an array, then delete individual values.',
+    stack: 'Push a value onto the stack or pop the current top element.',
+    avl: 'Insert values and watch the tree rebalance itself as needed.',
+    minheap: 'Add a labeled node with a weight, or extract the minimum root.',
+    maxheap: 'Add a labeled node with a weight, or extract the maximum root.',
+    graph: 'Build nodes and edges, then run BFS or DFS from a starting node.',
+};
+
+function ControlPanel({structure, data, setData} : ControlPanelProps) {
+    const [input, setInput] = useState('');
+    const [secondInput, setSecondInput] = useState('');
+    const [inputError, setInputError] = useState(false);
+
     useEffect(() => {
         setInput('');
+        setSecondInput('');
+        setInputError(false);
     }, [structure]);
 
-    // Force a data update (yeah this updates everything rather than just a single obj within data, but are we really concerned about efficieny here? this is TS.)
+    if(structure === '') {
+        return null;
+    }
+
     const forceUpdate = () => {
         setData({ ...data });
     }
 
-    const handleLinkedListSubmit = () => {
-        // let isValidListRe = new RegExp(/^\[\s*((\d+\s*,\s*)*\d+\s*)?\]$/);
-        try {
-            setData({ ...data, "linkedlist": JSON.parse(input) });
+    const resetInputs = () => {
+        setInput('');
+        setSecondInput('');
+    }
+
+    const handleInputChange = (value: string) => {
+        setInput(value);
+        if(inputError) {
             setInputError(false);
         }
-        catch(error) {
-            console.log("Error: invalid linked list input given.");
-            console.log(error);
+    }
+
+    const handleSecondInputChange = (value: string) => {
+        setSecondInput(value);
+        if(inputError) {
+            setInputError(false);
+        }
+    }
+
+    const parseNumberInput = (raw: string): number | null => {
+        const value = Number(raw);
+        return Number.isNaN(value) ? null : value;
+    }
+
+    const parseNumberArrayInput = (raw: string): number[] | null => {
+        try {
+            const parsed = JSON.parse(raw);
+            if(!Array.isArray(parsed)) {
+                return null;
+            }
+            if(!parsed.every((item) => typeof item === 'number')) {
+                return null;
+            }
+            return parsed;
+        }
+        catch {
+            return null;
+        }
+    }
+
+    const handleLinkedListSubmit = () => {
+        const parsed = parseNumberArrayInput(input);
+        if(parsed === null) {
             setInputError(true);
+            return;
         }
+
+        setData({ ...data, linkedlist: parsed });
+        setInputError(false);
+        resetInputs();
     }
-    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setInput(e.target.value);
-    }
-    const handleSecondInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setSecondInput(e.target.value);
-    }
+
     const handleBSTInsert = () => {
-        // quick parser for doing multiple inserts in a row
-        if(input[0] == '[') {
-            try {
-                const tree_arr = JSON.parse(input);
-                tree_arr.forEach((num: number) => data['bst'].insert(num));
-                setData({ ...data });
-                setInputError(false);
-            }
-            catch(error) {
-                console.log(error);
+        if(input.trim().startsWith('[')) {
+            const parsed = parseNumberArrayInput(input);
+            if(parsed === null) {
                 setInputError(true);
+                return;
             }
+
+            parsed.forEach((num) => data.bst.insert(num));
+            forceUpdate();
+            setInputError(false);
+            resetInputs();
+            return;
         }
-        else {
-            const val = Number(input);
-            // 0 is disabled because it breaks the tree structure since it will register the parent value as being null
-            // may be worth to fix eventually
-            if(isNaN(val)) { 
-                setInputError(true);
-            }
-            else {
-                try {
-                    data['bst'].insert(val);
-                    console.log(`BST inserting ${val}`)
-                    setData({ ...data });
-                    setInputError(false);
-                }
-                catch(error) {
-                    console.log(error);
-                    setInputError(true);
-                }
-            }
+
+        const value = parseNumberInput(input);
+        if(value === null) {
+            setInputError(true);
+            return;
         }
+
+        data.bst.insert(value);
+        forceUpdate();
+        setInputError(false);
+        resetInputs();
     }
 
     const handleBSTDelete = () => {
-        const val = Number(input);
-        if(isNaN(val)) {
+        const value = parseNumberInput(input);
+        if(value === null) {
             setInputError(true);
+            return;
         }
-        else {
-            try {
-                console.log(`BST deleting ${val}`)
-                data['bst'].delete(val);
-                forceUpdate();
-                setInputError(false);
-            }
-            catch(error) {
-                console.log(error);
-                setInputError(true);
-            }
-        }
+
+        data.bst.delete(value);
+        forceUpdate();
+        setInputError(false);
+        resetInputs();
     }
 
     const handleStackPush = () => {
-        const val = Number(input);
-        if(isNaN(val)) {
+        const value = parseNumberInput(input);
+        if(value === null) {
             setInputError(true);
+            return;
         }
-        else {
-            setInputError(false);
-            data['stack'].push(val);
-            forceUpdate();
-        }
+
+        data.stack.push(value);
+        forceUpdate();
+        setInputError(false);
+        resetInputs();
     }
 
     const handleStackPop = () => {
-        const val = Number(input);
-        if(isNaN(val)) {
-            setInputError(true);
-        }
-        else {
-            setInputError(false);
-            data['stack'].pop();
-            forceUpdate();
-        }
+        data.stack.pop();
+        forceUpdate();
+        setInputError(false);
     }
+
     const handleAVLInsert = () => {
-        // quick parser for putting multiple insertions in array form
-        if(input[0] == '[') {
-            try {
-                const tree_arr = JSON.parse(input);
-                tree_arr.forEach((num: number) => data['avl'].insert(num));
-                setData({ ...data });
-                setInputError(false);
-            }
-            catch(error) {
-                console.log(error);
+        if(input.trim().startsWith('[')) {
+            const parsed = parseNumberArrayInput(input);
+            if(parsed === null) {
                 setInputError(true);
+                return;
             }
+
+            parsed.forEach((num) => data.avl.insert(num));
+            forceUpdate();
+            setInputError(false);
+            resetInputs();
+            return;
         }
-        else {
-            const val = Number(input);
-            // 0 is disabled because it breaks the tree structure since it will register the parent value as being null
-            // may be worth to fix eventually
-            if(isNaN(val)) { 
-                setInputError(true);
-            }
-            else {
-                try {
-                    data['avl'].insert(val);
-                    console.log(`AVL inserting ${val}`)
-                    setData({ ...data });
-                    setInputError(false);
-                }
-                catch(error) {
-                    console.log(error);
-                    setInputError(true);
-                }
-            }
+
+        const value = parseNumberInput(input);
+        if(value === null) {
+            setInputError(true);
+            return;
         }
+
+        data.avl.insert(value);
+        forceUpdate();
+        setInputError(false);
+        resetInputs();
     }
 
     const handleAVLDelete = () => {
-        const val = Number(input);
-        if(isNaN(val)) {
+        const value = parseNumberInput(input);
+        if(value === null) {
             setInputError(true);
+            return;
         }
-        else {
-            try {
-                console.log(`deleting ${val}`)
-                data['avl'].delete(val);
-                forceUpdate();
-                setInputError(false);
-            }
-            catch(error) {
-                console.log(error);
-                setInputError(true);
-            }
-        }
+
+        data.avl.delete(value);
+        forceUpdate();
+        setInputError(false);
+        resetInputs();
     }
 
     const handleHeapInsert = () => {
-        const val = Number(input);
-        const txt = String(secondInput)
-        // insert depending on which heap is selected
-        structure == "minheap" ? data['minheap'].insert(val, txt) : data['maxheap'].insert(val, txt);
+        const weight = parseNumberInput(input);
+        const label = secondInput.trim();
+        if(weight === null || label.length === 0) {
+            setInputError(true);
+            return;
+        }
+
+        if(structure === 'minheap') {
+            data.minheap.insert(weight, label);
+        }
+        else {
+            data.maxheap.insert(weight, label);
+        }
         forceUpdate();
+        setInputError(false);
+        resetInputs();
     }
+
     const handleHeapExtract = () => {
-        structure == "minheap" ? data['minheap'].extract() : data['maxheap'].extract();
+        if(structure === 'minheap') {
+            data.minheap.extract();
+        }
+        else {
+            data.maxheap.extract();
+        }
         forceUpdate();
+        setInputError(false);
     }
+
+    const handleGraphAddNode = () => {
+        if(!data.graph.addNode(input)) {
+            setInputError(true);
+            return;
+        }
+
+        forceUpdate();
+        setInputError(false);
+        resetInputs();
+    }
+
+    const handleGraphAddEdge = () => {
+        if(!data.graph.addEdge(input, secondInput)) {
+            setInputError(true);
+            return;
+        }
+
+        forceUpdate();
+        setInputError(false);
+        resetInputs();
+    }
+
+    const handleGraphTraverse = (type: 'bfs' | 'dfs') => {
+        if(data.graph.traverse(type, input) === null) {
+            setInputError(true);
+            return;
+        }
+
+        forceUpdate();
+        setInputError(false);
+    }
+
+    const handleGraphLoadExample = () => {
+        data.graph.loadExample();
+        forceUpdate();
+        setInputError(false);
+    }
+
+    const handleGraphClear = () => {
+        data.graph.clear();
+        forceUpdate();
+        setInputError(false);
+        resetInputs();
+    }
+
+    const handleEnter = (event: KeyboardEvent<HTMLInputElement>, onEnter?: () => void) => {
+        if(event.key === 'Enter' && onEnter !== undefined) {
+            event.preventDefault();
+            onEnter();
+        }
+    }
+
+    const renderField = ({
+        id,
+        name,
+        label,
+        placeholder,
+        value,
+        onChange,
+        onEnter,
+        wide = false,
+    }: ControlFieldProps) => (
+        <label className={`control-field ${wide ? 'control-field-wide' : ''}`} htmlFor={id}>
+            <span>{label}</span>
+            <input
+                type="text"
+                id={id}
+                name={name}
+                placeholder={placeholder}
+                value={value}
+                onKeyDown={(event) => handleEnter(event, onEnter)}
+                onChange={(event) => onChange(event.target.value)}
+            />
+        </label>
+    );
+
+    const lastHeapValue = structure === 'minheap' ? data.minheap.lastExtracted : data.maxheap.lastExtracted;
+
     return (
-        <div className={`controlpanel-container`}>
-            { // potential TODO: Convert all control panels into separate components
-                structure == "linkedlist" &&
-                <div className={`controlpanel-linkedlist ${inputError && "text-error"}`}>
-                    <input type="text" id="linkedlist-input" name="linkedlist" placeholder="ex: [0, 1, 2]" defaultValue='' 
-                        onKeyDown={(e) => {
-                            if (e.key == "Enter") {
-                                e.preventDefault();
-                                handleLinkedListSubmit();
-                                e.currentTarget.value = "";
-                            }
-                        }} 
-                        onChange={handleInputChange} />
-                    <button type="submit" onClick={handleLinkedListSubmit}> Apply Changes </button>
+        <section className={`controlpanel-shell ${inputError ? 'text-error' : ''}`}>
+            <div className="controlpanel-heading">
+                <div>
+                    <p className="controlpanel-kicker">Command Panel</p>
+                    <h2>{structureLabels[structure]}</h2>
+                    <p className="controlpanel-summary">{panelDescriptions[structure]}</p>
                 </div>
-            }
-            {
-                structure == "bst" &&
-                <div className={`controlpanel-bst ${inputError && "text-error"}`}>
-                    <input type="text" id="bst_input" name="bst_input" placeholder="ex: 10" defaultValue='' 
-                        onKeyDown={(e) => {
-                            if (e.key == "Enter") {
-                                e.preventDefault();
-                                handleBSTInsert();
-                                e.currentTarget.value = "";
-                            }
-                        }} 
-                        onChange={handleInputChange} />
-                    <button type="submit" id="bst-insert-btn" onClick={handleBSTInsert}>Insert</button>
-                    <button type="submit" id="bst-delete-btn" onClick={handleBSTDelete}>Delete</button>
-                </div>
-            }
-            {
-                structure == "stack" &&
-                <div className={`controlpanel-stack ${inputError && "text-error"}`}>
-                    <input type="text" id="stack_input" name="stack_input" placeholder="ex: 10" defaultValue='' 
-                        onKeyDown={(e) => {
-                            if (e.key == "Enter") {
-                                e.preventDefault();
-                                handleStackPush();
-                                e.currentTarget.value = "";
-                            }
-                        }} 
-                        onChange={handleInputChange} />
-                    <button type="submit" id="stack-push-btn" onClick={handleStackPush}>Push</button>
-                    <button type="submit" id="stack-pop-btn" onClick={handleStackPop}>Pop [<span id="stack-last-popped">{data['stack'].lastPopped}</span>]</button>
-                </div>
-            }
-            {
-                structure == "avl" && // identical to bst (but may be changed in the future, so im keeping them separate for now)
-                <div className={`controlpanel-avl ${inputError && "text-error"}`}>
-                    <input type="text" id="avl-input" name="avl-input" placeholder="ex: 10" defaultValue='' 
-                        onKeyDown={(e) => {
-                            if (e.key == "Enter") {
-                                e.preventDefault();
-                                handleAVLInsert();
-                                e.currentTarget.value = "";
-                            }
-                        }} 
-                        onChange={handleInputChange} 
-                    />
-                    <button type="submit" id="avl-insert-btn" onClick={handleAVLInsert}>Insert</button>
-                    <button type="submit" id="avl-delete-btn" onClick={handleAVLDelete}>Delete</button>
-                </div>
-            }
-            {
-                (structure == "minheap" || structure == "maxheap") &&
-                <div className={`controlpanel-heap ${inputError && "text-error"}`}>
-                    <input type="text" id="heap-input-text" name="heap-input-text" placeholder="id" defaultValue='' 
-                        onKeyDown={(e) => {
-                            if (e.key == "Enter") {
-                                e.preventDefault();
-                                handleHeapInsert();
-                                e.currentTarget.value = "";
-                            }
-                        }} 
-                        onChange={handleSecondInputChange} />
-                    <input type="text" id="heap-input" name="heap-input" placeholder="weight" defaultValue='' 
-                        onKeyDown={(e) => {
-                            if (e.key == "Enter") {
-                                e.preventDefault();
-                                handleHeapInsert();
-                                e.currentTarget.value = "";
-                            }
-                        }} 
-                        onChange={handleInputChange} />
-                    <button type="submit" id="heap-insert-btn" onClick={handleHeapInsert}>Insert</button>
-                    <button type="submit" id="heap-extract-btn" onClick={handleHeapExtract}>Extract [<span id="heap-last-extracted">{structure == "minheap" ? data["minheap"].lastExtracted : data["maxheap"].lastExtracted}</span>]</button>
-                </div>
-            }
-        </div>
+            </div>
+            <div className="controlpanel-container">
+                {
+                    structure === 'linkedlist' &&
+                    <div className="controlpanel-row">
+                        {renderField({
+                            id: 'linkedlist-input',
+                            name: 'linkedlist',
+                            label: 'Values',
+                            placeholder: '[0, 1, 2]',
+                            value: input,
+                            onChange: handleInputChange,
+                            onEnter: handleLinkedListSubmit,
+                            wide: true,
+                        })}
+                        <div className="control-actions">
+                            <button type="button" onClick={handleLinkedListSubmit}>Apply Changes</button>
+                        </div>
+                    </div>
+                }
+                {
+                    structure === 'bst' &&
+                    <div className="controlpanel-row">
+                        {renderField({
+                            id: 'bst-input',
+                            name: 'bst-input',
+                            label: 'Value or Array',
+                            placeholder: '10 or [10, 5, 12]',
+                            value: input,
+                            onChange: handleInputChange,
+                            onEnter: handleBSTInsert,
+                            wide: true,
+                        })}
+                        <div className="control-actions">
+                            <button type="button" id="bst-insert-btn" onClick={handleBSTInsert}>Insert</button>
+                            <button type="button" id="bst-delete-btn" className="secondary-action" onClick={handleBSTDelete}>Delete</button>
+                        </div>
+                    </div>
+                }
+                {
+                    structure === 'stack' &&
+                    <div className="controlpanel-row">
+                        {renderField({
+                            id: 'stack-input',
+                            name: 'stack-input',
+                            label: 'Value',
+                            placeholder: '10',
+                            value: input,
+                            onChange: handleInputChange,
+                            onEnter: handleStackPush,
+                        })}
+                        <div className="control-actions">
+                            <button type="button" id="stack-push-btn" onClick={handleStackPush}>Push</button>
+                            <button type="button" id="stack-pop-btn" className="secondary-action" onClick={handleStackPop}>Pop</button>
+                        </div>
+                        <div className="controlpanel-stat">
+                            <span>Last Popped</span>
+                            <strong id="stack-last-popped">{String(data.stack.lastPopped ?? 'None')}</strong>
+                        </div>
+                    </div>
+                }
+                {
+                    structure === 'avl' &&
+                    <div className="controlpanel-row">
+                        {renderField({
+                            id: 'avl-input',
+                            name: 'avl-input',
+                            label: 'Value or Array',
+                            placeholder: '10 or [10, 5, 12]',
+                            value: input,
+                            onChange: handleInputChange,
+                            onEnter: handleAVLInsert,
+                            wide: true,
+                        })}
+                        <div className="control-actions">
+                            <button type="button" id="avl-insert-btn" onClick={handleAVLInsert}>Insert</button>
+                            <button type="button" id="avl-delete-btn" className="secondary-action" onClick={handleAVLDelete}>Delete</button>
+                        </div>
+                    </div>
+                }
+                {
+                    (structure === 'minheap' || structure === 'maxheap') &&
+                    <div className="controlpanel-row">
+                        {renderField({
+                            id: 'heap-input-text',
+                            name: 'heap-input-text',
+                            label: 'Node ID',
+                            placeholder: 'A',
+                            value: secondInput,
+                            onChange: handleSecondInputChange,
+                            onEnter: handleHeapInsert,
+                        })}
+                        {renderField({
+                            id: 'heap-input',
+                            name: 'heap-input',
+                            label: 'Weight',
+                            placeholder: '12',
+                            value: input,
+                            onChange: handleInputChange,
+                            onEnter: handleHeapInsert,
+                        })}
+                        <div className="control-actions">
+                            <button type="button" id="heap-insert-btn" onClick={handleHeapInsert}>Insert</button>
+                            <button type="button" id="heap-extract-btn" className="secondary-action" onClick={handleHeapExtract}>Extract</button>
+                        </div>
+                        <div className="controlpanel-stat">
+                            <span>Last Extracted</span>
+                            <strong id="heap-last-extracted">{lastHeapValue ?? 'None'}</strong>
+                        </div>
+                    </div>
+                }
+                {
+                    structure === 'graph' &&
+                    <div className="controlpanel-row">
+                        {renderField({
+                            id: 'graph-node-input',
+                            name: 'graph-node-input',
+                            label: 'Node / Start',
+                            placeholder: 'A',
+                            value: input,
+                            onChange: handleInputChange,
+                            onEnter: handleGraphAddNode,
+                        })}
+                        {renderField({
+                            id: 'graph-edge-input',
+                            name: 'graph-edge-input',
+                            label: 'Neighbor',
+                            placeholder: 'B',
+                            value: secondInput,
+                            onChange: handleSecondInputChange,
+                        })}
+                        <div className="control-actions">
+                            <button type="button" onClick={handleGraphAddNode}>Add Node</button>
+                            <button type="button" onClick={handleGraphAddEdge}>Add Edge</button>
+                            <button type="button" className="secondary-action" onClick={() => handleGraphTraverse('bfs')}>BFS</button>
+                            <button type="button" className="secondary-action" onClick={() => handleGraphTraverse('dfs')}>DFS</button>
+                            <button type="button" className="secondary-action" onClick={handleGraphLoadExample}>Example</button>
+                            <button type="button" className="secondary-action" onClick={handleGraphClear}>Clear</button>
+                        </div>
+                    </div>
+                }
+            </div>
+            {inputError && (
+                <p className="controlpanel-error">
+                    Check the expected input format and try again.
+                </p>
+            )}
+        </section>
     );
 }
 

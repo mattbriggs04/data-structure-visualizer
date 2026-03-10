@@ -11,6 +11,14 @@
   --fg-color: #28A745;
   --icon-color: rgb(255, 213, 46);
   --accent-color: #ffd700;
+  --page-grad-start: #fffdf7;
+  --page-grad-end: #eef8f1;
+  --panel-bg: rgba(250, 247, 240, 0.88);
+  --panel-bg-strong: rgba(255, 255, 255, 0.94);
+  --panel-border: rgba(29, 29, 29, 0.12);
+  --panel-shadow: 0 26px 60px rgba(74, 73, 71, 0.1);
+  --panel-muted: rgba(40, 167, 69, 0.1);
+  --hero-glow: rgba(40, 167, 69, 0.22);
 }
 /* system by default, can be overriden with data-theme */
 @media (prefers-color-scheme: dark) {
@@ -22,6 +30,14 @@
     --fg-color: #19bc8b;
     --accent-color: #ffd700;
     --icon-color: #eee;
+    --page-grad-start: #0f1412;
+    --page-grad-end: #101b18;
+    --panel-bg: rgba(29, 29, 29, 0.84);
+    --panel-bg-strong: rgba(22, 24, 23, 0.94);
+    --panel-border: rgba(250, 247, 240, 0.12);
+    --panel-shadow: 0 30px 70px rgba(0, 0, 0, 0.36);
+    --panel-muted: rgba(25, 188, 139, 0.16);
+    --hero-glow: rgba(25, 188, 139, 0.28);
   }
 }
 
@@ -33,38 +49,74 @@
   --fg-color: #28A745;
   --accent-color: #ffd700;
   --icon-color: rgb(255, 213, 46);
+  --page-grad-start: #fffdf7;
+  --page-grad-end: #eef8f1;
+  --panel-bg: rgba(250, 247, 240, 0.88);
+  --panel-bg-strong: rgba(255, 255, 255, 0.94);
+  --panel-border: rgba(29, 29, 29, 0.12);
+  --panel-shadow: 0 26px 60px rgba(74, 73, 71, 0.1);
+  --panel-muted: rgba(40, 167, 69, 0.1);
+  --hero-glow: rgba(40, 167, 69, 0.22);
+}
+
+[data-theme="dark"] {
+  --text-color: #eee;
+  --text-color-contrast: #4a4947;
+  --bg-color: #1d1d1d;
+  --bg-color-contrast: #faf7f0;
+  --fg-color: #19bc8b;
+  --accent-color: #ffd700;
+  --icon-color: #eee;
+  --page-grad-start: #0f1412;
+  --page-grad-end: #101b18;
+  --panel-bg: rgba(29, 29, 29, 0.84);
+  --panel-bg-strong: rgba(22, 24, 23, 0.94);
+  --panel-border: rgba(250, 247, 240, 0.12);
+  --panel-shadow: 0 30px 70px rgba(0, 0, 0, 0.36);
+  --panel-muted: rgba(25, 188, 139, 0.16);
+  --hero-glow: rgba(25, 188, 139, 0.28);
 }
 
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-  transition: background-color 300ms ease-in-out;
+  transition: background-color 300ms ease-in-out, border-color 300ms ease-in-out, color 300ms ease-in-out;
 }
 
 /* global styles for common elements */
+html,
+body,
+#root {
+  min-height: 100vh;
+}
+
 body {
-  background-color: var(--bg-color);
+  background:
+    linear-gradient(180deg, var(--page-grad-start), var(--page-grad-end));
   color: var(--text-color);
   font-size: 1.2rem;
 }
 
 .button-style1 {
-  font-family: 'Noto Sans Mono', monospace;
-  font-size: 1.2rem;
+  font-family: 'Space Mono', monospace;
+  font-size: 1rem;
   color: var(--text-color);
-
   outline: none;
-  border: none;
-  padding: 0.6rem;
-  border-radius: 0.2rem;
-
-  background-color: transparent;
-  border: 2px solid var(--fg-color);
+  border: 1px solid color-mix(in srgb, var(--fg-color) 38%, transparent);
+  padding: 0.9rem 1.35rem;
+  border-radius: 999px;
+  background: linear-gradient(135deg, color-mix(in srgb, var(--panel-bg-strong) 78%, var(--fg-color) 22%), color-mix(in srgb, var(--panel-bg) 70%, var(--accent-color) 30%));
+  box-shadow: 0 18px 34px color-mix(in srgb, var(--fg-color) 18%, transparent);
+  transition: transform 180ms ease, box-shadow 180ms ease, border-color 180ms ease, filter 180ms ease;
 }
 
 .button-style1:hover {
   cursor: pointer;
+  transform: translateY(-1px);
+  border-color: color-mix(in srgb, var(--fg-color) 52%, transparent);
+  box-shadow: 0 22px 40px color-mix(in srgb, var(--fg-color) 24%, transparent);
+  filter: saturate(1.04);
 }
 
 /* util classes */

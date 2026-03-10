@@ -1,6 +1,13 @@
+.avl-node-group {
+    animation: tree-node-fade 320ms ease both;
+}
+
 .avl-node {
     r: 20;
     fill: var(--bg-color-contrast);
+    transform-box: fill-box;
+    transform-origin: center;
+    transition: fill 220ms ease, filter 220ms ease;
 }
 .avl-node-text, .avl-node-height-text {
     fill: var(--text-color-contrast);
@@ -17,4 +24,53 @@
 
 .avl-line {
     stroke: var(--bg-color-contrast);
+    transition: stroke 220ms ease, stroke-width 220ms ease;
+}
+
+.avl-line-active {
+    stroke: var(--accent-color);
+}
+
+.avl-node-active {
+    fill: var(--fg-color);
+    filter: drop-shadow(0 0 10px color-mix(in srgb, var(--fg-color) 70%, transparent));
+}
+
+.avl-node-insert,
+.avl-node-delete,
+.avl-node-rotation {
+    animation: tree-node-pulse 700ms ease;
+}
+
+.avl-node-insert {
+    fill: var(--accent-color);
+}
+
+.avl-node-delete {
+    fill: #d9534f;
+}
+
+.avl-node-rotation {
+    fill: color-mix(in srgb, var(--accent-color) 75%, var(--bg-color-contrast));
+}
+
+@keyframes tree-node-fade {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes tree-node-pulse {
+    0% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.12);
+    }
+    100% {
+        transform: scale(1);
+    }
 }

@@ -1,38 +1,121 @@
 .modal-bg {
     position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    z-index: 10;
-
+    inset: 0;
+    z-index: 20;
     display: flex;
     justify-content: center;
     align-items: center;
-
-    background-color: rgba(0, 0, 0, 0.5);
-
+    padding: 1.25rem;
+    background-color: rgba(0, 0, 0, 0.58);
+    backdrop-filter: blur(10px);
 }
 
 .modal-container {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    grid-gap: 10px;
-
-    width: 70%;
+    width: min(920px, 100%);
+    padding: 1.5rem;
+    border: 1px solid var(--panel-border);
+    border-radius: 28px;
+    background: linear-gradient(180deg, var(--panel-bg-strong), var(--panel-bg));
+    box-shadow: var(--panel-shadow);
 }
 
-.modal-container button {
-    font-family: 'Noto Sans Mono';
-    font-size: 1rem;
-    border: 2px solid var(--bg-color-contrast);
-    background-color: var(--bg-color);
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    align-items: flex-start;
+    margin-bottom: 1.3rem;
+}
+
+.modal-kicker {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.78rem;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
     color: var(--fg-color);
-    padding: 1em;
+    margin-bottom: 0.35rem;
 }
-.modal-container button:hover {
-    transition: 300ms;
-    color: var(--accent-color);
-    box-shadow: 0 0 5px var(--bg-color-contrast);
+
+.modal-header h2 {
+    font-family: 'Montserrat', sans-serif;
+    font-size: clamp(1.5rem, 4vw, 2.35rem);
+    margin-bottom: 0.35rem;
+}
+
+.modal-header p:last-child {
+    font-family: 'Ubuntu', sans-serif;
+    line-height: 1.6;
+    color: color-mix(in srgb, var(--text-color) 82%, transparent);
+}
+
+.modal-close {
+    min-height: 48px;
+    padding: 0.8rem 1rem;
+    border: 1px solid var(--panel-border);
+    border-radius: 999px;
+    background: var(--panel-muted);
+    color: var(--text-color);
+    font-family: 'Space Mono', monospace;
     cursor: pointer;
+}
+
+.modal-close:hover {
+    box-shadow: 0 14px 24px color-mix(in srgb, var(--fg-color) 14%, transparent);
+}
+
+.modal-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 0.9rem;
+}
+
+.modal-option {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.55rem;
+    min-height: 136px;
+    padding: 1.05rem 1.1rem;
+    border: 1px solid var(--panel-border);
+    border-radius: 22px;
+    background: color-mix(in srgb, var(--panel-bg-strong) 84%, var(--fg-color) 16%);
+    text-align: left;
+    color: var(--text-color);
+    cursor: pointer;
+    transition: transform 180ms ease, box-shadow 180ms ease, border-color 180ms ease, background-color 180ms ease;
+}
+
+.modal-option:hover {
+    transform: translateY(-2px);
+    border-color: color-mix(in srgb, var(--fg-color) 44%, transparent);
+    box-shadow: 0 20px 32px color-mix(in srgb, var(--fg-color) 18%, transparent);
+    background: color-mix(in srgb, var(--panel-bg-strong) 68%, var(--fg-color) 32%);
+    cursor: pointer;
+}
+
+.modal-option-label {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 1.08rem;
+    font-weight: 600;
+}
+
+.modal-option-summary {
+    font-family: 'Ubuntu', sans-serif;
+    font-size: 0.96rem;
+    line-height: 1.5;
+    color: color-mix(in srgb, var(--text-color) 82%, transparent);
+}
+
+@media (max-width: 640px) {
+    .modal-container {
+        padding: 1.15rem;
+    }
+
+    .modal-header {
+        flex-direction: column;
+    }
+
+    .modal-close {
+        width: 100%;
+    }
 }

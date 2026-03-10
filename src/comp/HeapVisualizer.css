@@ -1,11 +1,67 @@
+.heap-node-group {
+    animation: tree-node-fade 320ms ease both;
+}
+
+.heap-link {
+    stroke: var(--bg-color-contrast);
+    transition: stroke 220ms ease, stroke-width 220ms ease;
+}
+
+.heap-link-active {
+    stroke: var(--accent-color);
+}
+
 .heap-node {
     r: 25;
     fill: var(--bg-color-contrast);
+    transform-box: fill-box;
+    transform-origin: center;
+    transition: fill 220ms ease, filter 220ms ease;
 }
+
+.heap-node-active {
+    fill: var(--fg-color);
+    filter: drop-shadow(0 0 10px color-mix(in srgb, var(--fg-color) 70%, transparent));
+}
+
+.heap-node-insert,
+.heap-node-extract {
+    animation: tree-node-pulse 700ms ease;
+}
+
+.heap-node-insert {
+    fill: var(--accent-color);
+}
+
+.heap-node-extract {
+    fill: #d9534f;
+}
+
 .heap-node-text {
     fill: var(--text-color-contrast);
     font-size: 1rem;
     font-family: 'Space Mono', monospace;
     text-anchor: middle;
     alignment-baseline: middle; /* VSCode thinks this is not a property but it is */
+}
+
+@keyframes tree-node-fade {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes tree-node-pulse {
+    0% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.12);
+    }
+    100% {
+        transform: scale(1);
+    }
 }

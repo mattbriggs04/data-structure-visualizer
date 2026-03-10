@@ -1,91 +1,181 @@
-/* general control panel styles */
-.controlpanel-container input,
-.controlpanel-container button {
-    font-family: 'Noto Sans Mono', monospace;
-    font-size: 1.2rem;
-    color: var(--text-color);
-
-    outline: none;
-    border: none;
-    padding: 0.6rem;
-    border-radius: 0.2rem;
-}
-
-.controlpanel-container input {
-    margin-right: 2em;
-    background-color: var(--bg-color);
-    border: 2px solid var(--bg-color-contrast);
-}
-
-.controlpanel-container button {
-    background-color: transparent;
-    border: 2px solid var(--fg-color);
-}
-
-.controlpanel-container button:hover {
-    transition: 0.5s;
-    box-shadow: inset 9em 0 0 0 var(--fg-color);
-    cursor: pointer;
-    color: black;
-}
-
-.controlpanel-container button:active {
-    transition: none;
-    color: white;
-}
-
-.controlpanel-container input {
-    min-width: 40%;
-    width: auto;
-}
-
-/* linked list */
-.controlpanel-linkedlist {
+.controlpanel-shell {
     display: flex;
-    flex-direction: row;
-    align-items: center;
+    flex-direction: column;
+    gap: 1.25rem;
+    width: 100%;
+    padding: 1.35rem 1.5rem;
+    border: 1px solid var(--panel-border);
+    border-radius: 28px;
+    background: linear-gradient(180deg, var(--panel-bg-strong), var(--panel-bg));
+    box-shadow: var(--panel-shadow);
+    backdrop-filter: blur(18px);
+}
+
+.controlpanel-heading {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+}
+
+.controlpanel-kicker {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.78rem;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--fg-color);
+    margin-bottom: 0.35rem;
+}
+
+.controlpanel-heading h2 {
+    font-family: 'Montserrat', sans-serif;
+    font-size: clamp(1.35rem, 3vw, 2rem);
+    margin-bottom: 0.45rem;
+}
+
+.controlpanel-summary {
+    font-family: 'Ubuntu', sans-serif;
+    line-height: 1.6;
+    color: color-mix(in srgb, var(--text-color) 84%, transparent);
+    max-width: 720px;
+}
+
+.controlpanel-container {
     width: 100%;
 }
 
-/* binary search tree, AVL tree, and Heap */
-.controlpanel-bst {
+.controlpanel-row {
     display: flex;
-    flex-direction: row;
-    align-items: flex-start;
-    max-width: 100%;
-    overflow: scroll;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    gap: 0.95rem;
+    width: 100%;
 }
 
-.controlpanel-bst input,
-.controlpanel-avl input,
-.controlpanel-heap input {
-    margin-right: 0;
-    min-width: 50px;
-    max-width: 100px;
-    text-align: center;
-}
-.controlpanel-bst button,
-.controlpanel-avl button,
-.controlpanel-heap button {
-    margin-left: 1rem;
-}
-/* stack */
-.controlpanel-stack input {
-    margin-right: 0;
-    min-width: 50px;
-    max-width: 100px;
-    text-align: center;
+.control-field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    min-width: 180px;
+    flex: 1 1 180px;
 }
 
-#stack-push-btn {
-    margin-left: 0.25rem;
+.control-field-wide {
+    flex: 2 1 320px;
 }
 
-#stack-pop-btn {
-    margin-left: 1rem;
+.control-field span {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.74rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: color-mix(in srgb, var(--text-color) 68%, transparent);
 }
 
-/* util */
+.controlpanel-container input,
+.controlpanel-container button {
+    min-height: 52px;
+    border-radius: 16px;
+    font-family: 'Noto Sans Mono', monospace;
+    font-size: 0.96rem;
+    outline: none;
+}
+
+.controlpanel-container input {
+    width: 100%;
+    padding: 0.85rem 1rem;
+    color: var(--text-color);
+    border: 1px solid color-mix(in srgb, var(--fg-color) 24%, var(--panel-border));
+    background: color-mix(in srgb, var(--panel-bg-strong) 90%, transparent);
+    transition: border-color 180ms ease, box-shadow 180ms ease, background-color 180ms ease;
+}
+
+.controlpanel-container input:focus {
+    border-color: color-mix(in srgb, var(--fg-color) 54%, transparent);
+    box-shadow: 0 0 0 4px color-mix(in srgb, var(--fg-color) 16%, transparent);
+}
+
+.controlpanel-container button {
+    padding: 0.85rem 1.1rem;
+    border: 1px solid color-mix(in srgb, var(--fg-color) 34%, transparent);
+    background: color-mix(in srgb, var(--panel-bg-strong) 78%, var(--fg-color) 22%);
+    color: var(--text-color);
+    cursor: pointer;
+    transition: transform 180ms ease, box-shadow 180ms ease, background-color 180ms ease, color 180ms ease, border-color 180ms ease;
+}
+
+.controlpanel-container button:hover {
+    transform: translateY(-1px);
+    background: color-mix(in srgb, var(--fg-color) 88%, var(--panel-bg-strong) 12%);
+    color: var(--bg-color);
+    box-shadow: 0 16px 28px color-mix(in srgb, var(--fg-color) 18%, transparent);
+}
+
+.controlpanel-container button.secondary-action {
+    border-color: var(--panel-border);
+    background: var(--panel-muted);
+}
+
+.controlpanel-container button.secondary-action:hover {
+    color: var(--text-color);
+    background: color-mix(in srgb, var(--panel-muted) 52%, var(--fg-color) 48%);
+}
+
+.control-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+}
+
+.controlpanel-stat {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 0.25rem;
+    min-width: 170px;
+    min-height: 52px;
+    padding: 0.7rem 0.95rem;
+    border: 1px solid var(--panel-border);
+    border-radius: 16px;
+    background: var(--panel-muted);
+}
+
+.controlpanel-stat span {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.72rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: color-mix(in srgb, var(--text-color) 68%, transparent);
+}
+
+.controlpanel-stat strong {
+    font-family: 'Noto Sans Mono', monospace;
+    font-size: 0.95rem;
+}
+
+.controlpanel-error {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.84rem;
+    color: #d94141;
+}
+
 .text-error input {
-    border: 2px solid red;
+    border-color: #d94141;
+    box-shadow: 0 0 0 4px color-mix(in srgb, #d94141 15%, transparent);
+}
+
+@media (max-width: 760px) {
+    .controlpanel-shell {
+        padding: 1.15rem;
+    }
+
+    .controlpanel-row,
+    .control-actions {
+        width: 100%;
+    }
+
+    .control-actions button,
+    .controlpanel-stat,
+    .control-field {
+        width: 100%;
+    }
 }

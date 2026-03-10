@@ -1,23 +1,25 @@
 .description-wrapper {
     display: flex;
     justify-content: center;
-    padding-top: 5vh;
-    padding-bottom: 5vh;
+    padding: 0 0 3rem;
 }
 
 .description-container {
     font-family: 'Ubuntu';
-    width: 80%;
+    width: 100%;
     max-width: 1200px;
-    background-color: var(--bg-colors);
-    border-radius: 12px;
+    background: linear-gradient(180deg, var(--panel-bg-strong), var(--panel-bg));
+    border: 1px solid var(--panel-border);
+    border-radius: 28px;
+    box-shadow: var(--panel-shadow);
     color: var(--text-color);
+    padding: 2rem 2.25rem;
 }
 
 .description-container h1 {
-    font-size: 28px;
+    font-size: 2rem;
     text-align: center;
-    margin-bottom: 10px;
+    margin-bottom: 1rem;
 }
 
 .description-container p,
@@ -26,10 +28,19 @@
     line-height: 1.6;
 }
 
+.description-container p {
+    margin: 0.85rem 0;
+}
+
 .description-container blockquote {
     padding-left: 1rem;
     margin: 1rem;
     border-left: 2px solid var(--accent-color);
+}
+
+.description-container h2,
+.description-container h3 {
+    margin-top: 1.6rem;
 }
 
 .description-container ol,
@@ -48,4 +59,16 @@
 
 .footer {
     height: 5vh;
+}
+
+@media (max-width: 760px) {
+    .description-container {
+        padding: 1.4rem 1.15rem;
+        border-radius: 24px;
+    }
+
+    .description-container ol,
+    .description-container ul {
+        padding-left: 1.6rem;
+    }
 }

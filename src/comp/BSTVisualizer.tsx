@@ -3,6 +3,8 @@ import { BST } from "../data_structures/tree";
 import { Group } from "@visx/group";
 import { hierarchy, Tree } from "@visx/hierarchy";
 import { LinkVerticalLine } from "@visx/shape";
+import useOperationAnimation from "./useOperationAnimation";
+
 interface BSTVisualizerProps {
     bst: BST<number>;
 }
@@ -10,72 +12,94 @@ interface BSTVisualizerProps {
 function BSTVisualizer({bst} : BSTVisualizerProps) {
     const width = 1200;
     const height = 800;
-    let origin = { x: 0, y: 0 };
-    let margin = { top: 30, left: 0, right: 0, bottom: 0 };
+    const margin = { top: 30, left: 0 };
+    const treeObj = bst.toObject();
+    const { activeNodeIds, focusNodeId } = useOperationAnimation(bst.lastOperation);
 
-    let treeObj = bst.toObject();
+    const operationCopy = bst.lastOperation === null
+        ? 'Insert or delete a value to animate the search path.'
+        : `${bst.lastOperation.type === 'insert' ? 'Inserting' : 'Deleting'} ${bst.lastOperation.value}`;
+
     return (
         <div className="bst-container">
             <h2>Binary Search Tree</h2>
-            <svg className={`bst-svg`} width={width} height={height}>
+            <p className="visualizer-copy">{operationCopy}</p>
+            <svg className={`bst-svg`} width={width} height={height} viewBox={`0 0 ${width} ${height}`}>
                 {
                 treeObj !== null &&
                 <Group top={margin.top} left={margin.left}>
-                    {/* Create the tree using the tree object */}
-                    <Tree 
+                    <Tree
                         root={hierarchy(treeObj)}
-                        size={[width, height - 100]} // Create 100px offset from height to account for circles needing to fit in svg
-                        // separation={(a, b) => (a.parent === b.parent ? 1 : 1)}
+                        size={[width, height - 100]}
                     >
-                        {
-                        (tree) => {
+                        {(tree) => {
+                            const widthGap = 250;
+                            const minGap = 20;
+                            const heightGap = 75;
 
-                        // Create the gaps between nodes for the tree relative to their parent
-                        const width_gap = 250;
-                        const min_gap = 20;
-                        const height_gap = 75;
-                        tree.descendants().forEach((node) => {
-                            if(node.parent !== null && node.parent.value !== undefined) {
-                                let gap = width_gap - node.depth * 50;
-                                if (gap < min_gap) {
-                                    gap = min_gap
+                            tree.descendants().forEach((node) => {
+                                if(node.parent !== null) {
+                                    let gap = widthGap - node.depth * 50;
+                                    if(gap < minGap) {
+                                        gap = minGap;
+                                    }
+
+                                    node.x = node.parent.x + (node.data.value <= node.parent.data.value ? -gap : gap);
+                                    node.y = node.parent.y + heightGap;
                                 }
-                                node.x = node.parent.x + (node.data.value <= node.parent.value ? -gap  : gap);
-                                node.y = node.parent.y + height_gap;
-                            }
-                        })
+                            });
 
-                        // Render the tree links and nodes themselves
-                        return (
-                            <Group top={origin.x} left={origin.y}>
-                                {/* Create the lines/links between all tree elements */}
-                                {tree.links().map((link, i) => (
-                                    <LinkVerticalLine
-                                        key={i}
-                                        data={link}
-                                        stroke="rgb(255,255,255)"
-                                        strokeWidth="1"
-                                        fill="none" 
-                                    />
-                                ))}
+                            return (
+                                <Group>
+                                    {tree.links().map((link) => {
+                                        const isActive = activeNodeIds.has(link.target.data.id) || focusNodeId === link.target.data.id;
+                                        return (
+                                            <LinkVerticalLine
+                                                key={link.target.data.id}
+                                                className={`bst-link ${isActive ? 'bst-link-active' : ''}`}
+                                                data={link}
+                                                strokeWidth={isActive ? "2.5" : "1"}
+                                                fill="none"
+                                            />
+                                        );
+                                    })}
 
-                                {/* Create the nodes */}
-                                {tree.descendants().map((node, i) => (
-                                    node.data && (
-                                    <Group key={i} top={node.y} left={node.x}>
-                                        <circle className={`bst-node`} />
-                                        <text className={`bst-node-text`}>
-                                            {node.data.value}
-                                        </text>
-                                    </Group>
-                                    )
-                                ))}
-                            </Group>
-                        )}
-                        }
+                                    {tree.descendants().map((node, idx) => {
+                                        const isVisited = activeNodeIds.has(node.data.id);
+                                        const isFocused = focusNodeId === node.data.id;
+                                        const nodeClass = [
+                                            'bst-node',
+                                            isVisited ? 'bst-node-active' : '',
+                                            isFocused ? `bst-node-${bst.lastOperation?.type}` : '',
+                                        ].join(' ').trim();
+
+                                        return (
+                                            <Group
+                                                key={node.data.id}
+                                                top={node.y}
+                                                left={node.x}
+                                                className="bst-node-group"
+                                                style={{ animationDelay: `${idx * 40}ms` }}
+                                            >
+                                                <circle className={nodeClass} />
+                                                <text className={`bst-node-text`}>
+                                                    {node.data.value}
+                                                </text>
+                                            </Group>
+                                        );
+                                    })}
+                                </Group>
+                            );
+                        }}
                     </Tree>
                 </Group>
-                } 
+                }
+                {
+                    treeObj === null &&
+                    <text className="visualizer-empty-text" x={width / 2} y={height / 2}>
+                        Insert a value to build the tree.
+                    </text>
+                }
             </svg>
         </div>
     )

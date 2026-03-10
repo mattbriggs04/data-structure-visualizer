@@ -1,3 +1,7 @@
+.linkedlist-node-group {
+    pointer-events: none;
+}
+
 .node {
     stroke: var(--bg-color-contrast);
     stroke-width: 2;
@@ -15,6 +19,7 @@
 .link {
     stroke: var(--bg-color-contrast);
     stroke-width: 2;
+    transition: stroke 220ms ease;
 }
 
 #ground {

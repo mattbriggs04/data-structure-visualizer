@@ -1,11 +1,67 @@
+.bst-link {
+    stroke: var(--bg-color-contrast);
+    transition: stroke 220ms ease, stroke-width 220ms ease;
+}
+
+.bst-link-active {
+    stroke: var(--accent-color);
+}
+
+.bst-node-group {
+    animation: tree-node-fade 320ms ease both;
+}
+
 .bst-node {
     r: 20;
     fill: var(--bg-color-contrast);
+    transform-box: fill-box;
+    transform-origin: center;
+    transition: fill 220ms ease, filter 220ms ease;
 }
+
+.bst-node-active {
+    fill: var(--fg-color);
+    filter: drop-shadow(0 0 10px color-mix(in srgb, var(--fg-color) 70%, transparent));
+}
+
+.bst-node-insert,
+.bst-node-delete {
+    animation: tree-node-pulse 700ms ease;
+}
+
+.bst-node-insert {
+    fill: var(--accent-color);
+}
+
+.bst-node-delete {
+    fill: #d9534f;
+}
+
 .bst-node-text {
     fill: var(--text-color-contrast);
     font-size: 1rem;
     font-family: 'Space Mono', monospace;
     text-anchor: middle;
     alignment-baseline: middle; /* VSCode thinks this is not a property but it is */
+}
+
+@keyframes tree-node-fade {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes tree-node-pulse {
+    0% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.12);
+    }
+    100% {
+        transform: scale(1);
+    }
 }

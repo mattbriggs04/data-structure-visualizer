@@ -1,7 +1,17 @@
+.stack-node-group {
+    animation: stack-node-enter 320ms ease both;
+}
+
 .stack-node {
     stroke: var(--bg-color-contrast);
     stroke-width: 2;
     fill: transparent;
+    transition: fill 220ms ease, stroke 220ms ease;
+}
+
+.stack-node-top {
+    fill: color-mix(in srgb, var(--fg-color) 18%, transparent);
+    stroke: var(--fg-color);
 }
 
 .stack-node-text {
@@ -10,4 +20,15 @@
     font-family: 'Space Mono', monospace;
     text-anchor: middle;
     alignment-baseline: middle; /* a warning for unknown property is generated (this is a property, don't delete) */
+}
+
+@keyframes stack-node-enter {
+    from {
+        opacity: 0;
+        transform: translateY(15px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }

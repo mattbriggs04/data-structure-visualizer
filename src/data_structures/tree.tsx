@@ -1,408 +1,480 @@
-import { Queue } from "./queue"
-import { Stack } from "./stack"
+import { Queue } from './queue';
+import { Stack } from './stack';
 
-// For processing by visualizers need an object with value and children
 export interface TNodeObj<T> {
+    id: number;
     value: T;
     children?: TNodeObj<T>[];
 }
+
 export interface AVLNodeObj<T> {
+    id: number;
     value: T;
     balance: number;
     children?: AVLNodeObj<T>[];
 }
+
 export interface HeapNodeObj {
-    value: number; // this is the weight, so must be a number
+    id: number;
+    value: number;
     children?: HeapNodeObj[];
     txt: string;
     isLeft?: boolean;
 }
+
+export interface TreeOperation<T> {
+    sequence: number;
+    type: 'insert' | 'delete';
+    value: T;
+    visitedNodeIds: number[];
+    focusNodeId: number | null;
+    accentNodeIds?: number[];
+}
+
+export interface HeapOperation {
+    sequence: number;
+    type: 'insert' | 'extract';
+    label: string;
+    visitedNodeIds: number[];
+    focusNodeId: number | null;
+}
+
 /*
 *
 * Binary Search Tree
-* 
+*
 */
-// Generic binary tree node 
 export class TreeNode<T> {
+    id: number;
     data: T;
     left: TreeNode<T> | null = null;
     right: TreeNode<T> | null = null;
 
-    constructor(data: T) {
+    constructor(data: T, id: number) {
         this.data = data;
+        this.id = id;
     }
 
-    // for the sake of this project, we can consider two nodes equal if they have the same data
     equals<U extends TreeNode<T>>(node: U): boolean {
-        return node.data === this.data;
+        return node.id === this.id;
     }
 }
 
 class Tree<T> {
     root: TreeNode<T> | null;
+    protected nextNodeId: number;
+    protected operationSequence: number;
+
     constructor() {
         this.root = null;
+        this.nextNodeId = 1;
+        this.operationSequence = 0;
     }
 
-    // debug print function (printTree is a helper)
+    protected createNodeId(): number {
+        return this.nextNodeId++;
+    }
+
+    protected nextSequence(): number {
+        return ++this.operationSequence;
+    }
+
     print(): void {
         this.printTree(this.root);
     }
-    private printTree(node : TreeNode<T> | null): void {
-        if(node != null) {
-            console.log(`${node.data}`)
-            this.printTree(node.left)
-            this.printTree(node.right)
+
+    private printTree(node: TreeNode<T> | null): void {
+        if(node !== null) {
+            console.log(`${node.data}`);
+            this.printTree(node.left);
+            this.printTree(node.right);
         }
     }
 }
 
-// Binary search tree
 export class BST<T> extends Tree<T> {
+    lastOperation: TreeOperation<T> | null = null;
+
     constructor() {
         super();
     }
 
+    private setOperation(type: 'insert' | 'delete', value: T, visitedNodeIds: number[], focusNodeId: number | null): void {
+        this.lastOperation = {
+            sequence: this.nextSequence(),
+            type,
+            value,
+            visitedNodeIds,
+            focusNodeId,
+        };
+    }
+
     insert(data: T): void {
-        const newNode = new TreeNode<T>(data);
-        // const path: TreeNode[] = []; // may want to store the path for animation purposes and return it
-        // TS doesn't do pass by reference / addr so no recursion today (yes I know you can also return for recursion)
-        if(this.root == null) {
+        const newNode = new TreeNode<T>(data, this.createNodeId());
+        if(this.root === null) {
             this.root = newNode;
+            this.setOperation('insert', data, [], newNode.id);
             return;
         }
-    
+
+        const visitedNodeIds: number[] = [];
         let curr = this.root;
-        while(curr) {
+        while(curr !== null) {
+            visitedNodeIds.push(curr.id);
             if(data <= curr.data) {
                 if(curr.left === null) {
                     curr.left = newNode;
-                    break;
+                    this.setOperation('insert', data, visitedNodeIds, newNode.id);
+                    return;
                 }
-                curr = curr.left
+                curr = curr.left;
             }
             else {
                 if(curr.right === null) {
                     curr.right = newNode;
-                    break;
+                    this.setOperation('insert', data, visitedNodeIds, newNode.id);
+                    return;
                 }
-                curr = curr.right
+                curr = curr.right;
             }
         }
-        return;
     }
 
-    // pair of node and its parent
     private getInOrderSuccessorPair(node: TreeNode<T> | null): {node: TreeNode<T> | null; parent: TreeNode<T> | null } {
         let parent: TreeNode<T> | null = null;
-        // In order successor is the min of the right subtree (go right and then down left as far as possible)
         if(node === null) {
-            return {node: node, parent: parent};
+            return {node: null, parent: null};
         }
+
         parent = node;
-        node = node.right; // right one
+        node = node.right;
         while(node !== null && node.left !== null) {
             parent = node;
-            node = node.left; // left as much as possible
+            node = node.left;
         }
-        return {node: node, parent: parent};
+        return {node, parent};
     }
-    // private inorderTraversal(node: TreeNode<T>): TreeNode<T> {
-    // }
+
     delete(key: T): void {
         if(this.root === null) {
             return;
         }
-        // simplest case (root is the only element and the key)
-        // this check is necessary because I need the parent for when I do the dfs and root does not have one
-        if(this.root.data === key && this.root.left === null && this.root.right === null) {
-            this.root = null;
-            return;
-        }
 
-        // in order search (DFS) using a stack - parent is required to actually change the tree structure (cannot change a current node by reference in JS/TS)
-        const rootObj = {node: this.root, parent: null};
         const stack = new Stack<{
-            node: TreeNode<T>; 
+            node: TreeNode<T>;
             parent: TreeNode<T> | null;
         }>();
-        stack.push(rootObj);
-        // DFS loop and deletion
+        stack.push({node: this.root, parent: null});
+
+        const visitedNodeIds: number[] = [];
         while(stack.size > 0) {
             const currObj = stack.pop();
-            if(!currObj) { // should already be accounted for by stack.size (TS forces this check)
-                console.log("Error: currObj is null in deletion");
+            if(currObj === null) {
                 return;
             }
 
-            const currNode = currObj['node'];
-            const currParent = currObj['parent'];
-            if(currNode) {
-                if(key < currNode.data && currNode.left !== null) { 
-                    const nextObj = {node: currNode.left, parent: currNode};
-                    stack.push(nextObj);
+            const currNode = currObj.node;
+            const currParent = currObj.parent;
+            visitedNodeIds.push(currNode.id);
+
+            if(key < currNode.data) {
+                if(currNode.left !== null) {
+                    stack.push({node: currNode.left, parent: currNode});
+                    continue;
                 }
-                else if(key > currNode.data && currNode.right !== null) {
-                    const nextObj = {node: currNode.right, parent: currNode};
-                    stack.push(nextObj);
+                this.setOperation('delete', key, visitedNodeIds, null);
+                return;
+            }
+
+            if(key > currNode.data) {
+                if(currNode.right !== null) {
+                    stack.push({node: currNode.right, parent: currNode});
+                    continue;
                 }
-                else if(key == currNode.data) {
-                    const isRoot = !currParent; // if there isn't a parent it has to be the root node
+                this.setOperation('delete', key, visitedNodeIds, null);
+                return;
+            }
 
-                    // three cases: node is a leaf, node has one child, node has two children
-                    // case 1: node is a leaf (no children)
-                    if(currNode.left === null && currNode.right === null && currParent !== null) {
-                        if(currParent?.left?.equals(currNode)) { // if its a left child -> delete left
-                            currParent.left = null;
-                        }
-                        else { // must be a right child -> delete right
-                            currParent.right = null;
-                        }
-                    }
-                    // case 2: node has one child (similar to case 1)
-                    else if(currNode.left === null) {
-                        if(isRoot) {
-                            this.root = this.root.right;
-                        }
-                        else if(currParent?.left?.equals(currNode)) {
-                            currParent.left = currNode.right;
-                        }
-                        else {
-                            currParent.right = currNode.right;
-                        }
-                    }
-                    else if(currNode.right === null) {
-                        if(isRoot) {
-                            this.root = this.root.left;
-                        }
-                        else if(currParent?.left?.equals(currNode)) {
-                            currParent.left = currNode.left;
-                        }
-                        else {
-                            currParent.right = currNode.left;
-                        }
-                    }
-
-                    // case 3: node has two children, need to find in-order successor to replace with
-                    else { // currNode.left && currNode.right both are not null
-                        const successorPair = this.getInOrderSuccessorPair(currNode);
-                        const successorNode = successorPair['node'];
-                        const successorParent = successorPair['parent'];
-
-                        if(!successorNode) {
-                            console.log("Error: no in order successor found");
-                            return;
-                        }
-                        // replace the current node with inorder successor (we can just use the data values for this)
-                        currNode.data = successorNode.data;
-
-                        // remove inorder successor by replacing it with its right child (its not possible for it to have a left child by definition)
-                        if (successorParent?.left?.equals(successorNode)) {
-                            successorParent.left = successorNode.right;
-                        } else if (successorParent) {
-                            successorParent.right = successorNode.right;
-                        }
-                    }
-                    // exit function once a deletion is successful
-                    return;
+            const isRoot = currParent === null;
+            if(currNode.left === null && currNode.right === null) {
+                if(isRoot) {
+                    this.root = null;
                 }
-                else { // node not found -> return and change nothing
-                    return;
+                else if(currParent.left?.equals(currNode)) {
+                    currParent.left = null;
+                }
+                else {
+                    currParent.right = null;
                 }
             }
+            else if(currNode.left === null) {
+                if(isRoot) {
+                    this.root = this.root?.right ?? null;
+                }
+                else if(currParent.left?.equals(currNode)) {
+                    currParent.left = currNode.right;
+                }
+                else {
+                    currParent.right = currNode.right;
+                }
+            }
+            else if(currNode.right === null) {
+                if(isRoot) {
+                    this.root = this.root?.left ?? null;
+                }
+                else if(currParent.left?.equals(currNode)) {
+                    currParent.left = currNode.left;
+                }
+                else {
+                    currParent.right = currNode.left;
+                }
+            }
+            else {
+                const successorPair = this.getInOrderSuccessorPair(currNode);
+                const successorNode = successorPair.node;
+                const successorParent = successorPair.parent;
+
+                if(successorNode === null) {
+                    this.setOperation('delete', key, visitedNodeIds, currNode.id);
+                    return;
+                }
+
+                currNode.data = successorNode.data;
+                if(successorParent?.left?.equals(successorNode)) {
+                    successorParent.left = successorNode.right;
+                }
+                else if(successorParent !== null) {
+                    successorParent.right = successorNode.right;
+                }
+            }
+
+            this.setOperation('delete', key, visitedNodeIds, currNode.id);
+            return;
         }
     }
 
-    // toObject() -> convert to object so that it is proccessable by hierarchy and Tree from d3 (there is a specific format that is expected)
     toObject(): TNodeObj<T> | null {
         if(this.root === null) {
             return null;
         }
-        let bstObj: TNodeObj<T> = { 
-            value: this.root.data,
-            children: []
-         };
 
-        // map can get the current object for each node that is pulled out (allows the ability to iterate into nested objects)
+        const bstObj: TNodeObj<T> = {
+            id: this.root.id,
+            value: this.root.data,
+            children: [],
+        };
+
         const map = new Map<TreeNode<T>, TNodeObj<T>>();
         map.set(this.root, bstObj);
 
-        // BFS
         const queue = new Queue<TreeNode<T>>();
         queue.enqueue(this.root);
         while(queue.getSize() > 0) {
             const currNode = queue.dequeue();
-            if(currNode !== null) {
-                let currObj = map.get(currNode);
-                if(currObj == undefined) {
-                    currObj = { value: currNode.data };
-                }
+            if(currNode === null) {
+                continue;
+            }
 
-                // convert the left node into a left object
-                if(currNode?.left !== null) {
-                    const leftObj: TNodeObj<T> = { value: currNode.left.data };
-                    if(currObj.children == undefined) {
-                        currObj.children = [];
-                    }
-                    currObj.children.push(leftObj);
-                    map.set(currNode.left, leftObj);
-                    queue.enqueue(currNode.left);
-                    
-                }
+            let currObj = map.get(currNode);
+            if(currObj === undefined) {
+                currObj = { id: currNode.id, value: currNode.data };
+            }
 
-                // convert right node into a right object
-                if(currNode?.right !== null) {
-                    const rightObj: TNodeObj<T> = { value: currNode.right.data }
-                    if(currObj.children == undefined) {
-                        currObj.children = [];
-                    }
-                    currObj.children.push(rightObj);
-                    map.set(currNode.right, rightObj);
-                    queue.enqueue(currNode.right);
+            if(currNode.left !== null) {
+                const leftObj: TNodeObj<T> = {
+                    id: currNode.left.id,
+                    value: currNode.left.data,
+                };
+                if(currObj.children === undefined) {
+                    currObj.children = [];
                 }
+                currObj.children.push(leftObj);
+                map.set(currNode.left, leftObj);
+                queue.enqueue(currNode.left);
+            }
+
+            if(currNode.right !== null) {
+                const rightObj: TNodeObj<T> = {
+                    id: currNode.right.id,
+                    value: currNode.right.data,
+                };
+                if(currObj.children === undefined) {
+                    currObj.children = [];
+                }
+                currObj.children.push(rightObj);
+                map.set(currNode.right, rightObj);
+                queue.enqueue(currNode.right);
             }
         }
+
         return bstObj;
     }
 }
 
-
 /*
 *
-*   AVL Tree
-* 
+* AVL Tree
+*
 */
 export class AVLNode<T> extends TreeNode<T> {
     height: number;
     left: AVLNode<T> | null = null;
     right: AVLNode<T> | null = null;
 
-    constructor(data: T) {
-        super(data);
-        this.height = 1; // non-null nodes have a height of 1
+    constructor(data: T, id: number) {
+        super(data, id);
+        this.height = 1;
     }
 
-    // balance defined left - right
     getBalance(): number {
-        const height_left = this.left ? this.left.height : 0;
-        const height_right = this.right ? this.right.height : 0;
-        return height_left - height_right;
+        const heightLeft = this.left ? this.left.height : 0;
+        const heightRight = this.right ? this.right.height : 0;
+        return heightLeft - heightRight;
     }
 }
+
+interface AVLContext {
+    visitedNodeIds: number[];
+    focusNodeId: number | null;
+    accentNodeIds: number[];
+}
+
 export class AVL<T> extends Tree<T> {
     root: AVLNode<T> | null = null;
+    lastOperation: TreeOperation<T> | null = null;
+
     constructor() {
         super();
     }
 
-    // Inspired by GeeksForGeeks implementation of AVL Tree insert
-    private insertHelper(node: AVLNode<T> | null, data: T): AVLNode<T> {
+    private setOperation(type: 'insert' | 'delete', value: T, context: AVLContext): void {
+        this.lastOperation = {
+            sequence: this.nextSequence(),
+            type,
+            value,
+            visitedNodeIds: context.visitedNodeIds,
+            focusNodeId: context.focusNodeId,
+            accentNodeIds: Array.from(new Set(context.accentNodeIds)),
+        };
+    }
+
+    private insertHelper(node: AVLNode<T> | null, data: T, context: AVLContext): AVLNode<T> {
         if(node === null) {
-            return new AVLNode(data);
+            const newNode = new AVLNode<T>(data, this.createNodeId());
+            context.focusNodeId = newNode.id;
+            return newNode;
         }
 
-        if(data <= node.data) { // equality goes left 
-            node.left = this.insertHelper(node.left, data);
+        context.visitedNodeIds.push(node.id);
+        if(data <= node.data) {
+            node.left = this.insertHelper(node.left, data, context);
         }
         else {
-            node.right = this.insertHelper(node.right, data);
+            node.right = this.insertHelper(node.right, data, context);
         }
 
-        // note: balance is defined as left - right (right - left works too, but would need to flip the cases)
-        // if left side height is larger than the right, then nodeBalance would be positive
-        // a tree is unbalanced if the magnitude of its balance is 2 or more
         node.height = Math.max(this.getHeight(node.left), this.getHeight(node.right)) + 1;
         const nodeBalance = this.getBalance(node);
 
-        // 4 Cases for node becoming unbalanced
-        // left subtree tree is larger, need to rotate to the right
-        if(nodeBalance >= 2 && data < node.left!.data) {
+        if(nodeBalance >= 2 && node.left !== null && data < node.left.data) {
+            context.accentNodeIds.push(node.id);
             return this.rightRotate(node)!;
         }
-        // left subtree is larger, but the path up from the inserted node comes from the 
-        // right subtree of the left node, requiring first a left rotation then a right rotation 
-        if(nodeBalance >= 2 && data > node.left!.data) {
-            node.left = this.leftRotate(node.left!);
+        if(nodeBalance >= 2 && node.left !== null && data > node.left.data) {
+            context.accentNodeIds.push(node.id);
+            node.left = this.leftRotate(node.left);
             return this.rightRotate(node)!;
         }
-        // right subtree is larger, rotate to the left
-        if(nodeBalance <= -2 && data > node.right!.data) {
+        if(nodeBalance <= -2 && node.right !== null && data > node.right.data) {
+            context.accentNodeIds.push(node.id);
             return this.leftRotate(node)!;
         }
-        // right subtree is larger, but the path up from the inserted node comes from the
-        // left subtree of the right node, requiring first a right rotation then a left rotation
-        if(nodeBalance <= -2 && data < node.right!.data) {
-            node.right = this.rightRotate(node.right!);
+        if(nodeBalance <= -2 && node.right !== null && data < node.right.data) {
+            context.accentNodeIds.push(node.id);
+            node.right = this.rightRotate(node.right);
             return this.leftRotate(node)!;
         }
 
         return node;
     }
-    
-    // adapted from GeeksForGeeks implementation of AVL deletion
-    private deleteHelper(node: AVLNode<T> | null, data: T): AVLNode<T> | null {
-        if (node === null) return node;
+
+    private deleteHelper(node: AVLNode<T> | null, data: T, context: AVLContext): AVLNode<T> | null {
+        if(node === null) {
+            return node;
+        }
+
+        context.visitedNodeIds.push(node.id);
         if(data < node.data) {
-            node.left = this.deleteHelper(node.left, data);
+            node.left = this.deleteHelper(node.left, data, context);
         }
         else if(data > node.data) {
-            node.right = this.deleteHelper(node.right, data);
-        } else { // equality case, delete node found -> delete
-            // case 1 / 2: no child or one child
+            node.right = this.deleteHelper(node.right, data, context);
+        }
+        else {
+            context.focusNodeId = node.id;
             if(node.left === null || node.right === null) {
-                node = node.left ? node.left : node.right; // note: if both left and right are null, node will become null
+                node = node.left ? node.left : node.right;
             }
-            else { // case 3: node has both children, replace node w/ in order successor
-                const successor = this.getInOrderSuccessor(node); // get successor
-                node.data = successor!.data; // replace data
-                node.right = this.deleteHelper(node.right, successor!.data) // delete the successor 
+            else {
+                const successor = this.getInOrderSuccessor(node);
+                if(successor === null) {
+                    return node;
+                }
+                node.data = successor.data;
+                node.right = this.deleteHelper(node.right, successor.data, context);
             }
         }
 
-        // update height
-        if(node === null) return node;
+        if(node === null) {
+            return node;
+        }
+
         node.height = Math.max(this.getHeight(node.left), this.getHeight(node.right)) + 1;
-
-        // rebalance - same as insert
         const nodeBalance = this.getBalance(node);
-        // left subtree tree is larger, need to rotate to the right
+
         if(nodeBalance >= 2 && this.getBalance(node.left) >= 0) {
-            console.log(`Tree imbalanced at ${node.data}, performing left rotation`);
+            context.accentNodeIds.push(node.id);
             return this.rightRotate(node)!;
         }
-        // left subtree is larger, but the path up from the inserted node comes from the 
-        // right subtree of the left node, requiring first a left rotation then a right rotation 
         if(nodeBalance >= 2 && this.getBalance(node.left) < 0) {
-            console.log(`Tree imbalanced at ${node.data}, performing left right rotation`);
-            node.left = this.leftRotate(node.left!);
+            context.accentNodeIds.push(node.id);
+            node.left = this.leftRotate(node.left);
             return this.rightRotate(node)!;
         }
-        // right subtree is larger, rotate to the left
         if(nodeBalance <= -2 && this.getBalance(node.right) <= 0) {
-            console.log(`Tree imbalanced at ${node.data}, performing right rotation`);
+            context.accentNodeIds.push(node.id);
             return this.leftRotate(node)!;
         }
-        // right subtree is larger, but the path up from the inserted node comes from the
-        // left subtree of the right node, requiring first a right rotation then a left rotation
         if(nodeBalance <= -2 && this.getBalance(node.right) > 0) {
-            console.log(`Tree imbalanced at ${node.data}, performing right left rotation`);
+            context.accentNodeIds.push(node.id);
             node.right = this.rightRotate(node.right!);
             return this.leftRotate(node)!;
         }
+
         return node;
     }
 
-    // wrapper function for recursive insertion
     insert(data: T): void {
-        this.root = this.insertHelper(this.root, data);
+        const context: AVLContext = {
+            visitedNodeIds: [],
+            focusNodeId: null,
+            accentNodeIds: [],
+        };
+        this.root = this.insertHelper(this.root, data, context);
+        this.setOperation('insert', data, context);
     }
 
-    // wrapper function for recursive deletion
     delete(data: T): void {
-        this.root = this.deleteHelper(this.root, data);
+        const context: AVLContext = {
+            visitedNodeIds: [],
+            focusNodeId: null,
+            accentNodeIds: [],
+        };
+        this.root = this.deleteHelper(this.root, data, context);
+        this.setOperation('delete', data, context);
     }
 
-    private getHeight(node: AVLNode<T> | null) {
+    private getHeight(node: AVLNode<T> | null): number {
         return node !== null ? node.height : 0;
     }
 
@@ -412,42 +484,46 @@ export class AVL<T> extends Tree<T> {
 
     private rightRotate(root: AVLNode<T>): AVLNode<T> | null {
         const newRoot = root.left;
-        if(newRoot === null) return null;
-        const subtree = newRoot.right;
+        if(newRoot === null) {
+            return null;
+        }
 
-        // rotate to the right (order matters, newRoot.right must be changed first)
+        const subtree = newRoot.right;
         newRoot.right = root;
         root.left = subtree;
 
-        // update the height values (order matters, root.height must be changed first since it is lower)
-        root.height = Math.max(this.getHeight(root.left), this.getHeight(root.right)) + 1
+        root.height = Math.max(this.getHeight(root.left), this.getHeight(root.right)) + 1;
         newRoot.height = Math.max(this.getHeight(newRoot.left), this.getHeight(newRoot.right)) + 1;
-    
+
         return newRoot;
     }
 
-    private leftRotate(root: AVLNode<T>) {
+    private leftRotate(root: AVLNode<T> | null): AVLNode<T> | null {
+        if(root === null) {
+            return null;
+        }
+
         const newRoot = root.right;
+        if(newRoot === null) {
+            return null;
+        }
 
-        // in theory newRoot == null should never happen, but is there to make typescript happy
-        if(newRoot === null) return null;
-
-        const subtree: AVLNode<T> | null = newRoot.left;
-
-        // rotate to the right (order matters, newRoot.right must be changed first)
+        const subtree = newRoot.left;
         newRoot.left = root;
         root.right = subtree;
 
-        // update the height values (order matters, root.height must be changed first, since it is lower)
-        root.height = Math.max(this.getHeight(root.left), this.getHeight(root.right)) + 1
+        root.height = Math.max(this.getHeight(root.left), this.getHeight(root.right)) + 1;
         newRoot.height = Math.max(this.getHeight(newRoot.left), this.getHeight(newRoot.right)) + 1;
-        
+
         return newRoot;
     }
 
     private getInOrderSuccessor(node: AVLNode<T> | null): AVLNode<T> | null {
-        let curr = node; 
-        if(curr === null) return null
+        let curr = node;
+        if(curr === null) {
+            return null;
+        }
+
         curr = curr.right;
         while(curr !== null && curr.left !== null) {
             curr = curr.left;
@@ -455,69 +531,83 @@ export class AVL<T> extends Tree<T> {
         return curr;
     }
 
-    // toObject(), same as BST's toObject() but holds a balance factor
     toObject(): AVLNodeObj<T> | null {
         if(this.root === null) {
             return null;
         }
-        let avlObj: AVLNodeObj<T> = { 
+
+        const avlObj: AVLNodeObj<T> = {
+            id: this.root.id,
             value: this.root.data,
             balance: this.getBalance(this.root),
-            children: []
-         };
+            children: [],
+        };
 
-        // map can get the current object for each node that is pulled out (allows the ability to iterate into nested objects)
         const map = new Map<AVLNode<T>, AVLNodeObj<T>>();
         map.set(this.root, avlObj);
 
-        // BFS
         const queue = new Queue<AVLNode<T>>();
         queue.enqueue(this.root);
         while(queue.getSize() > 0) {
             const currNode = queue.dequeue();
-            if(currNode !== null) {
-                let currObj = map.get(currNode);
-                if(currObj == undefined) {
-                    currObj = { value: currNode.data, balance: this.getBalance(currNode) };
-                }
+            if(currNode === null) {
+                continue;
+            }
 
-                // convert the left node into a left object
-                if(currNode.left !== null) {
-                    const leftObj: AVLNodeObj<T> = { value: currNode.left.data, balance: this.getBalance(currNode.left) };
-                    if(currObj.children == undefined) {
-                        currObj.children = [];
-                    }
-                    currObj.children.push(leftObj);
-                    map.set(currNode.left, leftObj);
-                    queue.enqueue(currNode.left);
-                    
-                }
+            let currObj = map.get(currNode);
+            if(currObj === undefined) {
+                currObj = {
+                    id: currNode.id,
+                    value: currNode.data,
+                    balance: this.getBalance(currNode),
+                };
+            }
 
-                // convert right node into a right object
-                if(currNode.right !== null) {
-                    const rightObj: AVLNodeObj<T> = { value: currNode.right.data, balance: this.getBalance(currNode.right) }
-                    if(currObj.children == undefined) {
-                        currObj.children = [];
-                    }
-                    currObj.children.push(rightObj);
-                    map.set(currNode.right, rightObj);
-                    queue.enqueue(currNode.right);
+            if(currNode.left !== null) {
+                const leftObj: AVLNodeObj<T> = {
+                    id: currNode.left.id,
+                    value: currNode.left.data,
+                    balance: this.getBalance(currNode.left),
+                };
+                if(currObj.children === undefined) {
+                    currObj.children = [];
                 }
+                currObj.children.push(leftObj);
+                map.set(currNode.left, leftObj);
+                queue.enqueue(currNode.left);
+            }
+
+            if(currNode.right !== null) {
+                const rightObj: AVLNodeObj<T> = {
+                    id: currNode.right.id,
+                    value: currNode.right.data,
+                    balance: this.getBalance(currNode.right),
+                };
+                if(currObj.children === undefined) {
+                    currObj.children = [];
+                }
+                currObj.children.push(rightObj);
+                map.set(currNode.right, rightObj);
+                queue.enqueue(currNode.right);
             }
         }
+
         return avlObj;
     }
 }
 
 /*
 *
-*   Heap (Max and Min)
-* 
+* Heap (Max and Min)
+*
 */
 class HeapNode {
+    id: number;
     weight: number;
     text: string;
-    constructor(weight: number, text: string) {
+
+    constructor(id: number, weight: number, text: string) {
+        this.id = id;
         this.weight = weight;
         this.text = text;
     }
@@ -528,144 +618,192 @@ export class Heap {
     type: string;
     size: number;
     lastExtracted: string | null;
+    lastOperation: HeapOperation | null;
+    private nextHeapNodeId: number;
+    private operationSequence: number;
+
     constructor(type: string) {
-        this.arr = []
-        this.type = type.toLowerCase()
-        this.size = 0
+        this.arr = [];
+        this.type = type.toLowerCase();
+        this.size = 0;
         this.lastExtracted = null;
+        this.lastOperation = null;
+        this.nextHeapNodeId = 1;
+        this.operationSequence = 0;
     }
 
-    insert(weight: number, text: string) {
-        this.arr.push(new HeapNode(weight, text));
-        console.log(`Adding new node ${text}, ${weight}`)
-        this.bubbleUp(this.size++);
+    private nextSequence(): number {
+        return ++this.operationSequence;
     }
 
-    bubbleUp(idx: number) {
-        let parent = Math.floor((idx - 1) / 2)
+    private compare(first: HeapNode, second: HeapNode): boolean {
+        return this.type === 'min' ? first.weight < second.weight : first.weight > second.weight;
+    }
+
+    private formatNode(node: HeapNode): string {
+        return `(${node.text}, ${node.weight})`;
+    }
+
+    insert(weight: number, text: string): void {
+        const newNode = new HeapNode(this.nextHeapNodeId++, weight, text);
+        this.arr.push(newNode);
+        const visitedNodeIds = this.bubbleUp(this.size);
+        this.size++;
+        this.lastOperation = {
+            sequence: this.nextSequence(),
+            type: 'insert',
+            label: this.formatNode(newNode),
+            visitedNodeIds,
+            focusNodeId: newNode.id,
+        };
+    }
+
+    bubbleUp(idx: number): number[] {
+        if(this.arr[idx] === undefined) {
+            return [];
+        }
+
+        let parent = Math.floor((idx - 1) / 2);
         let curr = idx;
-        console.log("bubbling up");
-        while(parent >= 0 && (this.type === "min" ? this.arr[curr].weight < this.arr[parent].weight : this.arr[curr].weight > this.arr[parent].weight)) {
-            console.log(`swapping ${parent} with ${curr}`)
-            const swap_node = this.arr[parent];
+        const visitedNodeIds = [this.arr[curr].id];
+        while(parent >= 0 && this.compare(this.arr[curr], this.arr[parent])) {
+            visitedNodeIds.push(this.arr[parent].id);
+            const swapNode = this.arr[parent];
             this.arr[parent] = this.arr[curr];
-            this.arr[curr] = swap_node;
+            this.arr[curr] = swapNode;
             curr = parent;
             parent = Math.floor((curr - 1) / 2);
         }
+        return visitedNodeIds;
     }
-    bubbleDown(idx: number) {
-        const leftIdx = 2 * idx + 1;
-        const rightIdx = 2 * idx + 2;
 
-        // if both are less/more, swap with the larger/smaller one
-        if(leftIdx < this.size && rightIdx < this.size 
-        && (this.type === "min" ? this.arr[leftIdx].weight < this.arr[idx].weight : this.arr[leftIdx].weight > this.arr[idx].weight) 
-        && (this.type === "min" ? this.arr[rightIdx].weight < this.arr[idx].weight : this.arr[rightIdx].weight > this.arr[idx].weight)) 
-        {
-            // case leftIdx is the one to swap with
-            let swapIdx: number;
-            if(this.type === "min" ? this.arr[leftIdx] < this.arr[rightIdx] : this.arr[leftIdx] >= this.arr[rightIdx] )
+    bubbleDown(idx: number): number[] {
+        if(this.size === 0 || this.arr[idx] === undefined) {
+            return [];
+        }
+
+        let curr = idx;
+        const visitedNodeIds = [this.arr[curr].id];
+        while(true) {
+            const leftIdx = 2 * curr + 1;
+            const rightIdx = 2 * curr + 2;
+            let swapIdx = curr;
+
+            if(leftIdx < this.size && this.compare(this.arr[leftIdx], this.arr[swapIdx])) {
                 swapIdx = leftIdx;
-            else   
+            }
+            if(rightIdx < this.size && this.compare(this.arr[rightIdx], this.arr[swapIdx])) {
                 swapIdx = rightIdx;
+            }
+            if(swapIdx === curr) {
+                break;
+            }
 
-            const swap_node = this.arr[idx];
-            this.arr[idx] = this.arr[swapIdx];
-            this.arr[swapIdx] = swap_node;
-            this.bubbleDown(swapIdx);
+            visitedNodeIds.push(this.arr[swapIdx].id);
+            const swapNode = this.arr[curr];
+            this.arr[curr] = this.arr[swapIdx];
+            this.arr[swapIdx] = swapNode;
+            curr = swapIdx;
         }
-        else if(leftIdx < this.size && (this.type === "min" ? this.arr[leftIdx].weight < this.arr[idx].weight : this.arr[leftIdx].weight > this.arr[idx].weight)) {
-            const swap_node = this.arr[idx];
-            this.arr[idx] = this.arr[leftIdx];
-            this.arr[leftIdx] = swap_node;
-            this.bubbleDown(leftIdx);
-        }
-        else if(rightIdx < this.size && (this.type === "min" ? this.arr[rightIdx].weight < this.arr[idx].weight : this.arr[rightIdx].weight > this.arr[idx].weight)) {
-            const swap_node = this.arr[idx];
-            this.arr[idx] = this.arr[rightIdx];
-            this.arr[rightIdx] = swap_node;
-            this.bubbleDown(rightIdx);
-        }
+
+        return visitedNodeIds;
     }
 
-    extract(): HeapNode {
-        const extract_node = this.arr[0]
-        this.arr[0] = this.arr[--this.size]; // set the last element to replace the max
-        this.arr.pop() // remove last element
-        this.bubbleDown(0); // bubble down the top element
-        
-        this.lastExtracted = `(${extract_node.text}, ${extract_node.weight})`;
-        return extract_node
+    extract(): HeapNode | null {
+        if(this.size === 0) {
+            return null;
+        }
+
+        const extractNode = this.arr[0];
+        if(this.size === 1) {
+            this.arr.pop();
+            this.size = 0;
+            this.lastExtracted = this.formatNode(extractNode);
+            this.lastOperation = {
+                sequence: this.nextSequence(),
+                type: 'extract',
+                label: this.lastExtracted,
+                visitedNodeIds: [extractNode.id],
+                focusNodeId: null,
+            };
+            return extractNode;
+        }
+
+        this.arr[0] = this.arr[this.size - 1];
+        this.arr.pop();
+        this.size--;
+        const visitedNodeIds = this.bubbleDown(0);
+
+        this.lastExtracted = this.formatNode(extractNode);
+        this.lastOperation = {
+            sequence: this.nextSequence(),
+            type: 'extract',
+            label: this.lastExtracted,
+            visitedNodeIds,
+            focusNodeId: this.size > 0 ? this.arr[0].id : null,
+        };
+        return extractNode;
     }
 
     toObject(): HeapNodeObj | null {
-        if (this.size === 0) { 
+        if(this.size === 0) {
             return null;
         }
-    
-        let heapObj: HeapNodeObj = {
+
+        const heapObj: HeapNodeObj = {
+            id: this.arr[0].id,
             value: this.arr[0].weight,
             children: [],
-            txt: this.arr[0].text
+            txt: this.arr[0].text,
         };
-    
+
         const map = new Map<HeapNode, HeapNodeObj>();
         map.set(this.arr[0], heapObj);
-    
-        const queue = new Queue<number>(); // Queue of indices
-        queue.enqueue(0); // Start with the root node at index 0
-    
-        while(queue.getSize() !== 0) {
+
+        const queue = new Queue<number>();
+        queue.enqueue(0);
+        while(queue.getSize() > 0) {
             const currIdx = queue.dequeue();
-            console.log(`curr idx = ${currIdx}`)
-            if(currIdx !== null) {
-                const currNode = this.arr[currIdx];
-                const currObj = map.get(currNode);
-    
-                if(currObj !== undefined) {
-                    const leftIdx = 2 * currIdx + 1;
-                    const rightIdx = 2 * currIdx + 2;
-                    
-                    console.log(leftIdx < this.size && this.arr[leftIdx] !== null);
-                    if(leftIdx < this.size && this.arr[leftIdx] !== null) {
-                        const leftObj: HeapNodeObj = {
-                            value: this.arr[leftIdx].weight,
-                            txt: this.arr[leftIdx].text,
-                            children: [],
-                            isLeft: true
-                        };
-                        console.log("adding to left side");
-                        currObj.children?.push(leftObj);
-                        map.set(this.arr[leftIdx], leftObj);
-                        queue.enqueue(leftIdx);
-                    }
-    
-                    if(rightIdx < this.size && this.arr[rightIdx] !== null) {
-                        const rightObj: HeapNodeObj = {
-                            value: this.arr[rightIdx].weight,
-                            txt: this.arr[rightIdx].text,
-                            children: [],
-                            isLeft: false
-                        };
-                        currObj.children?.push(rightObj);
-                        map.set(this.arr[rightIdx], rightObj);
-                        queue.enqueue(rightIdx);
-                    }
-                }
+            if(currIdx === null) {
+                continue;
+            }
+
+            const currNode = this.arr[currIdx];
+            const currObj = map.get(currNode);
+            if(currObj === undefined) {
+                continue;
+            }
+
+            const leftIdx = 2 * currIdx + 1;
+            const rightIdx = 2 * currIdx + 2;
+
+            if(leftIdx < this.size) {
+                const leftObj: HeapNodeObj = {
+                    id: this.arr[leftIdx].id,
+                    value: this.arr[leftIdx].weight,
+                    txt: this.arr[leftIdx].text,
+                    children: [],
+                    isLeft: true,
+                };
+                currObj.children?.push(leftObj);
+                map.set(this.arr[leftIdx], leftObj);
+                queue.enqueue(leftIdx);
+            }
+
+            if(rightIdx < this.size) {
+                const rightObj: HeapNodeObj = {
+                    id: this.arr[rightIdx].id,
+                    value: this.arr[rightIdx].weight,
+                    txt: this.arr[rightIdx].text,
+                    children: [],
+                    isLeft: false,
+                };
+                currObj.children?.push(rightObj);
+                map.set(this.arr[rightIdx], rightObj);
+                queue.enqueue(rightIdx);
             }
         }
-    
+
         return heapObj;
     }
-
-    // getArr(): string | null {
-    //     let out: string = '[';
-    //     for(let i = 0; i < this.size - 1; i++) {
-    //         out += `(${this.arr[i].text}, ${this.arr[i].weight}), `;
-    //     }
-    //     out += `(${this.arr[this.size - 1].text}, ${this.arr[this.size - 1].weight})`;
-    //     out += ']';
-    //     return out;
-    // }
 }

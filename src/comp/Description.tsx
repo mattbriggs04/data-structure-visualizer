@@ -1,155 +1,217 @@
 import './Description.css';
 import CodeBlock from './CodeBlock';
+import { StructureType } from '../types/types';
+
 interface DescriptionProps {
-    structure: string;
+    structure: StructureType;
 }
+
 function Description({structure}: DescriptionProps) {
+    if(structure === '') {
+        return null;
+    }
+
+    if(structure === 'stack') {
+        return (
+            <div className="description-wrapper">
+                <div className="description-container">
+                    <h1>What is a Stack?</h1>
+                    <p>A stack is a simple data structure that follows the Last-In, First-Out (LIFO) rule. The most recently inserted element is the first one removed. That small rule makes stacks useful in many places where work needs to be undone, deferred, or revisited in reverse order.</p>
+                    <blockquote>
+                        The stack in this visualizer grows upward because it reads better on screen. A process call stack in memory is a different concept and may grow in the opposite direction depending on the system.
+                    </blockquote>
+
+                    <h2>Core Operations</h2>
+                    <ul>
+                        <li><strong>Push</strong>: place a new element on top of the stack.</li>
+                        <li><strong>Pop</strong>: remove and return the current top element.</li>
+                        <li><strong>Peek</strong>: inspect the current top element without removing it.</li>
+                    </ul>
+                    <p>When a stack is implemented with either a linked list head or a dynamic array tail, all three of those operations are <strong>O(1)</strong>.</p>
+
+                    <h2>Why Stacks Matter</h2>
+                    <ul>
+                        <li>Function calls naturally nest, so languages often model call state as stack frames.</li>
+                        <li>Depth-first search is usually written with an explicit stack or with recursion, which uses the call stack implicitly.</li>
+                        <li>Undo and redo systems often keep past actions in one or more stacks.</li>
+                    </ul>
+
+                    <h2>C Code Implementation</h2>
+                    <p>This project already includes a C example of an array-backed stack. A useful follow-up exercise is writing the same API with a linked list instead.</p>
+                    <CodeBlock language="c" filepath="/code_examples/C/stack.c" />
+                </div>
+            </div>
+        );
+    }
+
+    if(structure === 'linkedlist') {
+        return (
+            <div className="description-wrapper">
+                <div className="description-container">
+                    <h1>What is a Linked List?</h1>
+                    <p>A linked list stores data in nodes, and each node stores both a value and a reference to another node. In a singly linked list, each node points only to the next node. The data does not need to live in one contiguous block of memory the way an array does.</p>
+                    <blockquote>
+                        This visualizer currently shows a <em>singly</em> linked list. The ground symbol at the end represents <em>NULL</em>, meaning there is no next node.
+                    </blockquote>
+
+                    <h2>Strengths</h2>
+                    <ul>
+                        <li>Insertion and deletion are cheap once you already have a pointer to the right location.</li>
+                        <li>The structure grows naturally one node at a time without copying the whole collection.</li>
+                    </ul>
+
+                    <h2>Tradeoffs</h2>
+                    <ul>
+                        <li>There is no constant-time random access. Reaching the fifth element still requires following four links first.</li>
+                        <li>Each node needs extra memory for its pointer fields.</li>
+                    </ul>
+
+                    <h2>Common Variants</h2>
+                    <ul>
+                        <li><strong>Singly linked list</strong>: each node points forward to the next node.</li>
+                        <li><strong>Doubly linked list</strong>: each node stores both <em>next</em> and <em>prev</em> links.</li>
+                        <li><strong>Circular linked list</strong>: the tail links back to the head instead of ending at <em>NULL</em>.</li>
+                    </ul>
+
+                    <h2>Complexity Notes</h2>
+                    <p>Searching is <strong>O(n)</strong> because links must be followed one by one. Inserting or deleting at the head is <strong>O(1)</strong>. Inserting or deleting in the middle is also <strong>O(1)</strong> once the predecessor node is already known, but finding that predecessor is still usually <strong>O(n)</strong>.</p>
+
+                    <h2>C Code Implementation</h2>
+                    <CodeBlock language="c" filepath="/code_examples/C/linkedlist.c" />
+                </div>
+            </div>
+        );
+    }
+
+    if(structure === 'bst') {
+        return (
+            <div className="description-wrapper">
+                <div className="description-container">
+                    <h1>What is a Binary Search Tree?</h1>
+                    <p>A binary search tree (BST) is a binary tree with an ordering rule: every value in the left subtree is less than or equal to the parent, and every value in the right subtree is greater than the parent. Because the same rule holds recursively at every node, searching can discard half of the remaining tree at each step in a well-shaped tree.</p>
+                    <blockquote>
+                        In this implementation, duplicate values go to the left. That is a design choice; the important part is staying consistent everywhere in the code.
+                    </blockquote>
+
+                    <h2>How Search Works</h2>
+                    <ol>
+                        <li>Start at the root node.</li>
+                        <li>Compare the target value to the current node.</li>
+                        <li>If the target is smaller, move left. If it is larger, move right. If it matches, stop.</li>
+                        <li>Continue until the value is found or a <em>NULL</em> child is reached.</li>
+                    </ol>
+
+                    <h2>Insertion and Deletion</h2>
+                    <p>Insertion follows the same comparisons as search until an empty child slot is found. Deletion has three classic cases:</p>
+                    <ul>
+                        <li><strong>No children</strong>: remove the node directly.</li>
+                        <li><strong>One child</strong>: replace the node with its child.</li>
+                        <li><strong>Two children</strong>: copy in the inorder successor or predecessor, then remove that replacement node from its original position.</li>
+                    </ul>
+
+                    <h2>Performance</h2>
+                    <p>Search, insert, and delete are <strong>O(h)</strong>, where <em>h</em> is the tree height. In a balanced tree that is typically <strong>O(log n)</strong>. In the worst case, a BST can become a long chain and degrade to <strong>O(n)</strong>.</p>
+
+                    <h2>Try These Inputs</h2>
+                    <ul>
+                        <li><code>[10, 8, 5, 3, 2, 1]</code> creates the classic worst-case skew.</li>
+                        <li><code>[5, 3, 8, 6, 1, 10, 2]</code> produces a much healthier shape.</li>
+                        <li><code>[10, 8, 12, 7, 9, 11]</code> is close to a complete binary tree.</li>
+                    </ul>
+                </div>
+            </div>
+        );
+    }
+
+    if(structure === 'avl') {
+        return (
+            <div className="description-wrapper">
+                <div className="description-container">
+                    <h1>What is an AVL Tree?</h1>
+                    <p>An AVL tree is a self-balancing binary search tree. It keeps the same ordering rule as a BST, but after insertion or deletion it checks whether the tree became too heavy on one side. If it did, the tree performs one or two rotations to restore balance.</p>
+                    <blockquote>
+                        Each node in this visualizer shows its balance factor: <em>height(left subtree) - height(right subtree)</em>. Values near zero are healthy. Magnitudes of two or more mean the node is unbalanced and needs a rotation.
+                    </blockquote>
+
+                    <h2>Why Balance Matters</h2>
+                    <p>A plain BST can degrade into a linked-list shape if values arrive in an unlucky order. AVL trees actively prevent that by keeping the height close to <strong>O(log n)</strong>, so search, insert, and delete stay efficient.</p>
+
+                    <h2>Rotation Cases</h2>
+                    <ul>
+                        <li><strong>Left-left</strong>: a single right rotation fixes the imbalance.</li>
+                        <li><strong>Right-right</strong>: a single left rotation fixes the imbalance.</li>
+                        <li><strong>Left-right</strong>: first rotate the child left, then rotate the parent right.</li>
+                        <li><strong>Right-left</strong>: first rotate the child right, then rotate the parent left.</li>
+                    </ul>
+
+                    <h2>Operational Costs</h2>
+                    <p>Search is still the same conceptual process as a BST. Insert and delete do extra bookkeeping because heights and balance factors need to be updated on the way back up the tree, but the overall complexity remains <strong>O(log n)</strong>.</p>
+                </div>
+            </div>
+        );
+    }
+
+    if(structure === 'minheap' || structure === 'maxheap') {
+        const title = structure === 'minheap' ? 'What is a Min Heap?' : 'What is a Max Heap?';
+        const heapProperty = structure === 'minheap'
+            ? 'every parent key is less than or equal to its children'
+            : 'every parent key is greater than or equal to its children';
+        const rootMeaning = structure === 'minheap'
+            ? 'the smallest element is always at the root'
+            : 'the largest element is always at the root';
+
+        return (
+            <div className="description-wrapper">
+                <div className="description-container">
+                    <h1>{title}</h1>
+                    <p>A heap is a complete binary tree stored efficiently in an array. “Complete” means every level is filled from left to right except possibly the last. The heap property then adds the ordering rule: {heapProperty}, so {rootMeaning}.</p>
+                    <blockquote>
+                        Heaps are not search trees. They guarantee something strong only at the root and along each parent-child relationship, not across an entire left or right subtree.
+                    </blockquote>
+
+                    <h2>Core Operations</h2>
+                    <ul>
+                        <li><strong>Insert</strong>: append the new value at the next open array slot, then bubble it up until the heap property is restored.</li>
+                        <li><strong>Extract</strong>: remove the root, move the last element to the root, then bubble it down.</li>
+                        <li><strong>Peek</strong>: inspect the root in <strong>O(1)</strong>.</li>
+                    </ul>
+
+                    <h2>Complexity</h2>
+                    <p>Insert and extract both take <strong>O(log n)</strong> because the element moves only along one root-to-leaf path. This is why heaps are a classic implementation choice for priority queues.</p>
+
+                    <h2>How This Visualizer Uses Heaps</h2>
+                    <p>Each node is displayed as <code>(id, weight)</code>. The weight determines where the node belongs in the heap, while the id is just a label so you can tell repeated priorities apart.</p>
+                </div>
+            </div>
+        );
+    }
+
     return (
         <div className="description-wrapper">
-            {structure == "stack" &&
-            <div className="description-container stack-desc-container">
-                <h1>What is a Stack?</h1>
-                <p>A stack is a simple data structure that follows the Last-In, First-Out (LIFO) principle, meaning the last element added is the first to be removed. Stacks are fundamental to the implementation of many algorithms. One notable use case of stacks is for storing information of a program, you may have heard of the stack of a process. In computer security, many vulnerabilities are exploited through buffer overflow attacks. This vulnerability takes advantage of the stacks structure in order to overwrite data that affects the control-flow of a program.</p>
+            <div className="description-container">
+                <h1>What is a Graph?</h1>
+                <p>A graph is a collection of vertices connected by edges. Graphs are a natural way to model roads, computer networks, social relationships, dependency graphs, game maps, and many other systems where “what connects to what” matters more than simple linear order.</p>
                 <blockquote>
-                    While the stack in the visualizer grows up, the stack of a process grows <em>downward</em> (toward lower addresses). This is done for space management, as the heap grows upward. And yes, the heap and the stack could grow into eachother and collide, causing a stack or heap overflow. However, modern operating systems typically incorporate protections to prevent such collisions.
+                    This visualizer uses an <em>undirected</em>, <em>unweighted</em> graph. An edge from A to B means A is connected to B and B is connected to A.
                 </blockquote>
-                <h3>Operations</h3>
-                <p>A stack is defined by three main operations:</p>
-                <ul>
-                    <li>Push - Place an element at the top of the stack.</li>
-                    <li>Pop - Read and remove the top element of the stack.</li>
-                    <li>Peek - Read the value of the top of the stack without removing it.</li>
-                </ul>
-                <p>All operations have <strong>O(1)</strong> time complexity.</p>
 
-                <h3>C Code Implementation</h3>
-                <p>Stacks can be implemented with either an array or a linked list. Below is an array implementation. A good exercise would be to write an implementation of a stack using a linked list.</p>
-                <CodeBlock language="c" filepath="/code_examples/C/stack.c" />
-                <h3>Applications</h3>
-                <p>Some stack applications are:</p>
+                <h2>Common Traversals</h2>
                 <ul>
-                    <li>Function call management: Storing function call data in what is known as a "stack frame" during program execution.</li>
-                    <li>Depth First Search: Stacks can be utilized to traverse trees</li>
-                    <li>Undo/Redo: Past actions can be stored in a stack for later retrieval</li>
+                    <li><strong>Breadth-first search (BFS)</strong>: visits neighbors level by level using a queue. BFS is useful when you care about the shortest path in an unweighted graph.</li>
+                    <li><strong>Depth-first search (DFS)</strong>: follows one branch as far as possible before backtracking. DFS is useful for connected components, cycle checks, and many recursive graph problems.</li>
                 </ul>
+
+                <h2>Representations</h2>
+                <ul>
+                    <li><strong>Adjacency list</strong>: each vertex stores the vertices it connects to. This is efficient for sparse graphs.</li>
+                    <li><strong>Adjacency matrix</strong>: a 2D table stores whether each pair of vertices is connected. This is often simpler but uses more space.</li>
+                </ul>
+
+                <h2>Complexity Notes</h2>
+                <p>With an adjacency list, both BFS and DFS run in <strong>O(V + E)</strong>, where <em>V</em> is the number of vertices and <em>E</em> is the number of edges. The traversal animation here highlights the order in which vertices and edges are discovered.</p>
             </div>
-
-            }
-            {structure == "linkedlist" &&
-                <div className="description-container linkedlist-desc-container">
-                    <h1>What is a Linked List?</h1>
-                    <p>Linked lists are a fundamental data structure that store information in nodes, in which each node is <em>linked</em> to eachother through a pointer to the next and or the previous node.</p> 
-                    <blockquote>Currently, the linked list shown in the visualizer is a singly linked list, which means each element contains only a pointer to the next element. A doubly linked list would also include an arrow going backwards, storing both a pointer to the next element and previous element. Note the electrical ground symbol is also used to denote <em>NULL</em> (end of list).</blockquote>
-                    <p>
-                    Linked lists are commonly used to create other fundamental data structures, such as a stack or queue. The "competition" to linked lists are arrays, which is what they are often compared to when making design decisions and considering the advantages and disadvantages. Much of the time, a linked list solution can also be replicated with an array, and vice versa. Understanding which one to use by weighing their pros and cons given a situation is an essential skill when working with data structures.</p>
-                    <h3>Advantages</h3>
-                    <ul>
-                        <li>Dynamically Sized. Easy to create and add a new node or remove a node already in the list. In contrast, an array's entire structure would have to be resized to add more elements (in C, this could be done using <em>realloc</em> ).</li>
-                        <li>Efficient insertion and deletion. Elements don't need to be moved around, just the links updated.</li>
-                    </ul>
-                    <h3>Disadvantages</h3>
-                    <ul>
-                        <li>No random access / indexing: while an array can access its fifth element with arr[5], a linked list would require a traversal of five links.
-                        </li>
-                        <li>Memory overhead: Each node requires additional space to store the next pointer (the link).</li>
-                    </ul>
-                    <h3>C Code Implementation</h3>
-                    <CodeBlock language="c" filepath="/code_examples/C/linkedlist.c" />
-                    <h3>Linked Lists Variants</h3>
-                    <p>This data structure visualizer (currently) only shows a singly linked list, where the links point to the next node. This does not always have to be the case. As seen in the C Code Implementation, a link is defined by a <strong>next</strong> pointer. These next pointers can store any other link. In fact, multiple pointers can be stored in the ListNode struct! Let's say we wanted to also store a pointer going backwards, to the previous node. We can! It would just require defining a prev pointer after the next pointer. This is known as a <strong>doubly linked list</strong>. Some common linked lists variants are:</p>
-                    <ol>
-                        <li>Singly Linked List</li>
-                        <ul>
-                            <li>Simplest linked list.</li>
-                            <li>Each node contains data and a pointer to the next node.</li>
-                            <li>Pros: Easy, memory efficient.</li>
-                            <li>Cons: No backward traversal.</li>
-                        </ul>
-                        <li>Doubly Linked List</li>
-                        <ul>
-                            <li>Each node contains data, a pointer to the next node, and a pointer to the previous node.</li>
-                            <li>Pros: Easier to delete nodes (given a node, not its data), supports backwards traversal.</li>
-                            <li>Cons: More memory overhead, may be more complex to manage pointers.</li>
-                        </ul>
-                        <li>Circularly Linked Lists</li>
-                        <ul>
-                            <li>A linked list where the last node points back to the first node, forming a loop.</li>
-                            <li>Can be singly or doubly linked.</li>
-                            <li>Pros: Useful for cyclic traversal applications.</li>
-                            <li>Cons: Risk of infinite loops.</li>
-                        </ul>
-                    </ol>
-                </div>
-            }
-            {structure == "bst" &&
-                <div className="description-container bst-desc-container">
-                    <h1>What is a Binary Search Tree?</h1>
-                    <p>A <b>Binary Search Tree</b> (BST) is a common data structure that is derived from a Binary Tree. BST's have properties that make them efficient in storing data.
-
-                    <blockquote>But first: what is a Binary Tree? A tree is a hierarchical data structure consisting of nodes that are connected to eachother. Nodes store data and links to their "children". In the case of a Binary Tree -- "Bi" meaning two -- each node has zero, one, or two children. A useful way to think about a Binary Tree is that each node always has two children, but children can be <em>NULL</em>.</blockquote>
-
-                    A Binary Search Tree is a Binary Tree with the following ordering property: for any given node, a node's left child must have a weight less than its parent's weight and the node's right child must have a weight more than its parent's weight. When using the visualizer, notice that this is always true.
-
-                    <blockquote>What about if the parent value is equal? It's a design choice: either discard and do nothing (only allowing unique values), go to the left, or go to the right. Whichever choice is made must be kept consistent with the rest of the program.</blockquote>
-
-                    <h2>Operations</h2>
-                    A BST's ordering property makes it efficient at searching, inserting, and deleting.</p>
-                    <h3>Searching</h3>
-                    <p>Consider searching for an element with value <em>target</em>.
-                        <ol>
-                            <li>Start at the root of current tree (the top node).</li>
-                            <li>Compare the target value to the current node value.</li>
-                            <ul>
-                                <li>If it's smaller, move left.</li>
-                                <li>If it's larger, move right.</li>
-                                <li>If it matches, the node has been found! Return.</li>
-                            </ul>
-                            <li>Repeat until either the target is found, or a NULL node is reached (the target is not in the tree).</li>
-                        </ol>
-                        Searching can be implemented recursively -- where each step calls the function on a smaller subtree -- or iteratively using a loop and pointer. The code segment below demonstrates an iterative approach.
-                    </p>
-                    <h3>Insertion</h3>
-                    <p>Insertion follows similarly to searching:
-                    <ol>
-                        <li>Exactly matching how searching works, compare the target value to the current node. Smaller goes left, larger goes right. As discussed in the note in the introduction, the equality case is a design choice.</li>
-                        <li>Once a NULL node is found, replace it with the new node. For example, if a tree has only a 10, then inserting a 7 would check the left node of the 10, see it is NULL, and place the 7 to the left of 10.</li>
-                    </ol>
-                    </p>
-                    <h3>Deletion</h3>
-                    <p>Deletion gets a little bit more complex. First, search for the node same as above. Once the desired node has been reached, there are three main cases to consider:
-                    <ol>
-                        <li><strong>No children</strong>: Simply remove the node.</li>
-                        <li><strong>One child</strong>: Replace the node with its child.</li>
-                        <li><strong>Two children</strong>: Unfortunately, you cannot just delete the node or randomly replace the node with one of its children. Instead:</li>
-                        <ul>
-                            <li>Find the inorder successor, which is the smallest value in the right subtree. This can be found by traversing once to the right, then left as far as possible. Then, Copy the successor value into the target node, then delete the successor. Since we have gone left as far as possible, we know the successor node does not have a left child, thus it will be replaced by the right child.</li>
-                            <li>This works because the inorder successor is the next largest value, so by replacing the node with it, the left child must still be smaller and the right still larger.</li>
-                            <li>Alternatively, the inorder predecessor also works (go left, then right as far as possible).</li>
-                        </ul>
-                    </ol>
-                    It is highly encouraged to test all three deletion cases using the visualizer: see if you can predict what the tree will look like after deletion!
-                    </p>
-                    <h3>Disadvantages</h3>
-                    <p>Consider inserting the following values in the order which they are listed: [10, 8, 5, 3, 2, 1]</p>
-                    <p>Since all of the elements are less than the previously inserted one, they form a straight line. In this case, the BST is effectively a Linked List -- the time complexity for inserting and searching is O(n), since every node needed to be checked. This is the Binary Search Tree's worst-case scenario, happening with data that is nearly sorted. <strong>Balanced</strong> BSTs (such as an AVL Tree) fix this issue by rearranging the nodes, enforcing an O(log n) performance. Much better!</p>
-                    
-                    <h3>Try It Yourself</h3>
-                    <p>Below are some trees you may want to insert and see how they differ in structure!</p>
-                    <ul>
-                        <li>[10, 8, 5, 3, 2, 1] - The worst case scenario from above</li>
-                        <li>[5, 3, 8, 6, 1, 10, 2] - A more balanced shape</li>
-                        <li>[10, 8, 12, 7, 9, 11] - A complete binary tree: a tree in which all but the last level is filled</li>
-                    </ul>
-                    <blockquote>
-                        <b>Tip:</b> into any tree visualizer, elements can be quickly inserted by putting them in a list format. [10, 8, 5] will insert a 10, then 8, then 5.
-                    </blockquote>
-                    {/* <p>See the code below for an example of how a general purpose BST would be implemented</p>
-                    Code Block Here */}
-                    
-                </div>
-            }
         </div>
-    )
+    );
 }
 
 export default Description;

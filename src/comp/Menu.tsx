@@ -1,44 +1,60 @@
-import { Dispatch, SetStateAction, useState } from 'react';
+import { Dispatch, SetStateAction } from 'react';
 import './Menu.css';
-import ControlPanel from "./ControlPanel"
-import StructureModal from "./StructureModal"
-import { DataType } from "../types/types"
+import { StructureType, structureLabels } from "../types/types"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faMoon } from "@fortawesome/free-regular-svg-icons";
 import { faSun } from "@fortawesome/free-solid-svg-icons";
 
 interface MenuProps {
-    structure: string;
-    setStructure: Dispatch<SetStateAction<string>>;
-    data: DataType<number>;
-    setData: Dispatch<SetStateAction<DataType<number>>>;
+    structure: StructureType;
     theme: string;
     setTheme: Dispatch<SetStateAction<string>>;
+    onOpenStructureModal: () => void;
 }
 
-function Menu({ structure, setStructure, data, setData, theme, setTheme }: MenuProps) {
-    const [isSelect, setIsSelect] = useState(false);
-    const handleSelectBtn = () => {
-        setIsSelect(true);
+function Menu({ structure, theme, setTheme, onOpenStructureModal }: MenuProps) {
+    const handleThemeChange = () => {
+        setTheme(theme === "light" ? "dark" : "light");
     }
 
-    const handleThemeChange = () => {
-        setTheme(theme == "light" ? "dark" : "light");
-    }
+    const currentStructure = structure === '' ? 'No structure selected' : structureLabels[structure];
 
     return (
-        <>
-            {isSelect && <StructureModal setIsSelect={setIsSelect} setStructure={setStructure} />}
-            <div className="menu-container">
-                <div>
-                    <button onClick={handleThemeChange} className={`theme-select-btn`}>
-                        <FontAwesomeIcon icon={theme === 'light' ? faSun : faMoon} />
-                    </button>
-                    <button onClick={handleSelectBtn} className={`button-style1 select-structure-btn`}>Select Structure</button>
+        <header className="menu-container">
+            <div className="menu-brand">
+                <p className="menu-kicker">Interactive Playground</p>
+                <div className="menu-copy">
+                    <p className="menu-title">Data Structure Visualizer</p>
+                    <p className="menu-description">
+                        {structure === ''
+                            ? 'Choose a structure to start exploring animations and controls.'
+                            : `Working with ${currentStructure}. Switch structures at any time.`}
+                    </p>
                 </div>
-                <ControlPanel structure={structure} data={data} setData={setData} />
             </div>
-        </>
+            <div className="menu-actions">
+                <div className="menu-selection" aria-live="polite">
+                    <span>Current</span>
+                    <strong>{currentStructure}</strong>
+                </div>
+                <button
+                    type="button"
+                    onClick={onOpenStructureModal}
+                    className="button-style1 select-structure-btn"
+                >
+                    {structure === '' ? 'Select Structure' : 'Change Structure'}
+                </button>
+                <button
+                    type="button"
+                    onClick={handleThemeChange}
+                    className="theme-select-btn"
+                    aria-label={`Switch to ${theme === 'light' ? 'dark' : 'light'} mode`}
+                >
+                    <FontAwesomeIcon icon={theme === 'light' ? faSun : faMoon} />
+                    <span>{theme === 'light' ? 'Light Mode' : 'Dark Mode'}</span>
+                </button>
+            </div>
+        </header>
     );
 }
 
