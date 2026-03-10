@@ -39,7 +39,7 @@ This project demonstrates interactive UI work for technical education tooling: t
 
 ## License
 
-MIT. See [LICENSE](LICENSE).
+This project is under the MIT license. See [LICENSE](LICENSE).
 
 
 ## Additional Images
