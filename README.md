@@ -1,19 +1,51 @@
 # Data Structure Visualizer
 
-AI is good at explaining how data structures work, but still has a long way to go in order to create visualizations that are intuitive to beginners. This web application intends to help fill that gap, by providing visualizers for common data structures, along with a description and code example implementing the data structure.
+Interactive visualizer for exploring core data structures through direct manipulation and animation. The project is designed to make structural behavior easier to understand by pairing each visualizer with structure-specific controls and concise explanations.
 
-This application has not yet been released to the web. You can check out the current version yourself by cloning the repository and then running `npm run dev`.
+![Project screenshot](images/homepage.png)
+
+## Overview
+
+- Visualizes linked lists, stacks, binary search trees, AVL trees, min heaps, max heaps, and graphs
+- Animates operations such as traversal paths, insertions, deletions, pushes, pops, and graph searches
+- Includes structure-aware control panels and explanation sections for each view
+- Built as a frontend-focused React + TypeScript project with SVG-based rendering
+
+## Tech Stack
+
+- React
+- TypeScript
+- Vite
+- D3
+- VisX
+
+## Run Locally
+
+```bash
+npm install
+npm run dev
+```
+
+Useful scripts:
+
+```bash
+npm run build
+npm run lint
+```
+
+## Purpose
+
+This project demonstrates interactive UI work for technical education tooling: translating abstract data-structure behavior into clear visual feedback, operation-specific animation, and a lightweight teaching interface.
+
+## License
+
+MIT. See [LICENSE](LICENSE).
 
 
-## Example Images
+## Additional Images
 
-### BST
+![AVL Tree](images/avl_tree.png)
 
-![bst](images/bst_example.png)
+![Graph](images/graph.png)
 
-### AVL
-
-![avl](images/avl_example.png)
-
-# License
-This project is under the MIT License. See `License.md`.
+![Selection Modal](images/selection_modal.png)
