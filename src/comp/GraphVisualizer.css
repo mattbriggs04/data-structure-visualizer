@@ -1,0 +1,68 @@
+.graph-link {
+    stroke: var(--bg-color-contrast);
+    stroke-width: 2;
+    transition: stroke 220ms ease, stroke-width 220ms ease;
+}
+
+.graph-link-active {
+    stroke: var(--accent-color);
+    stroke-width: 3;
+}
+
+.graph-node-group {
+    animation: graph-node-fade 320ms ease both;
+}
+
+.graph-node {
+    r: 28;
+    fill: var(--bg-color-contrast);
+    transform-box: fill-box;
+    transform-origin: center;
+    transition: fill 220ms ease, filter 220ms ease;
+}
+
+.graph-node-active {
+    fill: var(--fg-color);
+    filter: drop-shadow(0 0 12px color-mix(in srgb, var(--fg-color) 70%, transparent));
+}
+
+.graph-node-focus {
+    fill: var(--accent-color);
+    animation: graph-node-pulse 700ms ease;
+}
+
+.graph-node-text {
+    fill: var(--text-color-contrast);
+    font-size: 1rem;
+    font-family: 'Space Mono', monospace;
+    text-anchor: middle;
+    alignment-baseline: middle;
+    pointer-events: none;
+}
+
+.graph-traversal-order {
+    font-family: 'Space Mono', monospace;
+    margin-top: 1rem;
+    text-align: center;
+}
+
+@keyframes graph-node-fade {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes graph-node-pulse {
+    0% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.12);
+    }
+    100% {
+        transform: scale(1);
+    }
+}
