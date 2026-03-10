@@ -20,7 +20,7 @@ interface ControlFieldProps {
 }
 
 const panelDescriptions: Record<Exclude<StructureType, ''>, string> = {
-    linkedlist: 'Replace the current list with a JSON array of numbers.',
+    linkedlist: 'Insert a value or array at the tail, or remove the current head node.',
     bst: 'Insert a single number or an array, then delete individual values.',
     stack: 'Push a value onto the stack or pop the current top element.',
     avl: 'Insert values and watch the tree rebalance itself as needed.',
@@ -88,16 +88,39 @@ function ControlPanel({structure, data, setData} : ControlPanelProps) {
         }
     }
 
-    const handleLinkedListSubmit = () => {
-        const parsed = parseNumberArrayInput(input);
-        if(parsed === null) {
+    const handleLinkedListInsert = () => {
+        if(input.trim().startsWith('[')) {
+            const parsed = parseNumberArrayInput(input);
+            if(parsed === null) {
+                setInputError(true);
+                return;
+            }
+
+            setData({ ...data, linkedlist: [...data.linkedlist, ...parsed] });
+            setInputError(false);
+            resetInputs();
+            return;
+        }
+
+        const value = parseNumberInput(input);
+        if(value === null) {
             setInputError(true);
             return;
         }
 
-        setData({ ...data, linkedlist: parsed });
+        setData({ ...data, linkedlist: [...data.linkedlist, value] });
         setInputError(false);
         resetInputs();
+    }
+
+    const handleLinkedListRemoveHead = () => {
+        if(data.linkedlist.length === 0) {
+            setInputError(true);
+            return;
+        }
+
+        setData({ ...data, linkedlist: data.linkedlist.slice(1) });
+        setInputError(false);
     }
 
     const handleBSTInsert = () => {
@@ -323,15 +346,16 @@ function ControlPanel({structure, data, setData} : ControlPanelProps) {
                         {renderField({
                             id: 'linkedlist-input',
                             name: 'linkedlist',
-                            label: 'Values',
-                            placeholder: '[0, 1, 2]',
+                            label: 'Value or Array',
+                            placeholder: '10 or [10, 5, 12]',
                             value: input,
                             onChange: handleInputChange,
-                            onEnter: handleLinkedListSubmit,
+                            onEnter: handleLinkedListInsert,
                             wide: true,
                         })}
                         <div className="control-actions">
-                            <button type="button" onClick={handleLinkedListSubmit}>Apply Changes</button>
+                            <button type="button" onClick={handleLinkedListInsert}>Insert</button>
+                            <button type="button" className="secondary-action" onClick={handleLinkedListRemoveHead}>Remove Head</button>
                         </div>
                     </div>
                 }

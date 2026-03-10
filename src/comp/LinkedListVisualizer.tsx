@@ -22,9 +22,16 @@ interface LinkedListLinkDatum {
     markerEnd: string;
 }
 
+interface StableNodeEntry {
+    id: string;
+    value: number;
+}
+
 function LinkedListVisualizer({linkedList} : LinkedListVisualizerProps<number>) {
     const svgRef = useRef<HTMLDivElement | null>(null);
     const d3svg = useRef<d3.Selection<SVGSVGElement, unknown, null, undefined> | null>(null);
+    const stableEntriesRef = useRef<StableNodeEntry[]>([]);
+    const nextNodeIdRef = useRef(0);
     const svgWidth = 800;
     const svgHeight = 200;
     const leftPadding = 20;
@@ -57,6 +64,46 @@ function LinkedListVisualizer({linkedList} : LinkedListVisualizerProps<number>) 
             .attr("d", "M 5 0 L 5 7 M 0 7 L 10 7 M 2 9 L 8 9 M 4 11 L 6 11");
     }
 
+    const getStableEntries = (values: number[]): StableNodeEntry[] => {
+        const previousEntries = stableEntriesRef.current;
+        const createEntry = (value: number): StableNodeEntry => {
+            nextNodeIdRef.current += 1;
+            return {
+                id: `linkedlist-node-${nextNodeIdRef.current}`,
+                value,
+            };
+        };
+
+        const isAppendOrExtend =
+            previousEntries.length <= values.length &&
+            previousEntries.every((entry, idx) => entry.value === values[idx]);
+
+        const isRemoveHead =
+            previousEntries.length === values.length + 1 &&
+            values.every((value, idx) => previousEntries[idx + 1]?.value === value);
+
+        let nextEntries: StableNodeEntry[];
+
+        if(isAppendOrExtend) {
+            nextEntries = [
+                ...previousEntries,
+                ...values.slice(previousEntries.length).map((value) => createEntry(value)),
+            ];
+        }
+        else if(isRemoveHead) {
+            nextEntries = previousEntries.slice(1).map((entry, idx) => ({
+                id: entry.id,
+                value: values[idx],
+            }));
+        }
+        else {
+            nextEntries = values.map((value) => createEntry(value));
+        }
+
+        stableEntriesRef.current = nextEntries;
+        return nextEntries;
+    }
+
     useEffect(() => {
         if(svgRef.current === null || d3svg.current !== null) {
             return;
@@ -81,9 +128,10 @@ function LinkedListVisualizer({linkedList} : LinkedListVisualizerProps<number>) 
         const spacing = 40;
         const svg = d3svg.current;
         ensureMarkers(svg);
+        const stableEntries = getStableEntries(linkedList);
 
-        const nodes: LinkedListNodeDatum[] = linkedList.map((value, idx) => ({
-            id: `${idx}-${value}`,
+        const nodes: LinkedListNodeDatum[] = stableEntries.map(({id, value}, idx) => ({
+            id,
             value,
             x: leftPadding + idx * (nodeWidth + spacing),
             y: svgHeight / 2 - nodeHeight / 2,
@@ -180,7 +228,7 @@ function LinkedListVisualizer({linkedList} : LinkedListVisualizerProps<number>) 
 
     return (
         <div className={`linkedlist-container`}>
-            <p className="visualizer-copy">Each box stores a value and a pointer to the next node in the list.</p>
+            <p className="visualizer-copy">Each box stores a value and a pointer to the next node. Append adds on the right, while removing the head advances the left-most pointer.</p>
             <div ref={svgRef} className={`linkedlist-svg`}></div>
         </div>
     );

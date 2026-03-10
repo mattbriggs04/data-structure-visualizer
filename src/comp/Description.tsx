@@ -51,7 +51,7 @@ function Description({structure}: DescriptionProps) {
                     <h1>What is a Linked List?</h1>
                     <p>A linked list stores data in nodes, and each node stores both a value and a reference to another node. In a singly linked list, each node points only to the next node. The data does not need to live in one contiguous block of memory the way an array does.</p>
                     <blockquote>
-                        This visualizer currently shows a <em>singly</em> linked list. The ground symbol at the end represents <em>NULL</em>, meaning there is no next node.
+                        This visualizer shows a <em>singly</em> linked list. The left-most node is the head, and the ground symbol at the end represents <em>NULL</em>, meaning there is no next node.
                     </blockquote>
 
                     <h2>Strengths</h2>
@@ -71,6 +71,13 @@ function Description({structure}: DescriptionProps) {
                         <li><strong>Singly linked list</strong>: each node points forward to the next node.</li>
                         <li><strong>Doubly linked list</strong>: each node stores both <em>next</em> and <em>prev</em> links.</li>
                         <li><strong>Circular linked list</strong>: the tail links back to the head instead of ending at <em>NULL</em>.</li>
+                    </ul>
+
+                    <h2>Operations in This Visualizer</h2>
+                    <ul>
+                        <li><strong>Insert</strong>: enter either a single number such as <code>8</code> or an array such as <code>[3, 5, 8]</code>. A single number appends one node at the tail, while an array appends each value in order.</li>
+                        <li>Because this visualizer models a singly linked list with only a head reference, appending at the tail usually means walking from the head to the final node first, so insert-at-tail is typically <strong>O(n)</strong>.</li>
+                        <li><strong>Remove Head</strong>: drop the first node by moving the head pointer to the next node. That operation is a natural <strong>O(1)</strong> update for a singly linked list.</li>
                     </ul>
 
                     <h2>Complexity Notes</h2>
